@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuran API Deneme Sayfası — quran-api</title>
+<style>
+  :root{
+    --bg:#0b1210; --panel:#101a16; --panel2:#15231d; --border:#1f352c;
+    --txt:#dce9e2; --dim:#8aa398; --gold:#c9a35c; --green:#3ddc97;
+    --green2:#2a8f68; --red:#e06c6c; --mono:'Consolas','Courier New',monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  body{background:var(--bg); color:var(--txt); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.5}
+  a{color:var(--green)}
+  header{background:linear-gradient(160deg,#0d1a14 0%,#123027 60%,#0d1a14 100%); border-bottom:1px solid var(--border); padding:28px 20px 20px; text-align:center}
+  header h1{font-size:26px; letter-spacing:.5px}
+  header h1 span{color:var(--gold)}
+  header p{color:var(--dim); font-size:13px; margin-top:6px}
+  .stats{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:16px}
+  .stat{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:8px 16px; text-align:center; min-width:92px}
+  .stat b{display:block; font-size:20px; color:var(--green)}
+  .stat i{font-style:normal; font-size:11px; color:var(--dim)}
+  nav{position:sticky; top:0; z-index:50; background:rgba(11,18,16,.96); border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px; padding:8px 12px; justify-content:center}
+  nav a{color:var(--dim); text-decoration:none; font-size:12.5px; padding:5px 11px; border-radius:20px; border:1px solid transparent}
+  nav a:hover{color:var(--txt); border-color:var(--border)}
+  main{max-width:1100px; margin:0 auto; padding:24px 16px 60px}
+  section{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin-bottom:26px; overflow:hidden}
+  .sec-head{display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--panel2)}
+  .sec-head .no{background:var(--green); color:#06281a; font-weight:700; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0}
+  .sec-head h2{font-size:16px; font-weight:600}
+  .sec-head code{font-family:var(--mono); font-size:11.5px; color:var(--gold); margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px}
+  .sec-body{padding:16px 18px}
+  .desc{color:var(--dim); font-size:13px; margin-bottom:14px}
+  .desc b{color:var(--gold); font-weight:600}
+  .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:14px}
+  .ctl{display:flex; flex-direction:column; gap:4px}
+  .ctl label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px}
+  select,input[type=text],input[type=number],textarea{background:var(--panel2); color:var(--txt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13.5px; min-width:150px; outline:none}
+  select:focus,input:focus,textarea:focus{border-color:var(--green2)}
+  input[type=range]{accent-color:var(--green); background:transparent; cursor:pointer}
+  button{background:var(--green); color:#06281a; border:none; border-radius:8px; padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer}
+  button:hover{filter:brightness(1.1)}
+  button.ghost{background:transparent; color:var(--green); border:1px solid var(--green2)}
+  button.ghost:hover{background:var(--panel2)}
+  button.small{padding:5px 10px; font-size:12px; border-radius:6px}
+  button:disabled{opacity:.45; cursor:not-allowed}
+  .status{font-family:var(--mono); font-size:12px; color:var(--dim); margin-bottom:10px; min-height:18px}
+  .status.ok{color:var(--green)} .status.err{color:var(--red)}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  .table-wrap{max-height:420px; overflow:auto; border:1px solid var(--border); border-radius:10px}
+  table{width:100%; border-collapse:collapse; font-size:13px}
+  th{position:sticky; top:0; background:var(--panel2); text-align:left; padding:8px 10px; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim)}
+  td{padding:7px 10px; border-top:1px solid var(--border); vertical-align:top}
+  tr:hover td{background:rgba(61,220,151,.05)}
+  .verse{display:flex; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); font-size:14px}
+  .verse:last-child{border-bottom:none}
+  .verse .vn{color:var(--gold); font-family:var(--mono); font-size:12px; min-width:34px; text-align:right; padding-top:2px}
+  .verse.arabic{flex-direction:row-reverse; text-align:right}
+  .verse.arabic .vt{font-family:'Scheherazade New','Traditional Arabic','Amiri','Noto Naskh Arabic',serif; font-size:24px; line-height:2; direction:rtl}
+  .verse .vt{flex:1}
+  pre{background:#0a0f0d; border:1px solid var(--border); border-radius:10px; padding:12px; font-family:var(--mono); font-size:12px; overflow:auto; max-height:340px; white-space:pre-wrap; word-break:break-all}
+  .cards{display:flex; flex-wrap:wrap; gap:10px}
+  .card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; min-width:110px}
+  .card b{display:block; font-size:22px; color:var(--green)}
+  .card span{font-size:11.5px; color:var(--dim)}
+  .font-card{display:flex; align-items:center; gap:14px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; background:var(--panel2)}
+  .font-sample{font-size:26px; line-height:1.6; min-width:220px}
+  .font-info{flex:1; font-size:12.5px; color:var(--dim); min-width:0}
+  .font-info b{color:var(--txt); font-size:13.5px; display:block}
+  .font-links a{font-family:var(--mono); font-size:11px; text-decoration:none; margin-right:8px}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:0}
+  .pair .col{border:1px solid var(--border); border-radius:10px; overflow:hidden}
+  .pair .col .col-head{padding:8px 12px; font-size:12.5px; font-weight:600; background:var(--panel2); border-bottom:1px solid var(--border)}
+  .pair .col .col-head.rtl{direction:rtl; text-align:right; font-family:'Scheherazade New','Traditional Arabic',serif; font-size:14px}
+  .col-head{padding:10px 12px; font-size:12.5px; font-weight:600; background:var(--panel2); border:1px solid var(--border); border-radius:10px 10px 0 0; border-bottom:none}
+  @media(max-width:760px){.pair{grid-template-columns:1fr}}
+  .nav-sure{display:flex; gap:8px; margin-top:10px}
+  .footer{color:var(--dim); font-size:12px; text-align:center; padding:20px; border-top:1px solid var(--border)}
+  .footer a{color:var(--gold)}
+  .badge{display:inline-block; background:var(--panel2); border:1px solid var(--border); border-radius:6px; font-size:11px; padding:1px 7px; margin-left:6px; color:var(--dim)}
+  .badge.la{color:var(--gold); border-color:#5a4a26}
+  .spin{display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:6px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📖 Kuran API <span>Deneme Sayfası</span></h1>
+  <p>fawazahmed0/quran-api · 98 dil · 492 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
+  <div class="stats">
+    <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
+    <div class="stat"><b id="s-fonts">—</b><i>Font</i></div>
+    <div class="stat"><b>114</b><i>Sure</i></div>
+    <div class="stat"><b>6236</b><i>Ayet</i></div>
+    <div class="stat"><b>30</b><i>Cüz</i></div>
+    <div class="stat"><b>604</b><i>Sayfa</i></div>
+  </div>
+</header>
+
+<nav>
+  <a href="#genel">1 · Genel Bakış</a>
+  <a href="#ceviriler">2 · Çeviriler</a>
+  <a href="#okuyucu">3 · Okuyucu</a>
+  <a href="#ayet">4 · Tek Ayet</a>
+  <a href="#bolumler">5 · Bölümler</a>
+  <a href="#yanyana">6 · Arapça + Türkçe</a>
+  <a href="#fontlar">7 · Fontlar</a>
+  <a href="#ses">8 · Sesli Okuma</a>
+</nav>
+
+<main>
+
+<!-- ============ BÖLÜM 1: GENEL BAKIŞ / info.json ============ -->
+<section id="genel">
+  <div class="sec-head"><span class="no">1</span><h2>Genel Bakış</h2><code>/info.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Kur'an'ın yapısal istatistikleri. <b>Bu veriler API'den canlı çekilir.</b></p>
+    <div class="cards" id="info-cards"><div class="status">Yükleniyor…</div></div>
+    <br>
+    <button class="ghost small" onclick="toggleInfoRaw()">Ham JSON'u göster / gizle</button>
+    <pre id="info-raw" style="display:none; margin-top:10px"></pre>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
+<section id="ceviriler">
+  <div class="sec-head"><span class="no">2</span><h2>Çeviriler</h2><code>/editions.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Tüm çeviriler (492). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
+    <div class="controls">
+      <div class="ctl"><label>Dil</label><select id="f-dil" onchange="renderEditions()"></select></div>
+      <div class="ctl"><label>Ara (yazar / ad)</label><input type="text" id="f-ara" placeholder="Diyanet, Gölpınarlı…" oninput="renderEditions()"></div>
+      <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="resetFilter()">Sıfırla</button></div>
+    </div>
+    <div class="status" id="ed-status"></div>
+    <div class="table-wrap"><table><thead><tr><th>Çeviri</th><th>Yazar / Kaynak</th><th>Dil</th><th></th></tr></thead><tbody id="ed-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
+<section id="okuyucu">
+  <div class="sec-head"><span class="no">3</span><h2>Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
+    <div class="controls">
+      <div class="ctl"><label>Dil</label><select id="ok-dil" onchange="fillEditionSel()"></select></div>
+      <div class="ctl"><label>Çeviri</label><select id="ok-ed"></select></div>
+      <div class="ctl"><label>Latin (_la)</label><input type="checkbox" id="ok-la" style="width:20px; height:20px; margin-top:6px"></div>
+      <div class="ctl"><label>Sure</label><select id="ok-sure"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="loadSure()">Yükle</button></div>
+    </div>
+    <div class="status" id="ok-status"></div>
+    <div id="ok-list"></div>
+    <div class="nav-sure">
+      <button class="ghost small" onclick="sureAtla(-1)">← Önceki sure</button>
+      <button class="ghost small" onclick="sureAtla(1)">Sonraki sure →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
+<section id="ayet">
+  <div class="sec-head"><span class="no">4</span><h2>Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
+    <div class="controls">
+      <div class="ctl"><label>Çeviri</label><select id="ay-ed"></select></div>
+      <div class="ctl"><label>Sure</label><select id="ay-sure"></select></div>
+      <div class="ctl"><label>Ayet</label><input type="number" id="ay-no" value="1" min="1" style="width:90px"></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="tekAyet()">Getir</button></div>
+    </div>
+    <div class="status" id="ay-status"></div>
+    <div id="ay-sonuc"></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
+<section id="bolumler">
+  <div class="sec-head"><span class="no">5</span><h2>Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
+    <div class="controls">
+      <div class="ctl"><label>Parça tipi</label><select id="bl-tip" onchange="blMax()">
+        <option value="juzs" data-max="30">Cüz (juzs)</option>
+        <option value="rukus" data-max="556">Rükû (rukus)</option>
+        <option value="pages" data-max="604">Sayfa (pages)</option>
+        <option value="manzils" data-max="7">Menzil (manzils)</option>
+        <option value="maqras" data-max="240">Maqra (maqras)</option>
+      </select></div>
+      <div class="ctl"><label>Numara</label><input type="number" id="bl-no" value="1" min="1" style="width:90px"></div>
+      <div class="ctl"><label>Çeviri</label><select id="bl-ed"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="bolumYukle()">Yükle</button></div>
+    </div>
+    <div class="status" id="bl-status"></div>
+    <div id="bl-list"></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
+<section id="yanyana">
+  <div class="sec-head"><span class="no">6</span><h2>Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json × 2</code></div>
+  <div class="sec-body">
+    <p class="desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
+    <div class="controls">
+      <div class="ctl"><label>Sure</label><select id="ya-sure"></select></div>
+      <div class="ctl"><label>Arapça metin</label><select id="ya-ara"></select></div>
+      <div class="ctl"><label>Türkçe meal</label><select id="ya-tur"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="yanyanaYukle()">Yükle</button></div>
+    </div>
+    <div class="status" id="ya-status"></div>
+    <div id="ya-sonuc"></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 7: FONTLAR / fonts.json ============ -->
+<section id="fontlar">
+  <div class="sec-head"><span class="no">7</span><h2>Fontlar</h2><code>/fonts.json</code></div>
+  <div class="sec-body">
+    <p class="desc"><b>238 Kur'an fontu</b> — Arapça yazımı doğru gösteren fontlar. woff2/ttf olarak indirilebilir (CDN linki).</p>
+    <div class="controls">
+      <div class="ctl"><label>Ara</label><input type="text" id="f-font" placeholder="quran, naskh…" oninput="renderFonts()"></div>
+    </div>
+    <div class="status" id="fn-status"></div>
+    <div id="fn-list"></div>
+    <div style="margin-top:10px"><button class="ghost small" id="fn-more" onclick="fontSayisi+=40; renderFonts()" style="display:none">Daha fazla göster</button></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 8: SESLİ OKUMA / tilavet + TTS ============ -->
+<section id="ses">
+  <div class="sec-head"><span class="no">8</span><h2>Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
+  <div class="sec-body">
+    <p class="desc">8A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 8B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
+    <div class="grid2">
+      <div class="col">
+        <div class="col-head">🎧 Tilavet — Kur'an okunuşu (Arapça)</div>
+        <div style="padding:12px">
+          <div class="controls">
+            <div class="ctl"><label>Okuyucu</label><select id="tl-oku"></select></div>
+            <div class="ctl"><label>Sure</label><select id="tl-sure"></select></div>
+            <div class="ctl"><label>&nbsp;</label><button onclick="tilavetCal()">▶ Çal</button></div>
+            <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="tilavetDurdur()">⏹ Durdur</button></div>
+          </div>
+          <input type="range" id="tl-bar" min="0" max="1000" value="0" style="width:100%" oninput="tilBarAyarla(this.value)">
+          <div class="controls" style="margin-top:6px">
+            <div class="ctl" style="flex:1"><label>Ses seviyesi</label><input type="range" id="tl-vol" min="0" max="1" step="0.05" value="1" style="width:100%" oninput="tilSes(this.value)"></div>
+          </div>
+          <div class="status" id="tl-status"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="col-head">🗣️ TTS — Metni sesli oku</div>
+        <div style="padding:12px">
+          <div class="controls">
+            <div class="ctl"><label>Dil</label><select id="tts-dil"></select></div>
+            <div class="ctl"><label>Hız</label><input type="range" id="tts-hiz" min="0.5" max="1.5" step="0.1" value="1" style="width:130px"></div>
+          </div>
+          <textarea id="tts-metin" rows="3" style="width:100%; resize:vertical" placeholder="Okunacak metni buraya yaz… (Bölüm 3'teki ayetlerin yanındaki 🔊 butonu da ayeti okur)"></textarea>
+          <div class="controls" style="margin-top:10px; margin-bottom:0">
+            <button onclick="ttsOkuMetin()">▶ Oku</button>
+            <button class="ghost" onclick="ttsDuraklat()">⏸ Duraklat / Devam</button>
+            <button class="ghost" onclick="ttsDurdur()">⏹ Durdur</button>
+          </div>
+          <div class="status" id="tts-status">Sesler yükleniyor…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="footer">
+  Kaynak: <a href="https://github.com/fawazahmed0/quran-api" target="_blank">github.com/fawazahmed0/quran-api</a> ·
+  Tüm veriler <code style="font-size:11px">cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/</code> üzerinden canlı çekilir ·
+  Lisans: Unlicense (kamu malı) · Bu sayfa: <b id="f-sure">—</b> ms
+</div>
+
+<script>
+"use strict";
+const BASE = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
+
+// 114 sure: [Türkçe ad, ayet sayısı]
+const SURELER = [
+  ["Fâtiha",7],["Bakara",286],["Âl-i İmrân",200],["Nisâ",176],["Mâide",120],["En'âm",165],["A'râf",206],["Enfâl",75],["Tevbe",129],["Yûnus",109],
+  ["Hûd",123],["Yûsuf",111],["Ra'd",43],["İbrâhîm",52],["Hicr",99],["Nahl",128],["İsrâ",111],["Kehf",110],["Meryem",98],["Tâhâ",135],
+  ["Enbiyâ",112],["Hac",78],["Mü'minûn",118],["Nûr",64],["Furkân",77],["Şuarâ",227],["Neml",93],["Kasas",88],["Ankebût",69],["Rûm",60],
+  ["Lokmân",34],["Secde",30],["Ahzâb",73],["Sebe'",54],["Fâtır",45],["Yâsîn",83],["Sâffât",182],["Sâd",88],["Zümer",75],["Mü'min",85],
+  ["Fussilet",54],["Şûrâ",53],["Zuhruf",89],["Duhân",59],["Câsiye",37],["Ahkâf",35],["Muhammed",38],["Fetih",29],["Hucurât",18],["Kâf",45],
+  ["Zâriyât",60],["Tûr",49],["Necm",62],["Kamer",55],["Rahmân",78],["Vâkıa",96],["Hadîd",29],["Mücâdele",22],["Haşr",24],["Mümtehine",13],
+  ["Saf",14],["Cum'a",11],["Münafikûn",11],["Tegâbün",18],["Talâk",12],["Tahrîm",12],["Mülk",30],["Kalem",52],["Hâkka",52],["Meâric",44],
+  ["Nûh",28],["Cin",28],["Müzzemmil",20],["Müddessir",56],["Kıyâme",40],["İnsan",31],["Mürselât",50],["Nebe'",40],["Nâziât",46],["Abese",42],
+  ["Tekvîr",29],["İnfitâr",19],["Mutaffifîn",36],["İnşikâk",25],["Bürûc",22],["Târık",17],["A'lâ",19],["Gâşiye",26],["Fecr",30],["Beled",20],
+  ["Şems",15],["Leyl",21],["Duhâ",11],["İnşirâh",8],["Tîn",8],["Alak",19],["Kadir",5],["Beyyine",8],["Zilzâl",8],["Âdiyât",11],
+  ["Kâria",11],["Tekâsür",8],["Asr",3],["Hümeze",9],["Fîl",5],["Kureyş",4],["Mâûn",7],["Kevser",3],["Kâfirûn",6],["Nasr",3],
+  ["Leheb",5],["İhlâs",4],["Felak",5],["Nâs",6]
+];
+
+let EDITIONS = {};       // key -> {name, author, language, ...}
+let EDITION_LIST = [];   // sıralı dizi
+let FONTS = {};
+let OK_AYETLER = [];     // okuyucuda yüklü ayetler (TTS için)
+let fontSayisi = 30;
+let sureSecili = 1;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function api(path){
+  const t0 = performance.now();
+  const r = await fetch(BASE + '/' + path, {cache:'no-store'});
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  const text = await r.text();
+  return {data: JSON.parse(text), ms: Math.round(performance.now() - t0), kb: Math.round(text.length/1024)};
+}
+
+function ayetListesi(obj){
+  if(Array.isArray(obj)) return obj;
+  for(const k of Object.keys(obj)){ if(Array.isArray(obj[k])) return obj[k]; }
+  return [];
+}
+
+function sureAd(n){ return n + '. ' + SURELER[n-1][0]; }
+
+function doldurSure(selId, sec){
+  const el = $(selId);
+  el.innerHTML = SURELER.map((s,i) => `<option value="${i+1}">${sureAd(i+1)} (${s[1]} ayet)</option>`).join('');
+  if(sec) el.value = sec;
+}
+
+// 4 doğrulanmış tilavet okuyucusu (cdn.islamic.network)
+const TILAVETLER = [
+  ['ar.alafasy','Mishary Alafasy'],
+  ['ar.abdulbasitmurattal','Abdul Basit'],
+  ['ar.abdullahbasfar','Abdullah Basfar'],
+  ['ar.saudalshuraim','Saud Al-Shuraim']
+];
+
+// edition.language -> TTS dil kodu (Web Speech API)
+const TTS_DIL = {
+  'Turkish':'tr-TR','Arabic':'ar-SA','English':'en-US','German':'de-DE','French':'fr-FR',
+  'Spanish':'es-ES','Russian':'ru-RU','Indonesian':'id-ID','Urdu':'ur-PK','Persian':'fa-IR',
+  'Chinese':'zh-CN','Japanese':'ja-JP','Dutch':'nl-NL','Italian':'it-IT','Portuguese':'pt-BR',
+  'Korean':'ko-KR','Hindi':'hi-IN','Bengali':'bn-BD','Malay':'ms-MY','Swahili':'sw-KE',
+  'Kurdish':'ku-TR','Albanian':'sq-AL','Bosnian':'bs-BA','Somali':'so-SO','Azerbaijani':'az-AZ',
+  'Uzbek':'uz-UZ','Kazakh':'kk-KZ','Pashto':'ps-AF','Tamil':'ta-IN','Thai':'th-TH',
+  'Vietnamese':'vi-VN','Swedish':'sv-SE','Norwegian':'no-NO','Danish':'da-DK','Finnish':'fi-FI',
+  'Polish':'pl-PL','Czech':'cs-CZ','Hungarian':'hu-HU','Romanian':'ro-RO','Greek':'el-GR',
+  'Ukrainian':'uk-UA','Croatian':'hr-HR','Serbian':'sr-RS','Georgian':'ka-GE','Armenian':'hy-AM',
+  'Hausa':'ha-NG','Yoruba':'yo-NG','Afrikaans':'af-ZA','Mongolian':'mn-MN','Burmese':'my-MM'
+};
+
+// ---------- Başlangıç ----------
+(async function init(){
+  try{
+    const [ed, fo, inf] = await Promise.all([
+      api('editions.min.json'),
+      api('fonts.json'),
+      api('info.json').catch(() => null)
+    ]);
+    EDITIONS = ed.data; FONTS = fo.data;
+    EDITION_LIST = Object.values(ed.data).sort((a,b)=>a.language.localeCompare(b.language) || a.name.localeCompare(b.name));
+    $('s-editions').textContent = EDITION_LIST.length;
+    $('s-fonts').textContent = Object.keys(FONTS).length;
+
+    const diller = [...new Set(EDITION_LIST.map(e=>e.language))].sort();
+    const dilOpts = diller.map(d=>`<option>${esc(d)}</option>`).join('');
+    $('f-dil').innerHTML = '<option value="">Tüm diller</option>' + dilOpts;
+    $('ok-dil').innerHTML = dilOpts;
+    $('ok-dil').value = 'Turkish';
+    fillEditionSel(); fillOkEdit(); $('bl-ed').innerHTML = $('ok-ed').innerHTML; $('ay-ed').innerHTML = $('ok-ed').innerHTML;
+
+    // Arapça + Türkçe selects (bölüm 6)
+    const araList = EDITION_LIST.filter(e=>e.language==='Arabic').map(e=>e.name);
+    const turList = EDITION_LIST.filter(e=>e.language==='Turkish' && !e.name.endsWith('-la')).map(e=>e.name);
+    $('ya-ara').innerHTML = araList.map(n=>`<option>${n}</option>`).join('');
+    $('ya-tur').innerHTML = turList.map(n=>`<option>${n}</option>`).join('');
+    if(araList.includes('ara-quransimple')) $('ya-ara').value = 'ara-quransimple';
+    if(turList.includes('tur-diyanetisleri')) $('ya-tur').value = 'tur-diyanetisleri';
+
+    doldurSure('ok-sure', 1); doldurSure('ay-sure', 1); doldurSure('ya-sure', 1);
+    $('tl-oku').innerHTML = TILAVETLER.map(([k,ad]) => `<option value="${k}">${ad}</option>`).join('');
+    doldurSure('tl-sure', 1);
+    ttsDilleriYukle();
+    renderEditions(); renderFonts(); renderInfo(inf);
+  }catch(e){
+    $('ed-status').innerHTML = `<span class="err">Başlatma hatası: ${esc(e.message)}</span>`;
+  }
+})();
+
+// ---------- BÖLÜM 1: info ----------
+function renderInfo(inf){
+  const el = $('info-cards');
+  if(!inf){ el.innerHTML = '<div class="status err">info.json alınamadı</div>'; return; }
+  const map = {
+    verses:'Ayet', chapters:'Sure', juzs:'Cüz', pages:'Sayfa',
+    rukus:'Rükû', manzils:'Menzil', maqras:'Maqra', sajdas:'Secde'
+  };
+  el.innerHTML = Object.entries(map).map(([k,ad]) =>
+    `<div class="card"><b>${inf.data[k]?.count ?? '—'}</b><span>${ad}</span></div>`).join('');
+  $('info-raw').textContent = JSON.stringify(inf.data, null, 2);
+}
+function toggleInfoRaw(){ $('info-raw').style.display = $('info-raw').style.display==='none' ? 'block' : 'none'; }
+
+// ---------- BÖLÜM 2: editions ----------
+function renderEditions(){
+  const dil = $('f-dil').value, ara = $('f-ara').value.trim().toLowerCase();
+  const list = EDITION_LIST.filter(e =>
+    (!dil || e.language===dil) &&
+    (!ara || e.name.toLowerCase().includes(ara) || e.author.toLowerCase().includes(ara))
+  );
+  $('ed-status').textContent = `${list.length} / ${EDITION_LIST.length} çeviri listeleniyor`;
+  const la = e => e.name.endsWith('-la') ? '<span class="badge la">latin</span>' : '';
+  $('ed-body').innerHTML = list.map(e => `
+    <tr>
+      <td style="font-weight:600">${esc(e.name)}${la(e)}</td>
+      <td>${esc(e.author)}<br><span style="color:var(--dim); font-size:11px">${esc(e.source||'')}</span></td>
+      <td>${esc(e.language)}</td>
+      <td><button class="small" onclick="okuSec('${e.name}')">Oku</button></td>
+    </tr>`).join('');
+}
+function resetFilter(){ $('f-dil').value=''; $('f-ara').value=''; renderEditions(); }
+
+// ---------- BÖLÜM 3: okuyucu ----------
+function fillEditionSel(){
+  const dil = $('ok-dil').value;
+  const onceki = $('ok-ed').value;
+  const list = EDITION_LIST.filter(e=>e.language===dil).map(e=>e.name);
+  const la = $('ok-la').checked;
+  const filt = la ? list.filter(n=>n.endsWith('-la')) : list;
+  $('ok-ed').innerHTML = filt.map(n=>`<option value="${n}">${n}</option>`).join('');
+  if($('ok-ed').innerHTML===''){ $('ok-ed').innerHTML='<option value="">—</option>'; }
+  let sec = filt.includes(onceki) ? onceki :
+            (onceki && onceki.endsWith('-la')) ? onceki.slice(0,-3) : (onceki ? onceki + '-la' : '');
+  if(sec && filt.includes(sec)) $('ok-ed').value = sec;
+  $('ok-la').onchange = fillEditionSel;
+}
+function fillOkEdit(){
+  const dil = $('ok-dil').value;
+  const list = EDITION_LIST.filter(e=>e.language===dil).map(e=>e.name);
+  const html = list.map(n=>`<option value="${n}">${n}</option>`).join('');
+  $('bl-ed').innerHTML = html; $('ay-ed').innerHTML = html;
+}
+function okuSec(name){
+  const e = EDITIONS[name.replace(/-/g, '_')];
+  $('ok-dil').value = e.language; fillEditionSel();
+  $('ok-la').checked = name.endsWith('-la'); fillEditionSel();
+  $('ok-ed').value = name;
+  loadSure(); document.getElementById('okuyucu').scrollIntoView({behavior:'smooth'});
+}
+async function loadSure(){
+  const ad = $('ok-ed').value; if(!ad){ return; }
+  const s = +$('ok-sure').value; sureSecili = s;
+  const st = $('ok-status'); st.innerHTML = '<span class="spin"></span>Yükleniyor…';
+  try{
+    const {data, ms, kb} = await api(`editions/${ad}/${s}.min.json`);
+    const ayetler = ayetListesi(data);
+    OK_AYETLER = ayetler;
+    st.innerHTML = `<span class="ok">✔ ${sureAd(s)} · ${ayetler.length} ayet · ${kb} KB · ${ms} ms</span>`;
+    $('ok-list').innerHTML = ayetler.map((v,i) =>
+      `<div class="verse"><span class="vn">${v.verse}</span><span class="vt">${esc(v.text)}</span><button class="ghost small" onclick="ttsAyetOku(${i})" title="Bu ayeti sesli oku">🔊</button></div>`).join('');
+  }catch(e){
+    st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)} — bu çeviri için veri yok olabilir</span>`;
+    $('ok-list').innerHTML='';
+  }
+}
+function sureAtla(d){
+  const s = Math.min(114, Math.max(1, sureSecili + d));
+  $('ok-sure').value = s; loadSure();
+}
+
+// ---------- BÖLÜM 4: tek ayet ----------
+async function tekAyet(){
+  const ad = $('ay-ed').value; if(!ad){ return; }
+  const s = +$('ay-sure').value, v = Math.min(+$('ay-no').value, SURELER[s-1][1]) || 1;
+  $('ay-no').value = v;
+  const st = $('ay-status'); st.innerHTML = '<span class="spin"></span>Yükleniyor…';
+  try{
+    const {data, ms, kb} = await api(`editions/${ad}/${s}/${v}.min.json`);
+    st.innerHTML = `<span class="ok">✔ ${sureAd(s)}:${v} · ${ms} ms</span>`;
+    $('ay-sonuc').innerHTML = `
+      <div class="verse"><span class="vn">${s}:${v}</span><span class="vt" style="font-size:16px">${esc(data.text)}</span></div>
+      <br><pre>${esc(JSON.stringify(data, null, 2))}</pre>`;
+  }catch(e){ st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)}</span>`; }
+}
+
+// ---------- BÖLÜM 5: bölümler ----------
+function blMax(){
+  const opt = $('bl-tip').selectedOptions[0];
+  $('bl-no').max = opt.dataset.max;
+  if(+$('bl-no').value > +opt.dataset.max) $('bl-no').value = 1;
+}
+async function bolumYukle(){
+  const ad = $('bl-ed').value; if(!ad){ return; }
+  const tip = $('bl-tip').value, no = $('bl-no').value;
+  const st = $('bl-status'); st.innerHTML = '<span class="spin"></span>Yükleniyor…';
+  try{
+    const {data, ms, kb} = await api(`editions/${ad}/${tip}/${no}.min.json`);
+    const ayetler = ayetListesi(data);
+    st.innerHTML = `<span class="ok">✔ ${tip}/${no} · ${ayetler.length} ayet · ${kb} KB · ${ms} ms</span>`;
+    $('bl-list').innerHTML = ayetler.map(v =>
+      `<div class="verse"><span class="vn">${v.chapter}:${v.verse}</span><span class="vt">${esc(v.text)}</span></div>`).join('');
+  }catch(e){ st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)}</span>`; }
+}
+
+// ---------- BÖLÜM 6: yan yana ----------
+async function yanyanaYukle(){
+  const ara = $('ya-ara').value, tur = $('ya-tur').value, s = +$('ya-sure').value;
+  const st = $('ya-status'); st.innerHTML = '<span class="spin"></span>Yükleniyor…';
+  try{
+    const [a, t] = await Promise.all([
+      api(`editions/${ara}/${s}.min.json`),
+      api(`editions/${tur}/${s}.min.json`)
+    ]);
+    const am = new Map(ayetListesi(a.data).map(v=>[v.verse,v.text]));
+    const tlist = ayetListesi(t.data).map(v=>({v:v.verse, t:v.text}));
+    const toplam = tlist.length;
+    st.innerHTML = `<span class="ok">✔ ${sureAd(s)} · Arapça ${a.ms} ms + Türkçe ${t.ms} ms · ${toplam} ayet</span>`;
+    $('ya-sonuc').innerHTML = `
+      <div class="pair">
+        <div class="col">
+          <div class="col-head rtl">${esc(ara)} — Arapça</div>
+          <div id="ya-ar"></div>
+        </div>
+        <div class="col">
+          <div class="col-head">${esc(tur)} — Türkçe</div>
+          <div id="ya-tr"></div>
+        </div>
+      </div>`;
+    $('ya-ar').innerHTML = tlist.map(v=>`<div class="verse arabic"><span class="vn">${v.v}</span><span class="vt">${esc(am.get(v.v)||'')}</span></div>`).join('');
+    $('ya-tr').innerHTML = tlist.map(v=>`<div class="verse"><span class="vn">${v.v}</span><span class="vt">${esc(v.t)}</span></div>`).join('');
+  }catch(e){ st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)}</span>`; }
+}
+
+// ---------- BÖLÜM 7: fontlar ----------
+function renderFonts(){
+  const ara = $('f-font').value.trim().toLowerCase();
+  const keys = Object.keys(FONTS).filter(k => !ara || k.includes(ara) || (FONTS[k].designer||'').toLowerCase().includes(ara));
+  const goster = keys.slice(0, fontSayisi);
+  $('fn-status').textContent = `${goster.length} / ${keys.length} font gösteriliyor`;
+  $('fn-list').innerHTML = goster.map(k => {
+    const f = FONTS[k];
+    return `<div class="font-card">
+      <div class="font-sample" style="font-family:'${(f.font||k).replace(/'/g,"\\'")}','Scheherazade New',serif">بِسْمِ اللَّهِ</div>
+      <div class="font-info"><b>${esc(f.font||k)}</b>${f.designer ? ' · ' + esc(f.designer) : ''}${f.version ? ' · v' + f.version : ''}<br><span style="color:var(--dim)">${esc(k)}</span></div>
+      <div class="font-links">
+        ${f.woff2?`<a href="${f.woff2}" target="_blank">woff2</a>`:''}${f.ttf?`<a href="${f.ttf}" target="_blank">ttf</a>`:''}${f.eot?`<a href="${f.eot}" target="_blank">eot</a>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  $('fn-more').style.display = goster.length < keys.length ? 'inline-block' : 'none';
+}
+
+// ---------- BÖLÜM 8: sesli okuma ----------
+let tlAudio = null;
+function fmtSn(t){ t = Math.floor(t||0); return Math.floor(t/60) + ':' + String(t%60).padStart(2,'0'); }
+function tilavetCal(){
+  const oku = $('tl-oku').value, s = +$('tl-sure').value;
+  const st = $('tl-status');
+  if(tlAudio) tlAudio.pause();
+  tlAudio = new Audio('https://cdn.islamic.network/quran/audio-surah/128/' + oku + '/' + s + '.mp3');
+  tlAudio.volume = +$('tl-vol').value;
+  tlAudio.addEventListener('timeupdate', () => {
+    if(tlAudio && tlAudio.duration){
+      $('tl-bar').value = Math.round(tlAudio.currentTime / tlAudio.duration * 1000);
+      $('tl-status').textContent = `${sureAd(s)} · ${fmtSn(tlAudio.currentTime)} / ${fmtSn(tlAudio.duration)}`;
+    }
+  });
+  tlAudio.addEventListener('ended', () => { $('tl-status').innerHTML = '<span class="ok">✔ Tilavet tamamlandı</span>'; });
+  tlAudio.addEventListener('error', () => { $('tl-status').innerHTML = '<span class="err">✘ Ses yüklenemedi (ağ / okuyucu)</span>'; });
+  tlAudio.play().catch(e => { st.innerHTML = '<span class="err">✘ ' + esc(e.message) + '</span>'; });
+}
+function tilavetDurdur(){
+  if(tlAudio){ tlAudio.pause(); tlAudio.currentTime = 0; }
+  $('tl-bar').value = 0; $('tl-status').textContent = '';
+}
+function tilBarAyarla(v){
+  if(tlAudio && tlAudio.duration) tlAudio.currentTime = v / 1000 * tlAudio.duration;
+}
+function tilSes(v){ if(tlAudio) tlAudio.volume = +v; }
+
+let ttsSesler = [];
+function ttsDilleriYukle(){
+  const doldur = () => {
+    ttsSesler = speechSynthesis.getVoices();
+    const langs = [...new Set(ttsSesler.map(v => v.lang.replace('_','-')).sort())];
+    $('tts-dil').innerHTML = langs.map(l => `<option value="${l}">${l}</option>`).join('') || '<option value="">—</option>';
+    const sec = langs.find(l => l.toLowerCase().startsWith('tr')) || langs.find(l => l.toLowerCase().startsWith('en'));
+    if(sec) $('tts-dil').value = sec;
+    $('tts-status').innerHTML = `<span class="ok">✔ ${ttsSesler.length} ses bulundu (${langs.length} dil)</span>`;
+  };
+  if('speechSynthesis' in window){
+    speechSynthesis.onvoiceschanged = doldur;
+    doldur();
+  } else {
+    $('tts-status').innerHTML = '<span class="err">✘ Bu tarayıcı TTS desteklemiyor — Chrome/Edge dene</span>';
+  }
+}
+function ttsDilKodu(dil){
+  if(TTS_DIL[dil]) return TTS_DIL[dil];
+  const s = ttsSesler.find(v => v.lang.toLowerCase().startsWith(dil.slice(0,2).toLowerCase()));
+  return s ? s.lang : '';
+}
+function ttsKonus(metin, lang){
+  if(!metin){ $('tts-status').innerHTML = '<span class="err">✘ Okunacak metin yok</span>'; return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(metin);
+  u.lang = lang || $('tts-dil').value || undefined;
+  u.rate = +$('tts-hiz').value;
+  const ses = ttsSesler.find(v => v.lang.replace('_','-') === u.lang) ||
+              (u.lang ? ttsSesler.find(v => v.lang.toLowerCase().startsWith(u.lang.split('-')[0])) : null);
+  if(ses) u.voice = ses;
+  u.onend = () => { $('tts-status').innerHTML = '<span class="ok">✔ Okundu</span>'; };
+  u.onerror = () => { $('tts-status').innerHTML = '<span class="err">✘ Ses hatası</span>'; };
+  speechSynthesis.speak(u);
+  $('tts-status').textContent = (ses ? '🔊 Okunuyor (' + ses.lang + ')' : '🔊 Okunuyor') + '…';
+}
+function ttsOkuMetin(){
+  const m = $('tts-metin').value.trim();
+  if(!m){ $('tts-status').innerHTML = '<span class="err">✘ Önce metin gir</span>'; return; }
+  ttsKonus(m, $('tts-dil').value);
+}
+function ttsAyetOku(i){
+  const a = OK_AYETLER[i]; if(!a) return;
+  ttsKonus(a.text, ttsDilKodu($('ok-dil').value));
+}
+function ttsDuraklat(){
+  if(speechSynthesis.speaking && !speechSynthesis.paused) speechSynthesis.pause();
+  else if(speechSynthesis.paused) speechSynthesis.resume();
+}
+function ttsDurdur(){ speechSynthesis.cancel(); $('tts-status').textContent = ''; }
+
+// Footer: sayfa yükleme süresi
+window.addEventListener('load', () => {
+  $('f-sure').textContent = Math.round(performance.now());
+});
+</script>
+</body>
+</html>
