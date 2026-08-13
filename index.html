@@ -78,6 +78,12 @@
   @media(max-width:760px){.pair{grid-template-columns:1fr}}
   .nav-sure{display:flex; gap:8px; margin-top:10px}
   .footer{color:var(--dim); font-size:12px; text-align:center; padding:20px; border-top:1px solid var(--border)}
+  .chips{display:flex; flex-wrap:wrap; gap:6px}
+  .chips button{background:var(--panel2); color:var(--dim); border:1px solid var(--border); border-radius:16px; padding:4px 12px; font-size:12px; font-weight:500; cursor:pointer}
+  .chips button:hover{color:var(--txt); border-color:var(--green2)}
+  .chips button.aktif{background:var(--green); color:#06281a; border-color:var(--green)}
+  .ara-satir{cursor:pointer}
+  .ara-panel-arapca{font-size:24px; line-height:2; direction:rtl; text-align:right; font-family:'Scheherazade New','Traditional Arabic','Amiri','Noto Naskh Arabic',serif; word-break:break-word}
   .footer a{color:var(--gold)}
   .badge{display:inline-block; background:var(--panel2); border:1px solid var(--border); border-radius:6px; font-size:11px; padding:1px 7px; margin-left:6px; color:var(--dim)}
   .badge.la{color:var(--gold); border-color:#5a4a26}
@@ -109,6 +115,7 @@
   <a href="#bolumler">6 · Bölümler</a>
   <a href="#yanyana">7 · Arapça + Türkçe</a>
   <a href="#fontlar">8 · Fontlar</a>
+  <a href="#arama">9 · Kur'an'da Ara</a>
 </nav>
 
 <main>
@@ -268,6 +275,39 @@
     <div class="status" id="fn-status"></div>
     <div id="fn-list"></div>
     <div style="margin-top:10px"><button class="ghost small" id="fn-more" onclick="fontSayisi+=40; renderFonts()" style="display:none">Daha fazla göster</button></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 9: KUR'AN'DA ARA / tam metin arama ============ -->
+<section id="arama">
+  <div class="sec-head"><span class="no">9</span><h2>Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
+  <div class="sec-body">
+    <p class="desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
+    <div class="controls">
+      <div class="ctl"><label>Mod</label><select id="ara-mod" onchange="araModDegisti()">
+        <option value="kelime">Kelime</option>
+        <option value="cumle">Cümle</option>
+        <option value="konu">Konu</option>
+      </select></div>
+      <div class="ctl"><label>Dil</label><select id="ara-dil">
+        <option value="tur">Türkçe (Diyanet)</option>
+        <option value="ara">Arapça (asıl metin)</option>
+      </select></div>
+      <div class="ctl"><label>Aratılacak metin</label><input type="text" id="ara-kutu" placeholder="kelime veya cümle…" onkeydown="if(event.key==='Enter')araYap()"></div>
+      <div class="ctl"><label>&nbsp;</label><button id="ara-btn" onclick="araYap()">Ara</button></div>
+    </div>
+    <div id="ara-konular" style="display:none; margin-bottom:12px"></div>
+    <div class="status" id="ara-status"></div>
+    <div class="grid2">
+      <div>
+        <div class="col-head">Sonuçlar (<span id="ara-sayac">0</span>)</div>
+        <div class="table-wrap" id="ara-list"></div>
+      </div>
+      <div>
+        <div class="col-head" id="ara-panel-baslik">Seçili Ayet</div>
+        <div style="padding:12px" id="ara-panel"></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -632,6 +672,150 @@ function ttsDuraklat(){
   else if(speechSynthesis.paused) speechSynthesis.resume();
 }
 function ttsDurdur(){ speechSynthesis.cancel(); $('tts-status').textContent = ''; }
+
+// ===== BÖLÜM 9: KUR'AN'DA ARA =====
+const ARA_ED = {
+  ara: BASE + '/editions/ara-quransimple.min.json',
+  tur: BASE + '/editions/tur-diyanetisleri.min.json'
+};
+let ARA_DATA = {};
+let ARA_INDEX = {};
+let ARA_SECILI_KONU = '';
+
+function normAra(s){
+  let t = String(s).normalize('NFC').toLocaleLowerCase('tr');
+  if(/[\u0600-\u06FF]/.test(t)){
+    t = t.replace(/[\u0640\u064B-\u065F\u0670\u06D6-\u06ED\u08D3-\u08FF]/g, '');
+    t = t.replace(/[\u0623\u0625\u0622]/g, '\u0627');
+    t = t.replace(/\u0629/g, '\u0647');
+  }
+  return t;
+}
+
+async function araVeri(dil){
+  if(!ARA_DATA[dil]){
+    const st = $('ara-status');
+    st.textContent = '⏳ ' + (dil === 'ara' ? 'Arapça' : 'Türkçe') + ' tam metin yükleniyor…';
+    const r = await fetch(ARA_ED[dil]);
+    if(!r.ok) throw new Error('Yükleme hatası: HTTP ' + r.status);
+    const j = await r.json();
+    ARA_DATA[dil] = j.quran || [];
+    ARA_INDEX[dil] = new Map(ARA_DATA[dil].map(a => [a.chapter + ':' + a.verse, a.text]));
+    st.textContent = '';
+  }
+  return ARA_DATA[dil];
+}
+
+function araVerileri(){ return Promise.all(['ara','tur'].map(araVeri)); }
+
+const ARA_KONULAR = {
+  'Namaz':        {tr:['namaz','salât','salat','kılın','kılarlar','secde','rüku','rükû'], ar:['صلاة','صلوات','سجد','ركع','اقيموا','اقيم','قوموا']},
+  'Oruç':         {tr:['oruç','oruc','savm','sıyam','tutun'], ar:['صيام','صوم','صوموا']},
+  'Zekât':        {tr:['zekât','zekat','sadaka'], ar:['زكاة','زكوة','صدقة','صدقات']},
+  'Hac':          {tr:['hac','hacc','umre','kâbe','kabe'], ar:['حج','حجوا','عمرة','كعبة']},
+  'Sabır':        {tr:['sabır','sabir','sabr'], ar:['صبر','صابروا','اصبروا']},
+  'Merhamet':     {tr:['merhamet','rahmet','esirgeyen'], ar:['رحمة','رحم','رحيم']},
+  'Adalet':       {tr:['adalet','adl','mizan','ölçüyü','dosdoğru'], ar:['عدل','ميزان','قسط']},
+  'Tevbe':        {tr:['tevbe','tövbe','tovbe','bağışlanma','istiğfar'], ar:['توبة','استغفار','تابوا']},
+  'Şükür':        {tr:['şükür','sukur','şükred','hamd'], ar:['شكر','اشكروا','شاكر']},
+  'Cennet':       {tr:['cennet','cennete'], ar:['جنة','جنان']},
+  'Cehennem':     {tr:['cehennem','cehenneme','nar'], ar:['جهنم','نار']},
+  'Peygamberler': {tr:['peygamber','resul','elçi','nebi','nebî'], ar:['رسل','نبي','رسول','انبياء']},
+  'Melekler':     {tr:['melek','melekler'], ar:['ملائكة','ملاك']},
+  'Şeytan':       {tr:['şeytan','iblis'], ar:['شيطان','ابليس']},
+  'Kadir Gecesi': {tr:['kadir','kadir gecesi'], ar:['قدر','ليلة القدر']}
+};
+
+function araModDegisti(){
+  const konu = $('ara-mod').value === 'konu';
+  $('ara-konular').style.display = konu ? 'block' : 'none';
+  $('ara-kutu').style.display = konu ? 'none' : 'inline-block';
+  if(konu) araKonuRender();
+}
+
+function araKonuRender(){
+  $('ara-konular').innerHTML = '<div class="chips">' + Object.keys(ARA_KONULAR).map(k =>
+    '<button type="button" class="' + (ARA_SECILI_KONU === k ? 'aktif' : '') + '" onclick="araKonuSec(\'' + k + '\')">' + k + '</button>'
+  ).join('') + '</div>';
+}
+
+function araKonuSec(k){
+  ARA_SECILI_KONU = k;
+  document.querySelectorAll('#ara-konular .chips button').forEach(b => b.classList.toggle('aktif', b.textContent === k));
+  araYap();
+}
+
+function araEslesme(mod, query, dil){
+  const bul = new Map();
+  if(mod === 'konu'){
+    const k = ARA_KONULAR[query];
+    if(!k) return [];
+    for(const [d, kelimeler] of [['tur', k.tr], ['ara', k.ar]]){
+      if(!kelimeler) continue;
+      const nor = kelimeler.map(normAra);
+      for(const a of ARA_DATA[d] || []){
+        const m = normAra(a.text);
+        if(nor.some(w => m.includes(w))) bul.set(a.chapter + ':' + a.verse, {sure:a.chapter, ayet:a.verse});
+      }
+    }
+  } else {
+    const q = normAra(query).trim();
+    if(!q) return [];
+    const kelimeler = mod === 'kelime' ? q.split(/\s+/) : [q];
+    for(const a of ARA_DATA[dil] || []){
+      const m = normAra(a.text);
+      if(kelimeler.every(w => m.includes(w))) bul.set(a.chapter + ':' + a.verse, {sure:a.chapter, ayet:a.verse});
+    }
+  }
+  return [...bul.values()].sort((x,y) => x.sure - y.sure || x.ayet - y.ayet);
+}
+
+function araGoster(bul, dil){
+  $('ara-sayac').textContent = bul.length;
+  const diger = dil === 'ara' ? 'tur' : 'ara';
+  if(!bul.length){ $('ara-list').innerHTML = '<div style="padding:14px;color:var(--dim)">Sonuç bulunamadı</div>'; return; }
+  $('ara-list').innerHTML = '<table><tr><th style="width:140px">Ayet</th><th>Metin</th></tr>' + bul.map(r => {
+    const m = ARA_INDEX[dil].get(r.sure + ':' + r.ayet) || ARA_INDEX[diger].get(r.sure + ':' + r.ayet) || '';
+    const sn = m.length > 140 ? m.slice(0, 140) + '…' : m;
+    return '<tr class="ara-satir" onclick="araSec(' + r.sure + ',' + r.ayet + ')"><td><b>' + sureAd(r.sure) + ':' + r.ayet + '</b></td><td>' + esc(sn) + '</td></tr>';
+  }).join('') + '</table>';
+}
+
+function araSec(sure, ayet){
+  const ara = ARA_INDEX.ara.get(sure + ':' + ayet) || '';
+  const tur = ARA_INDEX.tur.get(sure + ':' + ayet) || '';
+  $('ara-panel-baslik').textContent = 'Seçili Ayet — ' + sureAd(sure) + ':' + ayet;
+  $('ara-panel').innerHTML =
+    '<div class="pair">' +
+      '<div class="col"><div class="col-head rtl">Arapça — ' + sureAd(sure) + ':' + ayet + '</div>' +
+      '<div class="sec-body"><div class="ara-panel-arapca">' + esc(ara) + '</div></div></div>' +
+      '<div class="col"><div class="col-head">Türkçe — Diyanet İşleri</div>' +
+      '<div class="sec-body">' + esc(tur) + '</div></div>' +
+    '</div>';
+}
+
+async function araYap(){
+  const st = $('ara-status');
+  const mod = $('ara-mod').value;
+  const dil = $('ara-dil').value;
+  let query;
+  if(mod === 'konu'){
+    if(!ARA_SECILI_KONU){ st.innerHTML = '<span class="err">✘ Bir konu seç</span>'; return; }
+    query = ARA_SECILI_KONU;
+  } else {
+    query = $('ara-kutu').value;
+    if(!query.trim()){ st.innerHTML = '<span class="err">✘ Arama kelimesi gir</span>'; return; }
+  }
+  try{
+    st.textContent = '⏳ Yükleniyor…';
+    await araVerileri();
+    const bul = araEslesme(mod, query, dil);
+    st.innerHTML = '<span class="ok">✔ ' + bul.length + ' sonuç' + (mod === 'konu' ? ' · ' + ARA_SECILI_KONU : '') + '</span>';
+    araGoster(bul, dil);
+  }catch(e){
+    st.innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
+  }
+}
 
 // Footer: sayfa yükleme süresi
 window.addEventListener('load', () => {
