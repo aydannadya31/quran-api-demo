@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <title>Kuran API Deneme Sayfası — quran-api</title>
 <style>
   :root{
@@ -90,9 +93,24 @@
   .spin{display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:6px}
   @keyframes sp{to{transform:rotate(360deg)}}
   .msj-kart{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:10px}
+  /* ===== DEKOR: sol İslami desen + sağ hat sanatı ===== */
+  #dekor-sol,#dekor-sag{position:fixed; top:0; height:100vh; pointer-events:none; user-select:none; z-index:40}
+  #dekor-sol{left:0; width:150px; opacity:.75;
+    background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='96'%20height='96'%20viewBox='0%200%2096%2096'%3E%3Cg%20fill='none'%20stroke='%23c9a35c'%20stroke-width='1'%20stroke-opacity='.3'%3E%3Crect%20x='30'%20y='30'%20width='36'%20height='36'/%3E%3Crect%20x='30'%20y='30'%20width='36'%20height='36'%20transform='rotate(45%2048%2048)'/%3E%3Ccircle%20cx='48'%20cy='48'%20r='7'/%3E%3Ccircle%20cx='0'%20cy='0'%20r='5'/%3E%3Ccircle%20cx='96'%20cy='0'%20r='5'/%3E%3Ccircle%20cx='0'%20cy='96'%20r='5'/%3E%3Ccircle%20cx='96'%20cy='96'%20r='5'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat:repeat; background-size:96px 96px}
+  #dekor-sag{right:0; width:200px; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at center, rgba(201,163,92,.07) 0%, transparent 70%)}
+  #dekor-sag span{font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
+    writing-mode:vertical-rl; direction:rtl; font-size:46px; color:var(--gold); opacity:.55;
+    letter-spacing:8px; line-height:1.5; text-shadow:0 0 18px rgba(201,163,92,.18)}
+  @media(max-width:1440px){#dekor-sol,#dekor-sag{display:none}}
 </style>
 </head>
 <body>
+
+<!-- DEKOR: Kur'an deseni (sol) + hat sanatı (sağ) -->
+<div id="dekor-sol" aria-hidden="true"></div>
+<div id="dekor-sag" aria-hidden="true"><span>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span></div>
 
 <header>
   <h1>📖 Kuran API <span>Deneme Sayfası</span></h1>
@@ -869,20 +887,33 @@ async function araYap(){
   }
 }
 
-// BÖLÜM 10: Yöneticiye mesaj gönder
-const MSC_KEY = 'quran_api_mesajlar';
-const MSC_SIFRE = 'Ag1453ag';
-function msjOku(){ try{ return JSON.parse(localStorage.getItem(MSC_KEY) || '[]'); }catch(e){ return []; } }
-function msjYaz(liste){ localStorage.setItem(MSC_KEY, JSON.stringify(liste)); }
-function msjGonder(){
+// BÖLÜM 10: Yöneticiye mesaj gönder (Vercel proxy → GitHub depolama, sırlar sunucuda)
+const MSC_API = 'https://quran-mesaj-api.vercel.app/api/mesaj';
+async function msjOku(){
+  const sifre = localStorage.getItem('msc_sifre') || '';
+  const r = await fetch(MSC_API, {method: 'GET', cache: 'no-store', headers: {'x-sifre': sifre}});
+  if(!r.ok) throw new Error(r.status === 401 ? 'Şifre doğrulanamadı' : 'Okuma hatası (' + r.status + ')');
+  const d = await r.json();
+  return Array.isArray(d) ? d : [];
+}
+async function msjGonder(){
   const d = $('msj-durum');
   const ad = $('msj-ad').value.trim(), konu = $('msj-konu').value.trim(), metin = $('msj-metin').value.trim();
   if(!ad || !konu || !metin){ d.innerHTML = '<span class="err">✘ Lütfen ad soyad, konu ve mesaj alanlarını doldurun</span>'; return; }
-  const liste = msjOku();
-  liste.unshift({id: Date.now(), ad, konu, metin, tarih: new Date().toLocaleString('tr-TR')});
-  msjYaz(liste);
-  $('msj-metin').value = '';
-  d.innerHTML = '<span class="ok">✔ Mesajınız yöneticiye iletildi. Teşekkür ederiz!</span>';
+  const g = $('msj-gonder');
+  const eski = g.textContent;
+  g.disabled = true; g.textContent = '⏳ Gönderiliyor…';
+  try{
+    const r = await fetch(MSC_API, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ad, konu, metin})});
+    const y = await r.json().catch(() => ({}));
+    if(!r.ok) throw new Error(y.hata || 'Gönderme hatası (' + r.status + ')');
+    $('msj-metin').value = '';
+    d.innerHTML = '<span class="ok">✔ Mesajınız yöneticiye iletildi. Teşekkür ederiz!</span>';
+  }catch(e){
+    d.innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
+  }finally{
+    g.disabled = false; g.textContent = eski;
+  }
 }
 function msjFormuTemizle(){
   $('msj-ad').value = ''; $('msj-konu').value = ''; $('msj-metin').value = '';
@@ -893,39 +924,67 @@ function yonGirisToggle(){
   a.style.display = a.style.display === 'none' ? 'block' : 'none';
   $('yon-hata').innerHTML = '';
 }
-function yonGirisYap(){
+async function yonGirisYap(){
   const h = $('yon-hata');
-  if($('yon-sifre').value !== MSC_SIFRE){ h.innerHTML = '<span class="err">✘ Yanlış şifre</span>'; return; }
-  h.innerHTML = '';
-  $('yon-giris-alan').style.display = 'none';
-  $('yon-sifre').value = '';
-  $('yon-panel').style.display = 'block';
-  yonListele();
+  const sifre = $('yon-sifre').value;
+  if(!sifre){ h.innerHTML = '<span class="err">✘ Lütfen şifrenizi girin</span>'; return; }
+  try{
+    const r = await fetch(MSC_API, {method: 'GET', cache: 'no-store', headers: {'x-sifre': sifre}});
+    if(!r.ok){ h.innerHTML = '<span class="err">✘ Yanlış şifre</span>'; return; }
+    localStorage.setItem('msc_sifre', sifre);
+    h.innerHTML = '';
+    $('yon-giris-alan').style.display = 'none';
+    $('yon-sifre').value = '';
+    $('yon-panel').style.display = 'block';
+    yonListele();
+  }catch(e){
+    h.innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
+  }
 }
-function yonListele(){
-  const liste = msjOku();
-  $('yon-sayac').textContent = liste.length;
+async function yonListele(){
   const yer = $('yon-liste');
-  if(!liste.length){ yer.innerHTML = '<div style="padding:14px;color:var(--dim)">Henüz mesaj yok.</div>'; return; }
-  yer.innerHTML = liste.map((m,i) =>
-    '<div class="msj-kart"><div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap"><b>' + esc(m.ad) + '</b><span style="color:var(--dim); font-size:11.5px">' + esc(m.tarih) + '</span></div>' +
-    '<div style="color:var(--gold); font-size:12.5px; margin:2px 0 6px">📩 ' + esc(m.konu) + '</div>' +
-    '<div style="font-size:13.5px; white-space:pre-wrap">' + esc(m.metin) + '</div>' +
-    '<div style="text-align:right; margin-top:8px"><button class="ghost small" onclick="yonSil(' + i + ')">🗑 Sil</button></div></div>'
-  ).join('');
+  yer.innerHTML = '<div style="padding:14px;color:var(--dim)">⏳ Yükleniyor…</div>';
+  try{
+    const liste = await msjOku();
+    $('yon-sayac').textContent = liste.length;
+    if(!liste.length){ yer.innerHTML = '<div style="padding:14px;color:var(--dim)">Henüz mesaj yok.</div>'; return; }
+    yer.innerHTML = liste.map((m,i) =>
+      '<div class="msj-kart"><div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap"><b>' + esc(m.ad) + '</b><span style="color:var(--dim); font-size:11.5px">' + esc(m.tarih) + '</span></div>' +
+      '<div style="color:var(--gold); font-size:12.5px; margin:2px 0 6px">📩 ' + esc(m.konu) + '</div>' +
+      '<div style="font-size:13.5px; white-space:pre-wrap">' + esc(m.metin) + '</div>' +
+      '<div style="text-align:right; margin-top:8px"><button class="ghost small" onclick="yonSil(' + i + ')">🗑 Sil</button></div></div>'
+    ).join('');
+  }catch(e){
+    $('yon-sayac').textContent = '0';
+    yer.innerHTML = '<div style="padding:14px;color:var(--dim)">✘ ' + esc(e.message || e) + '</div>';
+  }
 }
-function yonSil(i){
-  const liste = msjOku();
-  liste.splice(i, 1);
-  msjYaz(liste);
-  yonListele();
+async function yonSil(i){
+  try{
+    const liste = await msjOku();
+    const m = liste[i];
+    if(!m) return;
+    const sifre = localStorage.getItem('msc_sifre') || '';
+    const r = await fetch(MSC_API + '?id=' + m.id, {method: 'DELETE', headers: {'x-sifre': sifre}});
+    if(!r.ok){ const y = await r.json().catch(() => ({})); throw new Error(y.hata || 'Silme hatası (' + r.status + ')'); }
+    await yonListele();
+  }catch(e){
+    $('yon-hata').innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
+  }
 }
-function yonTemizle(){
+async function yonTemizle(){
   if(!confirm('Tüm mesajlar silinsin mi?')) return;
-  msjYaz([]);
-  yonListele();
+  try{
+    const sifre = localStorage.getItem('msc_sifre') || '';
+    const r = await fetch(MSC_API + '?hepsi=1', {method: 'DELETE', headers: {'x-sifre': sifre}});
+    if(!r.ok){ const y = await r.json().catch(() => ({})); throw new Error(y.hata || 'Temizleme hatası (' + r.status + ')'); }
+    await yonListele();
+  }catch(e){
+    $('yon-hata').innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
+  }
 }
 function yonCik(){
+  localStorage.removeItem('msc_sifre');
   $('yon-panel').style.display = 'none';
 }
 
