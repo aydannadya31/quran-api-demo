@@ -36,7 +36,7 @@
   .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:14px}
   .ctl{display:flex; flex-direction:column; gap:4px}
   .ctl label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px}
-  select,input[type=text],input[type=number],textarea{background:var(--panel2); color:var(--txt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13.5px; min-width:150px; outline:none}
+  select,input[type=text],input[type=password],input[type=number],textarea{background:var(--panel2); color:var(--txt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13.5px; min-width:150px; outline:none}
   select:focus,input:focus,textarea:focus{border-color:var(--green2)}
   input[type=range]{accent-color:var(--green); background:transparent; cursor:pointer}
   button{background:var(--green); color:#06281a; border:none; border-radius:8px; padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer}
@@ -89,6 +89,7 @@
   .badge.la{color:var(--gold); border-color:#5a4a26}
   .spin{display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:6px}
   @keyframes sp{to{transform:rotate(360deg)}}
+  .msj-kart{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -116,6 +117,7 @@
   <a href="#yanyana">7 · Arapça + Türkçe</a>
   <a href="#fontlar">8 · Fontlar</a>
   <a href="#arama">9 · Kur'an'da Ara</a>
+  <a href="#mesaj">10 · Yöneticiye Mesaj Gönder</a>
 </nav>
 
 <main>
@@ -307,6 +309,46 @@
         <div class="col-head" id="ara-panel-baslik">Seçili Ayet</div>
         <div style="padding:12px" id="ara-panel"></div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 10: YÖNETİCİYE MESAJ GÖNDER ============ -->
+<section id="mesaj">
+  <div class="sec-head"><span class="no">10</span><h2>Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
+  <div class="sec-body">
+    <p class="desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
+    <div class="controls">
+      <div class="ctl"><label>Ad Soyad</label><input type="text" id="msj-ad" placeholder="Adınız ve soyadınız"></div>
+      <div class="ctl"><label>Mesajın Konusu</label><input type="text" id="msj-konu" placeholder="Mesajınızın konusu"></div>
+    </div>
+    <div class="ctl" style="margin-bottom:12px"><label>Mesajınız</label><textarea id="msj-metin" rows="6" style="width:100%; resize:vertical" placeholder="Mesajınızı buraya yazabilirsiniz…"></textarea></div>
+    <div class="controls">
+      <div class="ctl"><label>&nbsp;</label><button id="msj-gonder" onclick="msjGonder()">Mesajı Gönder</button></div>
+      <div class="ctl"><label>&nbsp;</label><button class="ghost" id="msj-temizle" onclick="msjFormuTemizle()">Formu Temizle</button></div>
+    </div>
+    <div class="status" id="msj-durum"></div>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:4px 0 16px">
+
+    <div class="col-head" style="margin-bottom:8px">Yönetici İşlemleri</div>
+    <button class="ghost" id="yon-giris-buton" onclick="yonGirisToggle()">🔒 Yönetici Girişi</button>
+    <div id="yon-giris-alan" style="display:none; margin-top:10px">
+      <div class="controls">
+        <div class="ctl"><label>Yönetici Şifresi</label><input type="password" id="yon-sifre" placeholder="Şifre" onkeydown="if(event.key==='Enter')yonGirisYap()"></div>
+        <div class="ctl"><label>&nbsp;</label><button id="yon-giris-btn" onclick="yonGirisYap()">Giriş Yap</button></div>
+      </div>
+      <div class="status" id="yon-hata"></div>
+    </div>
+    <div id="yon-panel" style="display:none; margin-top:14px">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px">
+        <div class="col-head" style="margin:0">Gelen Mesajlar (<span id="yon-sayac">0</span>)</div>
+        <div>
+          <button class="ghost small" id="yon-temizle" onclick="yonTemizle()">Tümünü Sil</button>
+          <button class="ghost small" onclick="yonCik()">Çıkış</button>
+        </div>
+      </div>
+      <div id="yon-liste"></div>
     </div>
   </div>
 </section>
@@ -825,6 +867,66 @@ async function araYap(){
   }catch(e){
     st.innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
   }
+}
+
+// BÖLÜM 10: Yöneticiye mesaj gönder
+const MSC_KEY = 'quran_api_mesajlar';
+const MSC_SIFRE = 'Ag1453ag';
+function msjOku(){ try{ return JSON.parse(localStorage.getItem(MSC_KEY) || '[]'); }catch(e){ return []; } }
+function msjYaz(liste){ localStorage.setItem(MSC_KEY, JSON.stringify(liste)); }
+function msjGonder(){
+  const d = $('msj-durum');
+  const ad = $('msj-ad').value.trim(), konu = $('msj-konu').value.trim(), metin = $('msj-metin').value.trim();
+  if(!ad || !konu || !metin){ d.innerHTML = '<span class="err">✘ Lütfen ad soyad, konu ve mesaj alanlarını doldurun</span>'; return; }
+  const liste = msjOku();
+  liste.unshift({id: Date.now(), ad, konu, metin, tarih: new Date().toLocaleString('tr-TR')});
+  msjYaz(liste);
+  $('msj-metin').value = '';
+  d.innerHTML = '<span class="ok">✔ Mesajınız yöneticiye iletildi. Teşekkür ederiz!</span>';
+}
+function msjFormuTemizle(){
+  $('msj-ad').value = ''; $('msj-konu').value = ''; $('msj-metin').value = '';
+  $('msj-durum').innerHTML = '';
+}
+function yonGirisToggle(){
+  const a = $('yon-giris-alan');
+  a.style.display = a.style.display === 'none' ? 'block' : 'none';
+  $('yon-hata').innerHTML = '';
+}
+function yonGirisYap(){
+  const h = $('yon-hata');
+  if($('yon-sifre').value !== MSC_SIFRE){ h.innerHTML = '<span class="err">✘ Yanlış şifre</span>'; return; }
+  h.innerHTML = '';
+  $('yon-giris-alan').style.display = 'none';
+  $('yon-sifre').value = '';
+  $('yon-panel').style.display = 'block';
+  yonListele();
+}
+function yonListele(){
+  const liste = msjOku();
+  $('yon-sayac').textContent = liste.length;
+  const yer = $('yon-liste');
+  if(!liste.length){ yer.innerHTML = '<div style="padding:14px;color:var(--dim)">Henüz mesaj yok.</div>'; return; }
+  yer.innerHTML = liste.map((m,i) =>
+    '<div class="msj-kart"><div style="display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap"><b>' + esc(m.ad) + '</b><span style="color:var(--dim); font-size:11.5px">' + esc(m.tarih) + '</span></div>' +
+    '<div style="color:var(--gold); font-size:12.5px; margin:2px 0 6px">📩 ' + esc(m.konu) + '</div>' +
+    '<div style="font-size:13.5px; white-space:pre-wrap">' + esc(m.metin) + '</div>' +
+    '<div style="text-align:right; margin-top:8px"><button class="ghost small" onclick="yonSil(' + i + ')">🗑 Sil</button></div></div>'
+  ).join('');
+}
+function yonSil(i){
+  const liste = msjOku();
+  liste.splice(i, 1);
+  msjYaz(liste);
+  yonListele();
+}
+function yonTemizle(){
+  if(!confirm('Tüm mesajlar silinsin mi?')) return;
+  msjYaz([]);
+  yonListele();
+}
+function yonCik(){
+  $('yon-panel').style.display = 'none';
 }
 
 // Footer: sayfa yükleme süresi
