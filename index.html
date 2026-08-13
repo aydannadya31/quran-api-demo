@@ -755,7 +755,12 @@ function araEslesme(mod, query, dil){
       const nor = kelimeler.map(normAra);
       for(const a of ARA_DATA[d] || []){
         const m = normAra(a.text);
-        if(nor.some(w => m.includes(w))) bul.set(a.chapter + ':' + a.verse, {sure:a.chapter, ayet:a.verse});
+        const adet = nor.reduce((t,w) => t + m.split(w).length - 1, 0);
+        if(adet > 0){
+          const key = a.chapter + ':' + a.verse;
+          const onceki = bul.get(key);
+          bul.set(key, {sure:a.chapter, ayet:a.verse, adet:(onceki ? onceki.adet : 0) + adet});
+        }
       }
     }
   } else {
@@ -764,7 +769,10 @@ function araEslesme(mod, query, dil){
     const kelimeler = mod === 'kelime' ? q.split(/\s+/) : [q];
     for(const a of ARA_DATA[dil] || []){
       const m = normAra(a.text);
-      if(kelimeler.every(w => m.includes(w))) bul.set(a.chapter + ':' + a.verse, {sure:a.chapter, ayet:a.verse});
+      if(kelimeler.every(w => m.includes(w))){
+        const adet = kelimeler.reduce((t,w) => t + m.split(w).length - 1, 0);
+        bul.set(a.chapter + ':' + a.verse, {sure:a.chapter, ayet:a.verse, adet});
+      }
     }
   }
   return [...bul.values()].sort((x,y) => x.sure - y.sure || x.ayet - y.ayet);
@@ -810,7 +818,9 @@ async function araYap(){
     st.textContent = '⏳ Yükleniyor…';
     await araVerileri();
     const bul = araEslesme(mod, query, dil);
-    st.innerHTML = '<span class="ok">✔ ' + bul.length + ' sonuç' + (mod === 'konu' ? ' · ' + ARA_SECILI_KONU : '') + '</span>';
+    const sureSayisi = new Set(bul.map(r => r.sure)).size;
+    const toplamAdet = bul.reduce((t,r) => t + r.adet, 0);
+    st.innerHTML = '<span class="ok">✔ ' + bul.length + ' ayette · ' + sureSayisi + ' surede · ' + toplamAdet + ' kez geçiyor' + (mod === 'konu' ? ' · ' + ARA_SECILI_KONU : '') + '</span>';
     araGoster(bul, dil);
   }catch(e){
     st.innerHTML = '<span class="err">✘ ' + esc(e.message || e) + '</span>';
