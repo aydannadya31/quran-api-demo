@@ -88,11 +88,6 @@
   .card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; min-width:110px}
   .card b{display:block; font-size:22px; color:var(--green)}
   .card span{font-size:11.5px; color:var(--dim)}
-  .font-card{display:flex; align-items:center; gap:14px; padding:10px 12px; border:1px solid var(--border); border-radius:10px; margin-bottom:8px; background:var(--panel2)}
-  .font-sample{font-size:26px; line-height:1.6; min-width:220px}
-  .font-info{flex:1; font-size:12.5px; color:var(--dim); min-width:0}
-  .font-info b{color:var(--txt); font-size:13.5px; display:block}
-  .font-links a{font-family:var(--mono); font-size:11px; text-decoration:none; margin-right:8px}
   .pair{display:grid; grid-template-columns:1fr 1fr; gap:0}
   .pair .col{border:1px solid var(--border); border-radius:10px; overflow:hidden}
   .pair .col .col-head{padding:8px 12px; font-size:12.5px; font-weight:600; background:var(--panel2); border-bottom:1px solid var(--border)}
@@ -143,7 +138,6 @@
   <p>fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
   <div class="stats">
     <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
-    <div class="stat"><b id="s-fonts">—</b><i>Font</i></div>
     <div class="stat"><b>114</b><i>Sure</i></div>
     <div class="stat"><b>6236</b><i>Ayet</i></div>
     <div class="stat"><b>30</b><i>Cüz</i></div>
@@ -159,7 +153,6 @@
   <a href="#ayet">5 · Tek Ayet</a>
   <a href="#bolumler">6 · Bölümler</a>
   <a href="#yanyana">7 · Arapça + Türkçe</a>
-  <a href="#fontlar">8 · Fontlar</a>
   <a href="#arama">9 · Kur'an'da Ara</a>
   <a href="#mesaj">10 · Yöneticiye Mesaj Gönder</a>
   <a href="#ayarlar">0 · Tema & Görünüm</a>
@@ -340,20 +333,6 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 8: FONTLAR / fonts.json ============ -->
-<section id="fontlar">
-  <div class="sec-head"><span class="no">8</span><h2>Fontlar</h2><code>/fonts.json</code></div>
-  <div class="sec-body">
-    <p class="desc"><b>238 Kur'an fontu</b> — Arapça yazımı doğru gösteren fontlar. woff2/ttf olarak indirilebilir (CDN linki).</p>
-    <div class="controls">
-      <div class="ctl"><label>Ara</label><input type="text" id="f-font" placeholder="quran, naskh…" oninput="renderFonts()"></div>
-    </div>
-    <div class="status" id="fn-status"></div>
-    <div id="fn-list"></div>
-    <div style="margin-top:10px"><button class="ghost small" id="fn-more" onclick="fontSayisi+=40; renderFonts()" style="display:none">Daha fazla göster</button></div>
-  </div>
-</section>
-
 <!-- ============ BÖLÜM 9: KUR'AN'DA ARA / tam metin arama ============ -->
 <section id="arama">
   <div class="sec-head"><span class="no">9</span><h2>Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
@@ -457,9 +436,7 @@ const SURELER = [
 
 let EDITIONS = {};       // key -> {name, author, language, ...}
 let EDITION_LIST = [];   // sıralı dizi
-let FONTS = {};
 let OK_AYETLER = [];     // okuyucuda yüklü ayetler (TTS için)
-let fontSayisi = 30;
 let sureSecili = 1;
 
 const $ = id => document.getElementById(id);
@@ -512,15 +489,13 @@ const TTS_DIL = {
 // ---------- Başlangıç ----------
 (async function init(){
   try{
-    const [ed, fo, inf] = await Promise.all([
+    const [ed, inf] = await Promise.all([
       api('editions.min.json'),
-      api('fonts.json'),
       api('info.json').catch(() => null)
     ]);
-    EDITIONS = ed.data; FONTS = fo.data;
+    EDITIONS = ed.data;
     EDITION_LIST = Object.values(ed.data).filter(e => e.author !== 'Yasar Nuri Ozturk' && e.author !== 'Y. N. Ozturk').sort((a,b)=>a.language.localeCompare(b.language) || a.name.localeCompare(b.name));
     $('s-editions').textContent = EDITION_LIST.length;
-    $('s-fonts').textContent = Object.keys(FONTS).length;
 
     const diller = [...new Set(EDITION_LIST.map(e=>e.language))].sort();
     const dilOpts = diller.map(d=>`<option>${esc(d)}</option>`).join('');
@@ -541,7 +516,7 @@ const TTS_DIL = {
     $('tl-oku').innerHTML = TILAVETLER.map(([k,ad]) => `<option value="${k}">${ad}</option>`).join('');
     doldurSure('tl-sure', 1);
     ttsDilleriYukle();
-    renderEditions(); renderFonts(); renderInfo(inf);
+    renderEditions(); renderInfo(inf);
   }catch(e){
     $('ed-status').innerHTML = `<span class="err">Başlatma hatası: ${esc(e.message)}</span>`;
   }
@@ -689,25 +664,6 @@ async function yanyanaYukle(){
     $('ya-ar').innerHTML = tlist.map(v=>`<div class="verse arabic"><span class="vn">${v.v}</span><span class="vt">${esc(am.get(v.v)||'')}</span></div>`).join('');
     $('ya-tr').innerHTML = tlist.map(v=>`<div class="verse"><span class="vn">${v.v}</span><span class="vt">${esc(v.t)}</span></div>`).join('');
   }catch(e){ st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)}</span>`; }
-}
-
-// ---------- BÖLÜM 8: fontlar ----------
-function renderFonts(){
-  const ara = $('f-font').value.trim().toLowerCase();
-  const keys = Object.keys(FONTS).filter(k => !ara || k.includes(ara) || (FONTS[k].designer||'').toLowerCase().includes(ara));
-  const goster = keys.slice(0, fontSayisi);
-  $('fn-status').textContent = `${goster.length} / ${keys.length} font gösteriliyor`;
-  $('fn-list').innerHTML = goster.map(k => {
-    const f = FONTS[k];
-    return `<div class="font-card">
-      <div class="font-sample" style="font-family:'${(f.font||k).replace(/'/g,"\\'")}','Scheherazade New',serif">بِسْمِ اللَّهِ</div>
-      <div class="font-info"><b>${esc(f.font||k)}</b>${f.designer ? ' · ' + esc(f.designer) : ''}${f.version ? ' · v' + f.version : ''}<br><span style="color:var(--dim)">${esc(k)}</span></div>
-      <div class="font-links">
-        ${f.woff2?`<a href="${f.woff2}" target="_blank">woff2</a>`:''}${f.ttf?`<a href="${f.ttf}" target="_blank">ttf</a>`:''}${f.eot?`<a href="${f.eot}" target="_blank">eot</a>`:''}
-      </div>
-    </div>`;
-  }).join('');
-  $('fn-more').style.display = goster.length < keys.length ? 'inline-block' : 'none';
 }
 
 // ---------- BÖLÜM 1: sesli okuma ----------
