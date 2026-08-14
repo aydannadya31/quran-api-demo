@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-tema="koyu" data-renk="altin">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,16 +7,36 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <title>Kuran API Deneme Sayfası — quran-api</title>
+<script>try{var t=localStorage.getItem('kuran_tema')||'koyu',r=localStorage.getItem('kuran_renk')||'altin';document.documentElement.dataset.tema=t;document.documentElement.dataset.renk=r;}catch(e){}</script>
 <style>
   :root{
     --bg:#0b1210; --panel:#101a16; --panel2:#15231d; --border:#1f352c;
     --txt:#dce9e2; --dim:#8aa398; --gold:#c9a35c; --green:#3ddc97;
     --green2:#2a8f68; --red:#e06c6c; --mono:'Consolas','Courier New',monospace;
+    --on-vurgu:#06281a; --header-bg:linear-gradient(160deg,#0d1a14 0%,#123027 60%,#0d1a14 100%);
+    --nav-bg:rgba(11,18,16,.96); --pre-bg:#0a0f0d; --hover-bg:rgba(61,220,151,.05);
   }
+  /* AÇIK MOD */
+  html[data-tema="acik"]{
+    --bg:#f3efe6; --panel:#fffdf7; --panel2:#efe9dc; --border:#dcd3c0;
+    --txt:#2c2b25; --dim:#6e675a; --gold:#a8843c; --green:#1d7a4f; --green2:#14613e;
+    --on-vurgu:#f2fbf6; --header-bg:linear-gradient(160deg,#f7f2e7 0%,#eef0e2 60%,#f7f2e7 100%);
+    --nav-bg:rgba(243,239,230,.97); --pre-bg:#faf7f0; --hover-bg:rgba(29,122,79,.07);
+  }
+  /* TEMA RENKLERİ (hem koyu hem açık modda uygulanır) */
+  html[data-renk="zumrut"]{--gold:#3dbd8e; --green:#2a8f68; --green2:#1d6b4e; --on-vurgu:#e9fbf3}
+  html[data-renk="lacivert"]{--gold:#6f9fd8; --green:#3b6fb5; --green2:#2c5590; --on-vurgu:#eaf3ff}
+  html[data-renk="mor"]{--gold:#b58ae0; --green:#8a5cc0; --green2:#6c4698; --on-vurgu:#f7efff}
+  html[data-renk="mercan"]{--gold:#e08a6c; --green:#c95f3d; --green2:#a04a2e; --on-vurgu:#fff2ec}
+  html[data-renk="turkuaz"]{--gold:#3fc5c9; --green:#1f9ba0; --green2:#187a7e; --on-vurgu:#eafcfb}
+  .renkler{display:flex; flex-wrap:wrap; gap:8px}
+  .renk{width:30px; height:30px; border-radius:50%; background:var(--r); border:2px solid transparent; padding:0; cursor:pointer}
+  .renk:hover{transform:scale(1.12)}
+  .renk.aktif{border-color:var(--txt); transform:scale(1.12)}
   *{box-sizing:border-box; margin:0; padding:0}
   body{background:var(--bg); color:var(--txt); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.5}
   a{color:var(--green)}
-  header{background:linear-gradient(160deg,#0d1a14 0%,#123027 60%,#0d1a14 100%); border-bottom:1px solid var(--border); padding:28px 20px 20px; text-align:center}
+  header{background:var(--header-bg); border-bottom:1px solid var(--border); padding:28px 20px 20px; text-align:center}
   header h1{font-size:26px; letter-spacing:.5px}
   header h1 span{color:var(--gold)}
   header p{color:var(--dim); font-size:13px; margin-top:6px}
@@ -24,13 +44,13 @@
   .stat{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:8px 16px; text-align:center; min-width:92px}
   .stat b{display:block; font-size:20px; color:var(--green)}
   .stat i{font-style:normal; font-size:11px; color:var(--dim)}
-  nav{position:sticky; top:0; z-index:50; background:rgba(11,18,16,.96); border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px; padding:8px 12px; justify-content:center}
+  nav{position:sticky; top:0; z-index:50; background:var(--nav-bg); border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px; padding:8px 12px; justify-content:center}
   nav a{color:var(--dim); text-decoration:none; font-size:12.5px; padding:5px 11px; border-radius:20px; border:1px solid transparent}
   nav a:hover{color:var(--txt); border-color:var(--border)}
   main{max-width:1100px; margin:0 auto; padding:24px 16px 60px}
   section{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin-bottom:26px; overflow:hidden}
   .sec-head{display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--panel2)}
-  .sec-head .no{background:var(--green); color:#06281a; font-weight:700; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0}
+  .sec-head .no{background:var(--green); color:var(--on-vurgu); font-weight:700; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0}
   .sec-head h2{font-size:16px; font-weight:600}
   .sec-head code{font-family:var(--mono); font-size:11.5px; color:var(--gold); margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px}
   .sec-body{padding:16px 18px}
@@ -42,7 +62,7 @@
   select,input[type=text],input[type=password],input[type=number],textarea{background:var(--panel2); color:var(--txt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13.5px; min-width:150px; outline:none}
   select:focus,input:focus,textarea:focus{border-color:var(--green2)}
   input[type=range]{accent-color:var(--green); background:transparent; cursor:pointer}
-  button{background:var(--green); color:#06281a; border:none; border-radius:8px; padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer}
+  button{background:var(--green); color:var(--on-vurgu); border:none; border-radius:8px; padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer}
   button:hover{filter:brightness(1.1)}
   button.ghost{background:transparent; color:var(--green); border:1px solid var(--green2)}
   button.ghost:hover{background:var(--panel2)}
@@ -56,14 +76,14 @@
   table{width:100%; border-collapse:collapse; font-size:13px}
   th{position:sticky; top:0; background:var(--panel2); text-align:left; padding:8px 10px; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim)}
   td{padding:7px 10px; border-top:1px solid var(--border); vertical-align:top}
-  tr:hover td{background:rgba(61,220,151,.05)}
+  tr:hover td{background:var(--hover-bg)}
   .verse{display:flex; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); font-size:14px}
   .verse:last-child{border-bottom:none}
   .verse .vn{color:var(--gold); font-family:var(--mono); font-size:12px; min-width:34px; text-align:right; padding-top:2px}
   .verse.arabic{flex-direction:row-reverse; text-align:right}
   .verse.arabic .vt{font-family:'Scheherazade New','Traditional Arabic','Amiri','Noto Naskh Arabic',serif; font-size:24px; line-height:2; direction:rtl}
   .verse .vt{flex:1}
-  pre{background:#0a0f0d; border:1px solid var(--border); border-radius:10px; padding:12px; font-family:var(--mono); font-size:12px; overflow:auto; max-height:340px; white-space:pre-wrap; word-break:break-all}
+  pre{background:var(--pre-bg); border:1px solid var(--border); border-radius:10px; padding:12px; font-family:var(--mono); font-size:12px; overflow:auto; max-height:340px; white-space:pre-wrap; word-break:break-all}
   .cards{display:flex; flex-wrap:wrap; gap:10px}
   .card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; min-width:110px}
   .card b{display:block; font-size:22px; color:var(--green)}
@@ -84,7 +104,7 @@
   .chips{display:flex; flex-wrap:wrap; gap:6px}
   .chips button{background:var(--panel2); color:var(--dim); border:1px solid var(--border); border-radius:16px; padding:4px 12px; font-size:12px; font-weight:500; cursor:pointer}
   .chips button:hover{color:var(--txt); border-color:var(--green2)}
-  .chips button.aktif{background:var(--green); color:#06281a; border-color:var(--green)}
+  .chips button.aktif{background:var(--green); color:var(--on-vurgu); border-color:var(--green)}
   .ara-satir{cursor:pointer}
   .ara-panel-arapca{font-size:24px; line-height:2; direction:rtl; text-align:right; font-family:'Scheherazade New','Traditional Arabic','Amiri','Noto Naskh Arabic',serif; word-break:break-word}
   .footer a{color:var(--gold)}
@@ -104,6 +124,12 @@
     writing-mode:vertical-rl; direction:rtl; font-size:46px; color:var(--gold); opacity:.55;
     letter-spacing:8px; line-height:1.5; text-shadow:0 0 18px rgba(201,163,92,.18)}
   @media(max-width:1440px){#dekor-sol,#dekor-sag{display:none}}
+  /* Açık modda dekor tonları */
+  html[data-tema="acik"] #dekor-sol{
+    background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='96'%20height='96'%20viewBox='0%200%2096%2096'%3E%3Cg%20fill='none'%20stroke='%23a8843c'%20stroke-width='1'%20stroke-opacity='.25'%3E%3Crect%20x='30'%20y='30'%20width='36'%20height='36'/%3E%3Crect%20x='30'%20y='30'%20width='36'%20height='36'%20transform='rotate(45%2048%2048)'/%3E%3Ccircle%20cx='48'%20cy='48'%20r='7'/%3E%3Ccircle%20cx='0'%20cy='0'%20r='5'/%3E%3Ccircle%20cx='96'%20cy='0'%20r='5'/%3E%3Ccircle%20cx='0'%20cy='96'%20r='5'/%3E%3Ccircle%20cx='96'%20cy='96'%20r='5'/%3E%3C/g%3E%3C/svg%3E");
+  }
+  html[data-tema="acik"] #dekor-sag{background:radial-gradient(ellipse at center, rgba(168,132,60,.09) 0%, transparent 70%)}
+  html[data-tema="acik"] #dekor-sag span{text-shadow:0 0 18px rgba(168,132,60,.16)}
 </style>
 </head>
 <body>
@@ -136,9 +162,39 @@
   <a href="#fontlar">8 · Fontlar</a>
   <a href="#arama">9 · Kur'an'da Ara</a>
   <a href="#mesaj">10 · Yöneticiye Mesaj Gönder</a>
+  <a href="#ayarlar">0 · Tema & Görünüm</a>
+  <a href="javascript:void(0)" id="tema-hizli" onclick="temaUygula(document.documentElement.dataset.tema==='acik'?'koyu':'acik')" title="Açık / Koyu mod geçişi">☀️</a>
 </nav>
 
 <main>
+
+<!-- ============ BÖLÜM 0: TEMA & GÖRÜNÜM ============ -->
+<section id="ayarlar">
+  <div class="sec-head"><span class="no">0</span><h2>Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
+  <div class="sec-body">
+    <p class="desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve <b>tema rengi</b>. Seçimler tarayıcında saklanır, bir sonraki ziyaretinde hatırlanır. Sağ üstteki 🌙/☀️ simgesiyle hızlı geçiş yapabilirsin.</p>
+    <div class="controls">
+      <div class="ctl">
+        <label>Görünüm</label>
+        <div class="chips" id="tema-sec">
+          <button id="tema-koyu" onclick="temaUygula('koyu')">🌙 Koyu</button>
+          <button id="tema-acik" onclick="temaUygula('acik')">☀️ Açık</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Tema rengi</label>
+        <div class="renkler" id="renk-sec">
+          <button class="renk" data-renk="altin" style="--r:#c9a35c" onclick="renkUygula('altin')" title="Altın (varsayılan)"></button>
+          <button class="renk" data-renk="zumrut" style="--r:#2a8f68" onclick="renkUygula('zumrut')" title="Zümrüt"></button>
+          <button class="renk" data-renk="lacivert" style="--r:#3b6fb5" onclick="renkUygula('lacivert')" title="Lacivert"></button>
+          <button class="renk" data-renk="mor" style="--r:#8a5cc0" onclick="renkUygula('mor')" title="Mor"></button>
+          <button class="renk" data-renk="mercan" style="--r:#c95f3d" onclick="renkUygula('mercan')" title="Mercan"></button>
+          <button class="renk" data-renk="turkuaz" style="--r:#1f9ba0" onclick="renkUygula('turkuaz')" title="Turkuaz"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ============ BÖLÜM 1: SESLİ OKUMA / tilavet + TTS ============ -->
 <section id="ses">
@@ -987,6 +1043,26 @@ function yonCik(){
   localStorage.removeItem('msc_sifre');
   $('yon-panel').style.display = 'none';
 }
+
+// BÖLÜM 0: Tema & görünüm (açık/koyu mod + tema rengi)
+function temaUygula(t){
+  document.documentElement.dataset.tema = t;
+  try{ localStorage.setItem('kuran_tema', t); }catch(e){}
+  document.querySelectorAll('#tema-sec button').forEach(b => b.classList.toggle('aktif', b.id === 'tema-' + t));
+  const h = $('tema-hizli');
+  if(h) h.textContent = t === 'acik' ? '🌙' : '☀️';
+}
+function renkUygula(r){
+  document.documentElement.dataset.renk = r;
+  try{ localStorage.setItem('kuran_renk', r); }catch(e){}
+  document.querySelectorAll('#renk-sec .renk').forEach(b => b.classList.toggle('aktif', b.dataset.renk === r));
+}
+function temaHazirla(){
+  let t = 'koyu', r = 'altin';
+  try{ t = localStorage.getItem('kuran_tema') || 'koyu'; r = localStorage.getItem('kuran_renk') || 'altin'; }catch(e){}
+  temaUygula(t); renkUygula(r);
+}
+temaHazirla();
 
 // Footer: sayfa yükleme süresi
 window.addEventListener('load', () => {
