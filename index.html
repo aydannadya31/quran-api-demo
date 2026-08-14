@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <title>Kuran API Deneme Sayfası — quran-api</title>
-<script>try{var t=localStorage.getItem('kuran_tema')||'koyu',r=localStorage.getItem('kuran_renk')||'altin';document.documentElement.dataset.tema=t;document.documentElement.dataset.renk=r;}catch(e){}</script>
+<script>try{var t=localStorage.getItem('kuran_tema')||'koyu',r=localStorage.getItem('kuran_renk')||'altin';document.documentElement.dataset.tema=t;document.documentElement.dataset.renk=r.indexOf('ozel:')===0?'ozel':r;}catch(e){}</script>
 <style>
   :root{
     --bg:#0b1210; --panel:#101a16; --panel2:#15231d; --border:#1f352c;
@@ -29,10 +29,13 @@
   html[data-renk="mor"]{--gold:#b58ae0; --green:#8a5cc0; --green2:#6c4698; --on-vurgu:#f7efff}
   html[data-renk="mercan"]{--gold:#e08a6c; --green:#c95f3d; --green2:#a04a2e; --on-vurgu:#fff2ec}
   html[data-renk="turkuaz"]{--gold:#3fc5c9; --green:#1f9ba0; --green2:#187a7e; --on-vurgu:#eafcfb}
+  html[data-renk="ozel"]{--gold:#e07aa8; --green:#e07aa8; --green2:#b44fa8; --on-vurgu:#fff}
   .renkler{display:flex; flex-wrap:wrap; gap:8px}
   .renk{width:30px; height:30px; border-radius:50%; background:var(--r); border:2px solid transparent; padding:0; cursor:pointer}
   .renk:hover{transform:scale(1.12)}
   .renk.aktif{border-color:var(--txt); transform:scale(1.12)}
+  .renk-ozel{font-size:14px; color:var(--txt); display:flex; align-items:center; justify-content:center}
+  #renk-ozel-girdi{display:none}
   *{box-sizing:border-box; margin:0; padding:0}
   body{background:var(--bg); color:var(--txt); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.5}
   a{color:var(--green)}
@@ -147,14 +150,13 @@
 
 <nav>
   <a href="#ses">1 · Sesli Okuma</a>
-  <a href="#genel">2 · Genel Bakış</a>
-  <a href="#ceviriler">3 · Çeviriler</a>
-  <a href="#okuyucu">4 · Okuyucu</a>
-  <a href="#ayet">5 · Tek Ayet</a>
-  <a href="#bolumler">6 · Bölümler</a>
-  <a href="#yanyana">7 · Arapça + Türkçe</a>
-  <a href="#arama">9 · Kur'an'da Ara</a>
-  <a href="#mesaj">10 · Yöneticiye Mesaj Gönder</a>
+  <a href="#ceviriler">2 · Çeviriler</a>
+  <a href="#okuyucu">3 · Okuyucu</a>
+  <a href="#ayet">4 · Tek Ayet</a>
+  <a href="#bolumler">5 · Bölümler</a>
+  <a href="#yanyana">6 · Arapça + Türkçe</a>
+  <a href="#arama">7 · Kur'an'da Ara</a>
+  <a href="#mesaj">8 · Yöneticiye Mesaj Gönder</a>
   <a href="#ayarlar">0 · Tema & Görünüm</a>
   <a href="javascript:void(0)" id="tema-hizli" onclick="temaUygula(document.documentElement.dataset.tema==='acik'?'koyu':'acik')" title="Açık / Koyu mod geçişi">☀️</a>
 </nav>
@@ -176,14 +178,8 @@
       </div>
       <div class="ctl">
         <label>Tema rengi</label>
-        <div class="renkler" id="renk-sec">
-          <button class="renk" data-renk="altin" style="--r:#c9a35c" onclick="renkUygula('altin')" title="Altın (varsayılan)"></button>
-          <button class="renk" data-renk="zumrut" style="--r:#2a8f68" onclick="renkUygula('zumrut')" title="Zümrüt"></button>
-          <button class="renk" data-renk="lacivert" style="--r:#3b6fb5" onclick="renkUygula('lacivert')" title="Lacivert"></button>
-          <button class="renk" data-renk="mor" style="--r:#8a5cc0" onclick="renkUygula('mor')" title="Mor"></button>
-          <button class="renk" data-renk="mercan" style="--r:#c95f3d" onclick="renkUygula('mercan')" title="Mercan"></button>
-          <button class="renk" data-renk="turkuaz" style="--r:#1f9ba0" onclick="renkUygula('turkuaz')" title="Turkuaz"></button>
-        </div>
+        <div class="renkler" id="renk-sec"></div>
+        <input type="color" id="renk-ozel-girdi" value="#8a5cc0">
       </div>
     </div>
   </div>
@@ -218,7 +214,7 @@
             <div class="ctl"><label>Dil</label><select id="tts-dil"></select></div>
             <div class="ctl"><label>Hız</label><input type="range" id="tts-hiz" min="0.5" max="1.5" step="0.1" value="1" style="width:130px"></div>
           </div>
-          <textarea id="tts-metin" rows="3" style="width:100%; resize:vertical" placeholder="Okunacak metni buraya yaz… (Bölüm 4'teki ayetlerin yanındaki 🔊 butonu da ayeti okur)"></textarea>
+          <textarea id="tts-metin" rows="3" style="width:100%; resize:vertical" placeholder="Okunacak metni buraya yaz… (Bölüm 3'teki ayetlerin yanındaki 🔊 butonu da ayeti okur)"></textarea>
           <div class="controls" style="margin-top:10px; margin-bottom:0">
             <button onclick="ttsOkuMetin()">▶ Oku</button>
             <button class="ghost" onclick="ttsDuraklat()">⏸ Duraklat / Devam</button>
@@ -231,23 +227,11 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 2: GENEL BAKIŞ / info.json ============ -->
-<section id="genel">
-  <div class="sec-head"><span class="no">2</span><h2>Genel Bakış</h2><code>/info.json</code></div>
-  <div class="sec-body">
-    <p class="desc">Kur'an'ın yapısal istatistikleri. <b>Bu veriler API'den canlı çekilir.</b></p>
-    <div class="cards" id="info-cards"><div class="status">Yükleniyor…</div></div>
-    <br>
-    <button class="ghost small" onclick="toggleInfoRaw()">Ham JSON'u göster / gizle</button>
-    <pre id="info-raw" style="display:none; margin-top:10px"></pre>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 3: ÇEVİRİLER / editions.min.json ============ -->
+<!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
 <section id="ceviriler">
-  <div class="sec-head"><span class="no">3</span><h2>Çeviriler</h2><code>/editions.min.json</code></div>
+  <div class="sec-head"><span class="no">2</span><h2>Çeviriler</h2><code>/editions.min.json</code></div>
   <div class="sec-body">
-    <p class="desc">Tüm çeviriler (492). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 4'e aktar.</p>
+    <p class="desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
     <div class="controls">
       <div class="ctl"><label>Dil</label><select id="f-dil" onchange="renderEditions()"></select></div>
       <div class="ctl"><label>Ara (yazar / ad)</label><input type="text" id="f-ara" placeholder="Diyanet, Gölpınarlı…" oninput="renderEditions()"></div>
@@ -258,9 +242,9 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 4: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
+<!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
 <section id="okuyucu">
-  <div class="sec-head"><span class="no">4</span><h2>Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
+  <div class="sec-head"><span class="no">3</span><h2>Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
   <div class="sec-body">
     <p class="desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
     <div class="controls">
@@ -279,9 +263,9 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 5: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
+<!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
 <section id="ayet">
-  <div class="sec-head"><span class="no">5</span><h2>Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
+  <div class="sec-head"><span class="no">4</span><h2>Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
   <div class="sec-body">
     <p class="desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
     <div class="controls">
@@ -295,9 +279,9 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 6: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
+<!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
 <section id="bolumler">
-  <div class="sec-head"><span class="no">6</span><h2>Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
+  <div class="sec-head"><span class="no">5</span><h2>Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
   <div class="sec-body">
     <p class="desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
     <div class="controls">
@@ -317,9 +301,9 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 7: ARAPÇA + TÜRKÇE YAN YANA ============ -->
+<!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
 <section id="yanyana">
-  <div class="sec-head"><span class="no">7</span><h2>Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json × 2</code></div>
+  <div class="sec-head"><span class="no">6</span><h2>Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
   <div class="sec-body">
     <p class="desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
     <div class="controls">
@@ -333,9 +317,9 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 9: KUR'AN'DA ARA / tam metin arama ============ -->
+<!-- ============ BÖLÜM 7: KUR'AN'DA ARA / tam metin arama ============ -->
 <section id="arama">
-  <div class="sec-head"><span class="no">9</span><h2>Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
+  <div class="sec-head"><span class="no">7</span><h2>Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
   <div class="sec-body">
     <p class="desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
     <div class="controls">
@@ -366,9 +350,9 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 10: YÖNETİCİYE MESAJ GÖNDER ============ -->
+<!-- ============ BÖLÜM 8: YÖNETİCİYE MESAJ GÖNDER ============ -->
 <section id="mesaj">
-  <div class="sec-head"><span class="no">10</span><h2>Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
+  <div class="sec-head"><span class="no">8</span><h2>Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
   <div class="sec-body">
     <p class="desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
     <div class="controls">
@@ -489,10 +473,7 @@ const TTS_DIL = {
 // ---------- Başlangıç ----------
 (async function init(){
   try{
-    const [ed, inf] = await Promise.all([
-      api('editions.min.json'),
-      api('info.json').catch(() => null)
-    ]);
+    const ed = await api('editions.min.json');
     EDITIONS = ed.data;
     EDITION_LIST = Object.values(ed.data).filter(e => e.author !== 'Yasar Nuri Ozturk' && e.author !== 'Y. N. Ozturk').sort((a,b)=>a.language.localeCompare(b.language) || a.name.localeCompare(b.name));
     $('s-editions').textContent = EDITION_LIST.length;
@@ -504,7 +485,7 @@ const TTS_DIL = {
     $('ok-dil').value = 'Turkish';
     fillEditionSel(); fillOkEdit(); $('bl-ed').innerHTML = $('ok-ed').innerHTML; $('ay-ed').innerHTML = $('ok-ed').innerHTML;
 
-    // Arapça + Türkçe selects (bölüm 7)
+    // Arapça + Türkçe selects (bölüm 6)
     const araList = EDITION_LIST.filter(e=>e.language==='Arabic').map(e=>e.name);
     const turList = EDITION_LIST.filter(e=>e.language==='Turkish' && !e.name.endsWith('-la')).map(e=>e.name);
     $('ya-ara').innerHTML = araList.map(n=>`<option>${n}</option>`).join('');
@@ -516,27 +497,13 @@ const TTS_DIL = {
     $('tl-oku').innerHTML = TILAVETLER.map(([k,ad]) => `<option value="${k}">${ad}</option>`).join('');
     doldurSure('tl-sure', 1);
     ttsDilleriYukle();
-    renderEditions(); renderInfo(inf);
+    renderEditions();
   }catch(e){
     $('ed-status').innerHTML = `<span class="err">Başlatma hatası: ${esc(e.message)}</span>`;
   }
 })();
 
-// ---------- BÖLÜM 2: info ----------
-function renderInfo(inf){
-  const el = $('info-cards');
-  if(!inf){ el.innerHTML = '<div class="status err">info.json alınamadı</div>'; return; }
-  const map = {
-    verses:'Ayet', chapters:'Sure', juzs:'Cüz', pages:'Sayfa',
-    rukus:'Rükû', manzils:'Menzil', maqras:'Maqra', sajdas:'Secde'
-  };
-  el.innerHTML = Object.entries(map).map(([k,ad]) =>
-    `<div class="card"><b>${inf.data[k]?.count ?? '—'}</b><span>${ad}</span></div>`).join('');
-  $('info-raw').textContent = JSON.stringify(inf.data, null, 2);
-}
-function toggleInfoRaw(){ $('info-raw').style.display = $('info-raw').style.display==='none' ? 'block' : 'none'; }
-
-// ---------- BÖLÜM 3: editions ----------
+// ---------- BÖLÜM 2: editions ----------
 function renderEditions(){
   const dil = $('f-dil').value, ara = $('f-ara').value.trim().toLowerCase();
   const list = EDITION_LIST.filter(e =>
@@ -555,7 +522,7 @@ function renderEditions(){
 }
 function resetFilter(){ $('f-dil').value=''; $('f-ara').value=''; renderEditions(); }
 
-// ---------- BÖLÜM 4: okuyucu ----------
+// ---------- BÖLÜM 3: okuyucu ----------
 function fillEditionSel(){
   const dil = $('ok-dil').value;
   const onceki = $('ok-ed').value;
@@ -603,7 +570,7 @@ function sureAtla(d){
   $('ok-sure').value = s; loadSure();
 }
 
-// ---------- BÖLÜM 5: tek ayet ----------
+// ---------- BÖLÜM 4: tek ayet ----------
 async function tekAyet(){
   const ad = $('ay-ed').value; if(!ad){ return; }
   const s = +$('ay-sure').value, v = Math.min(+$('ay-no').value, SURELER[s-1][1]) || 1;
@@ -618,7 +585,7 @@ async function tekAyet(){
   }catch(e){ st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)}</span>`; }
 }
 
-// ---------- BÖLÜM 6: bölümler ----------
+// ---------- BÖLÜM 5: bölümler ----------
 function blMax(){
   const opt = $('bl-tip').selectedOptions[0];
   $('bl-no').max = opt.dataset.max;
@@ -637,7 +604,7 @@ async function bolumYukle(){
   }catch(e){ st.innerHTML = `<span class="err">✘ Hata: ${esc(e.message)}</span>`; }
 }
 
-// ---------- BÖLÜM 7: yan yana ----------
+// ---------- BÖLÜM 6: yan yana ----------
 async function yanyanaYukle(){
   const ara = $('ya-ara').value, tur = $('ya-tur').value, s = +$('ya-sure').value;
   const st = $('ya-status'); st.innerHTML = '<span class="spin"></span>Yükleniyor…';
@@ -745,7 +712,7 @@ function ttsDuraklat(){
 }
 function ttsDurdur(){ speechSynthesis.cancel(); $('tts-status').textContent = ''; }
 
-// ===== BÖLÜM 9: KUR'AN'DA ARA =====
+// ===== BÖLÜM 7: KUR'AN'DA ARA =====
 const ARA_ED = {
   ara: BASE + '/editions/ara-quransimple.min.json',
   tur: BASE + '/editions/tur-diyanetisleri.min.json'
@@ -899,7 +866,7 @@ async function araYap(){
   }
 }
 
-// BÖLÜM 10: Yöneticiye mesaj gönder (Vercel proxy → GitHub depolama, sırlar sunucuda)
+// BÖLÜM 8: Yöneticiye mesaj gönder (Vercel proxy → GitHub depolama, sırlar sunucuda)
 const MSC_API = 'https://quran-mesaj-api.vercel.app/api/mesaj';
 async function msjOku(){
   const sifre = localStorage.getItem('msc_sifre') || '';
@@ -1000,7 +967,100 @@ function yonCik(){
   $('yon-panel').style.display = 'none';
 }
 
-// BÖLÜM 0: Tema & görünüm (açık/koyu mod + tema rengi)
+// BÖLÜM 0: Tema & görünüm (açık/koyu mod + 60+ tema rengi + özel renk paleti)
+const RENKLER = [
+  {id:'altin', ad:'Altın (varsayılan)', r:'#c9a35c'},
+  {id:'zumrut', ad:'Zümrüt', r:'#2a8f68'},
+  {id:'lacivert', ad:'Lacivert', r:'#3b6fb5'},
+  {id:'mor', ad:'Mor', r:'#8a5cc0'},
+  {id:'mercan', ad:'Mercan', r:'#c95f3d'},
+  {id:'turkuaz', ad:'Turkuaz', r:'#1f9ba0'},
+  {id:'kirmizi', ad:'Kırmızı', r:'#e53935'},
+  {id:'nar', ad:'Nar', r:'#c62828'},
+  {id:'bordo', ad:'Bordo', r:'#8e2436'},
+  {id:'gul', ad:'Gül', r:'#e91e63'},
+  {id:'alev', ad:'Alev', r:'#ff5722'},
+  {id:'portakal', ad:'Portakal', r:'#f57c00'},
+  {id:'amber', ad:'Amber', r:'#ffb300'},
+  {id:'karamel', ad:'Karamel', r:'#c98a3c'},
+  {id:'seftali', ad:'Şeftali', r:'#f8b878'},
+  {id:'sari', ad:'Sarı', r:'#e5c94b'},
+  {id:'limon', ad:'Limon', r:'#d8d84b'},
+  {id:'zeytin', ad:'Zeytin', r:'#8a8a3c'},
+  {id:'orman', ad:'Orman', r:'#1e6b47'},
+  {id:'cam', ad:'Çam', r:'#2c6e49'},
+  {id:'nane', ad:'Nane', r:'#3ddc97'},
+  {id:'fistik', ad:'Fıstık', r:'#7fb069'},
+  {id:'haki', ad:'Haki', r:'#6b8e4e'},
+  {id:'deniz', ad:'Deniz', r:'#1e88a8'},
+  {id:'gokyuzu', ad:'Gökyüzü', r:'#5a9bd4'},
+  {id:'civit', ad:'Çivit', r:'#4a5fc0'},
+  {id:'gece', ad:'Gece', r:'#33418c'},
+  {id:'su', ad:'Su', r:'#58c4dd'},
+  {id:'celik', ad:'Çelik', r:'#6d8fac'},
+  {id:'erik', ad:'Erik', r:'#7b3fa8'},
+  {id:'patlican', ad:'Patlıcan', r:'#5c3a8a'},
+  {id:'leylak', ad:'Leylak', r:'#a58ad1'},
+  {id:'fusya', ad:'Fuşya', r:'#b44fa8'},
+  {id:'pembe', ad:'Pembe', r:'#e07aa8'},
+  {id:'magenta', ad:'Magenta', r:'#d4488e'},
+  {id:'flamingo', ad:'Flamingo', r:'#f296b4'},
+  {id:'pudra', ad:'Pudra', r:'#d8a8b8'},
+  {id:'tarcin', ad:'Tarçın', r:'#9b5b3b'},
+  {id:'kakao', ad:'Kakao', r:'#7a4e3a'},
+  {id:'kum', ad:'Kum', r:'#b0905c'},
+  {id:'gulkurusu', ad:'Gül Kurusu', r:'#c28a8a'},
+  {id:'narcicegi', ad:'Nar Çiçeği', r:'#d43d5e'},
+  {id:'somon', ad:'Somon', r:'#f28585'},
+  {id:'koral', ad:'Koral', r:'#ff7f6e'},
+  {id:'bahar', ad:'Bahar Yeşili', r:'#9ccc65'},
+  {id:'avokado', ad:'Avokado', r:'#7c9c3f'},
+  {id:'cayir', ad:'Çayır', r:'#5aa840'},
+  {id:'limet', ad:'Limet', r:'#a8d84b'},
+  {id:'mistik', ad:'Mistik', r:'#00897b'},
+  {id:'okyanus', ad:'Okyanus', r:'#0288d1'},
+  {id:'masmavi', ad:'Masmavi', r:'#3949ab'},
+  {id:'menekse', ad:'Menekşe', r:'#6a3fb5'},
+  {id:'lavanta', ad:'Lavanta', r:'#b39ddb'},
+  {id:'gri', ad:'Gri', r:'#7a8a85'},
+  {id:'gumus', ad:'Gümüş', r:'#9aa5a1'},
+  {id:'komur', ad:'Kömür', r:'#5c6461'},
+  {id:'arduvaz', ad:'Arduvaz', r:'#6b7a8a'},
+  {id:'inci', ad:'İnci', r:'#b8c4c0'},
+  {id:'duman', ad:'Duman', r:'#8a9894'},
+  {id:'visne', ad:'Vişne', r:'#a03a5e'},
+  {id:'kahve', ad:'Kahve', r:'#6f4e37'},
+  {id:'toprak', ad:'Toprak', r:'#a07040'},
+  {id:'safran', ad:'Safran', r:'#e0a83c'},
+  {id:'bugday', ad:'Buğday', r:'#d8c488'},
+  {id:'kil', ad:'Kil', r:'#b06040'},
+  {id:'pas', ad:'Pas', r:'#8a4a2c'}
+];
+
+function renkParse(hex){
+  const h = hex.replace('#','');
+  if(h.length < 6) return [128,128,128];
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function renkBirlestir(rgb){ return '#' + rgb.map(x => Math.max(0, Math.min(255, Math.round(x))).toString(16).padStart(2,'0')).join(''); }
+function renkAydinlat(hex, f){ const [r,g,b] = renkParse(hex); return renkBirlestir([r+(255-r)*f, g+(255-g)*f, b+(255-b)*f]); }
+function renkKarart(hex, f){ const [r,g,b] = renkParse(hex); return renkBirlestir([r*(1-f), g*(1-f), b*(1-f)]); }
+function renkParlaklik(hex){ const [r,g,b] = renkParse(hex); return (0.299*r + 0.587*g + 0.114*b) / 255; }
+
+function renkUygula(r){
+  const renk = RENKLER.find(x => x.id === r);
+  const hex = renk ? renk.r : (r.indexOf('ozel:') === 0 ? r.split(':')[1] : '#8a5cc0');
+  document.documentElement.dataset.renk = renk ? renk.id : 'ozel';
+  const st = document.documentElement.style;
+  st.setProperty('--gold', renkAydinlat(hex, 0.12));
+  st.setProperty('--green', hex);
+  st.setProperty('--green2', renkKarart(hex, 0.28));
+  st.setProperty('--on-vurgu', renkParlaklik(hex) > 0.55 ? '#06281a' : '#fdf6ec');
+  try{ localStorage.setItem('kuran_renk', r); }catch(e){}
+  document.querySelectorAll('#renk-sec .renk').forEach(b => b.classList.toggle('aktif', b.dataset.renk === (renk ? renk.id : 'ozel')));
+  const oz = $('renk-ozel-girdi');
+  if(oz) oz.value = hex;
+}
 function temaUygula(t){
   document.documentElement.dataset.tema = t;
   try{ localStorage.setItem('kuran_tema', t); }catch(e){}
@@ -1008,14 +1068,18 @@ function temaUygula(t){
   const h = $('tema-hizli');
   if(h) h.textContent = t === 'acik' ? '🌙' : '☀️';
 }
-function renkUygula(r){
-  document.documentElement.dataset.renk = r;
-  try{ localStorage.setItem('kuran_renk', r); }catch(e){}
-  document.querySelectorAll('#renk-sec .renk').forEach(b => b.classList.toggle('aktif', b.dataset.renk === r));
+function renkPaletiKur(){
+  const kutu = $('renk-sec');
+  if(!kutu) return;
+  kutu.innerHTML = RENKLER.map(r => `<button class="renk" data-renk="${r.id}" style="--r:${r.r}" onclick="renkUygula('${r.id}')" title="${esc(r.ad)}"></button>`).join('')
+    + `<button class="renk renk-ozel" data-renk="ozel" style="--r:conic-gradient(#e53935,#ffb300,#3ddc97,#1f9ba0,#8a5cc0,#e53935)" onclick="$('renk-ozel-girdi').click()" title="Özel renk seç">🎨</button>`;
+  const oz = $('renk-ozel-girdi');
+  if(oz) oz.addEventListener('input', () => renkUygula('ozel:' + oz.value));
 }
 function temaHazirla(){
   let t = 'koyu', r = 'altin';
   try{ t = localStorage.getItem('kuran_tema') || 'koyu'; r = localStorage.getItem('kuran_renk') || 'altin'; }catch(e){}
+  renkPaletiKur();
   temaUygula(t); renkUygula(r);
 }
 temaHazirla();
