@@ -140,7 +140,7 @@
 
 <header>
   <h1>📖 Kuran API <span>Deneme Sayfası</span></h1>
-  <p>fawazahmed0/quran-api · 98 dil · 492 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
+  <p>fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
   <div class="stats">
     <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
     <div class="stat"><b id="s-fonts">—</b><i>Font</i></div>
@@ -518,7 +518,7 @@ const TTS_DIL = {
       api('info.json').catch(() => null)
     ]);
     EDITIONS = ed.data; FONTS = fo.data;
-    EDITION_LIST = Object.values(ed.data).sort((a,b)=>a.language.localeCompare(b.language) || a.name.localeCompare(b.name));
+    EDITION_LIST = Object.values(ed.data).filter(e => e.author !== 'Yasar Nuri Ozturk' && e.author !== 'Y. N. Ozturk').sort((a,b)=>a.language.localeCompare(b.language) || a.name.localeCompare(b.name));
     $('s-editions').textContent = EDITION_LIST.length;
     $('s-fonts').textContent = Object.keys(FONTS).length;
 
