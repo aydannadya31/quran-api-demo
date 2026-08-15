@@ -663,8 +663,10 @@ function tilSes(v){ if(tlAudio) tlAudio.volume = +v; }
 
 let ttsSesler = [];
 function ttsDilleriYukle(){
+  let deneme = 0;
   const doldur = () => {
     ttsSesler = speechSynthesis.getVoices();
+    if(ttsSesler.length === 0 && deneme < 10){ deneme++; setTimeout(doldur, 250); return; }
     const langs = [...new Set(ttsSesler.map(v => v.lang.replace('_','-')).sort())];
     $('tts-dil').innerHTML = langs.map(l => `<option value="${l}">${l}</option>`).join('') || '<option value="">—</option>';
     const sec = langs.find(l => l.toLowerCase().startsWith('tr')) || langs.find(l => l.toLowerCase().startsWith('en'));
@@ -678,6 +680,14 @@ function ttsDilleriYukle(){
     $('tts-status').innerHTML = '<span class="err">✘ Bu tarayıcı TTS desteklemiyor — Chrome/Edge dene</span>';
   }
 }
+function ttsSesBul(lang){
+  const tam = lang ? lang.replace('_','-') : '';
+  const on = tam.split('-')[0].toLowerCase();
+  let ses = ttsSesler.find(v => v.lang.replace('_','-').toLowerCase() === tam.toLowerCase());
+  if(!ses && on) ses = ttsSesler.find(v => v.lang.toLowerCase().startsWith(on));
+  if(!ses && on === 'tr') ses = ttsSesler.find(v => (v.name || '').toLowerCase().includes('turk') || (v.name || '').toLowerCase().includes('türkçe'));
+  return ses;
+}
 function ttsDilKodu(dil){
   if(TTS_DIL[dil]) return TTS_DIL[dil];
   const s = ttsSesler.find(v => v.lang.toLowerCase().startsWith(dil.slice(0,2).toLowerCase()));
@@ -687,15 +697,14 @@ function ttsKonus(metin, lang){
   if(!metin){ $('tts-status').innerHTML = '<span class="err">✘ Okunacak metin yok</span>'; return; }
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(metin);
-  u.lang = lang || $('tts-dil').value || undefined;
+  const ses = ttsSesBul(lang || $('tts-dil').value);
+  u.lang = ses ? ses.lang : (lang || $('tts-dil').value || undefined);
   u.rate = +$('tts-hiz').value;
-  const ses = ttsSesler.find(v => v.lang.replace('_','-') === u.lang) ||
-              (u.lang ? ttsSesler.find(v => v.lang.toLowerCase().startsWith(u.lang.split('-')[0])) : null);
   if(ses) u.voice = ses;
   u.onend = () => { $('tts-status').innerHTML = '<span class="ok">✔ Okundu</span>'; };
   u.onerror = () => { $('tts-status').innerHTML = '<span class="err">✘ Ses hatası</span>'; };
   speechSynthesis.speak(u);
-  $('tts-status').textContent = (ses ? '🔊 Okunuyor (' + ses.lang + ')' : '🔊 Okunuyor') + '…';
+  $('tts-status').textContent = (ses ? '🔊 Okunuyor (' + (ses.name || ses.lang) + ')' : '🔊 Okunuyor') + '…';
 }
 function ttsOkuMetin(){
   const m = $('tts-metin').value.trim();
