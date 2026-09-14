@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <title>Kuran API — Ücretsiz & Limitsiz Kur'an Veri Merkezi</title>
 <script>try{var t=localStorage.getItem('kuran_tema')||'koyu';document.documentElement.dataset.tema=t;}catch(e){}</script>
+<script>try{var l=localStorage.getItem('kuran_dil')||'tr';document.documentElement.lang=l==='ar'?'ar':(l==='en'?'en':'tr');if(l==='ar')document.documentElement.dir='rtl';}catch(e){}</script>
 <style>
   /* ===== DİNAMİK TEMA SİSTEMİ ===== */
   /* Tüm renkler JavaScript ile HSL'den türetilir. CSS'de sadece sabit olmayan değerler kalır. */
@@ -213,6 +214,16 @@
   /* Responsive: küçük ekranlarda gizle */
   @media(max-width:1200px){#dekor-sol{width:120px;opacity:.3}#dekor-sag{width:140px}}
   @media(max-width:900px){#dekor-sol,#dekor-sag{display:none}#dekor-glow{display:none}}
+  /* RTL + Dil seçici */
+  .dil-sec{display:flex;gap:2px;margin-left:6px}
+  .dil-sec button{background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer}
+  .dil-sec button:hover{color:var(--txt);border-color:var(--green2)}
+  .dil-sec button.aktif{background:var(--green);color:var(--on-vurgu);border-color:var(--green)}
+  [dir="rtl"] body{text-align:right}
+  [dir="rtl"] nav{direction:rtl}
+  [dir="rtl"] .sec-head code{margin-left:0;margin-right:auto}
+  [dir="rtl"] .nav-sure{flex-direction:row-reverse}
+  [dir="rtl"] .verse{flex-direction:row-reverse}
 </style>
 </head>
 <body>
@@ -222,40 +233,45 @@
 <div id="dekor-sag" aria-hidden="true"><span>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span></div>
 
 <header>
-  <h1>📖 Kuran API <span>Ücretsiz & Limitsiz Kur'an Veri Merkezi</span></h1>
-  <p>fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
+  <h1>📖 Kuran API <span data-t="subtitle">Ücretsiz & Limitsiz Kur'an Veri Merkezi</span></h1>
+  <p data-t="header_desc">fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
   <div class="stats">
-    <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
-    <div class="stat"><b>114</b><i>Sure</i></div>
-    <div class="stat"><b>6236</b><i>Ayet</i></div>
-    <div class="stat"><b>30</b><i>Cüz</i></div>
-    <div class="stat"><b>604</b><i>Sayfa</i></div>
+    <div class="stat"><b id="s-editions">—</b><i data-t="stat_ed">Çeviri</i></div>
+    <div class="stat"><b>114</b><i data-t="stat_sur">Sure</i></div>
+    <div class="stat"><b>6236</b><i data-t="stat_ayet">Ayet</i></div>
+    <div class="stat"><b>30</b><i data-t="stat_cuz">Cüz</i></div>
+    <div class="stat"><b>604</b><i data-t="stat_sayfa">Sayfa</i></div>
   </div>
 </header>
 
 <nav>
-  <a href="#ses">1 · Sesli Okuma</a>
-  <a href="#ceviriler">2 · Çeviriler</a>
-  <a href="#okuyucu">3 · Okuyucu</a>
-  <a href="#ayet">4 · Tek Ayet</a>
-  <a href="#bolumler">5 · Bölümler</a>
-  <a href="#yanyana">6 · Arapça + Türkçe</a>
-  <a href="#arama">7 · Kur'an'da Ara</a>
-  <a href="#mesaj">8 · Yöneticiye Mesaj Gönder</a>
-  <a href="#ayarlar">0 · Tema & Görünüm</a>
+  <a href="#ses" data-t="nav_1">1 · Sesli Okuma</a>
+  <a href="#ceviriler" data-t="nav_2">2 · Çeviriler</a>
+  <a href="#okuyucu" data-t="nav_3">3 · Okuyucu</a>
+  <a href="#ayet" data-t="nav_4">4 · Tek Ayet</a>
+  <a href="#bolumler" data-t="nav_5">5 · Bölümler</a>
+  <a href="#yanyana" data-t="nav_6">6 · Arapça + Türkçe</a>
+  <a href="#arama" data-t="nav_7">7 · Kur'an'da Ara</a>
+  <a href="#mesaj" data-t="nav_8">8 · Yöneticiye Mesaj Gönder</a>
+  <a href="#ayarlar" data-t="nav_0">0 · Tema & Görünüm</a>
   <a href="javascript:void(0)" id="tema-hizli" onclick="temaUygula(document.documentElement.dataset.tema==='acik'?'koyu':'acik')" title="Açık / Koyu mod geçişi">☀️</a>
+  <div class="dil-sec" id="dil-sec">
+    <button data-dil="tr" onclick="dilUygula('tr')" class="aktif">TR</button>
+    <button data-dil="ar" onclick="dilUygula('ar')">عربي</button>
+    <button data-dil="en" onclick="dilUygula('en')">EN</button>
+  </div>
 </nav>
 
 <main>
 
 <!-- ============ BÖLÜM 0: TEMA & GÖRÜNÜM ============ -->
 <section id="ayarlar">
-  <div class="sec-head"><span class="no">0</span><h2>Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
+  <div class="sec-head"><span class="no">0</span><h2 data-t="s0_title">Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
   <div class="sec-body">
-    <p class="desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve her bölge için <b>bağımsız renk</b>. Seçimler tarayıcında saklanır. Sağ üstteki 🌙/☀️ ile hızlı geçiş yapabilirsin.</p>
+    <p class="desc" data-t="s0_desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve her bölge için <b>bağımsız renk</b>. Seçimler tarayıcında saklanır. Sağ üstteki 🌙/☀️ ile hızlı geçiş yapabilirsin.</p>
     <div class="controls">
       <div class="ctl">
-        <label>Görünüm</label>
+        <label data-t="s0_gorunum">Görünüm</label>
         <div class="chips" id="tema-sec">
           <button id="tema-koyu" onclick="temaUygula('koyu')">🌙 Koyu</button>
           <button id="tema-acik" onclick="temaUygula('acik')">☀️ Açık</button>
@@ -264,28 +280,28 @@
     </div>
     <div class="tema-bolgeler">
       <div class="tema-bolge" data-bolge="vurgu">
-        <label>🎨 Vurgu <span class="tema-bolge-info">Butonlar, linkler, aktif durumlar</span></label>
+        <label>🎨 Vurgu <span class="tema-bolge-info" data-t="s0_vurgu_info">Butonlar, linkler, aktif durumlar</span></label>
         <div class="renkler" id="renk-vurgu"></div>
         <input type="color" id="renk-vurgu-ozel" value="#c9a35c">
       </div>
       <div class="tema-bolge" data-bolge="bg">
-        <label>🖼️ Arka Plan <span class="tema-bolge-info">Sayfa ve nav arka planı</span></label>
+        <label>🖼️ Arka Plan <span class="tema-bolge-info" data-t="s0_bg_info">Sayfa ve nav arka planı</span></label>
         <div class="renkler" id="renk-bg"></div>
         <input type="color" id="renk-bg-ozel" value="#0b1210">
       </div>
       <div class="tema-bolge" data-bolge="panel">
-        <label>📋 Panel <span class="tema-bolge-info">Kart ve bölüm arka planları</span></label>
+        <label>📋 Panel <span class="tema-bolge-info" data-t="s0_panel_info">Kart ve bölüm arka planları</span></label>
         <div class="renkler" id="renk-panel"></div>
         <input type="color" id="renk-panel-ozel" value="#101a16">
       </div>
       <div class="tema-bolge" data-bolge="border">
-        <label>🔲 Kenarlık <span class="tema-bolge-info">Çerçeve ve ayırıcı çizgiler</span></label>
+        <label>🔲 Kenarlık <span class="tema-bolge-info" data-t="s0_border_info">Çerçeve ve ayırıcı çizgiler</span></label>
         <div class="renkler" id="renk-border"></div>
         <input type="color" id="renk-border-ozel" value="#1f352c">
       </div>
     </div>
     <div class="tema-kombinasyonlar">
-      <label>Hazır Kombinasyonlar</label>
+      <label data-t="s0_komb">Hazır Kombinasyonlar</label>
       <div class="chips" id="kombinasyon-sec">
         <button onclick="kombinasyonUygula('gece')">🌙 Gece</button>
         <button onclick="kombinasyonUygula('gunes')">☀️ Güneş</button>
@@ -302,37 +318,37 @@
 
 <!-- ============ BÖLÜM 1: SESLİ OKUMA / tilavet + TTS ============ -->
 <section id="ses">
-  <div class="sec-head"><span class="no">1</span><h2>Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
+  <div class="sec-head"><span class="no">1</span><h2 data-t="s1_title">Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
   <div class="sec-body">
-    <p class="desc">1A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 1B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
+    <p class="desc" data-t="s1_desc">1A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 1B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
     <div class="grid2">
       <div class="col">
-        <div class="col-head">🎧 Tilavet — Kur'an okunuşu (Arapça)</div>
+        <div class="col-head" data-t="s1_tilavet">🎧 Tilavet — Kur'an okunuşu (Arapça)</div>
         <div style="padding:12px">
           <div class="controls">
-            <div class="ctl"><label>Okuyucu</label><select id="tl-oku"></select></div>
-            <div class="ctl"><label>Sure</label><select id="tl-sure"></select></div>
-            <div class="ctl"><label>&nbsp;</label><button onclick="tilavetCal()">▶ Çal</button></div>
-            <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="tilavetDurdur()">⏹ Durdur</button></div>
+            <div class="ctl"><label data-t="s1_okuyucu">Okuyucu</label><select id="tl-oku"></select></div>
+            <div class="ctl"><label data-t="s1_sure">Sure</label><select id="tl-sure"></select></div>
+            <div class="ctl"><label>&nbsp;</label><button onclick="tilavetCal()" data-t="s1_cal">▶ Çal</button></div>
+            <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="tilavetDurdur()" data-t="s1_durdur">⏹ Durdur</button></div>
           </div>
           <input type="range" id="tl-bar" min="0" max="1000" value="0" style="width:100%" oninput="tilBarAyarla(this.value)">
           <div class="controls" style="margin-top:6px">
-            <div class="ctl" style="flex:1"><label>Ses seviyesi</label><input type="range" id="tl-vol" min="0" max="1" step="0.05" value="1" style="width:100%" oninput="tilSes(this.value)"></div>
+            <div class="ctl" style="flex:1"><label data-t="s1_ses">Ses seviyesi</label><input type="range" id="tl-vol" min="0" max="1" step="0.05" value="1" style="width:100%" oninput="tilSes(this.value)"></div>
           </div>
           <div class="status" id="tl-status"></div>
         </div>
       </div>
       <div class="col">
-        <div class="col-head">🗣️ TTS — Metni sesli oku</div>
+        <div class="col-head" data-t="s1_tts">🗣️ TTS — Metni sesli oku</div>
         <div style="padding:12px">
           <div class="controls">
-            <div class="ctl"><label>Dil</label><select id="tts-dil"></select></div>
-            <div class="ctl"><label>Hız</label><input type="range" id="tts-hiz" min="0.5" max="1.5" step="0.1" value="1" style="width:130px"></div>
+            <div class="ctl"><label data-t="s1_dil">Dil</label><select id="tts-dil"></select></div>
+            <div class="ctl"><label data-t="s1_hiz">Hız</label><input type="range" id="tts-hiz" min="0.5" max="1.5" step="0.1" value="1" style="width:130px"></div>
           </div>
           <textarea id="tts-metin" rows="3" style="width:100%; resize:vertical" placeholder="Okunacak metni buraya yaz… (Bölüm 3'teki ayetlerin yanındaki 🔊 butonu da ayeti okur)"></textarea>
           <div class="controls" style="margin-top:10px; margin-bottom:0">
-            <button onclick="ttsOkuMetin()">▶ Oku</button>
-            <button class="ghost" onclick="ttsDuraklat()">⏸ Duraklat / Devam</button>
+            <button onclick="ttsOkuMetin()" data-t="s1_oku">▶ Oku</button>
+            <button class="ghost" onclick="ttsDuraklat()" data-t="s1_duraklat">⏸ Duraklat / Devam</button>
             <button class="ghost" onclick="ttsDurdur()">⏹ Durdur</button>
           </div>
           <div class="status" id="tts-status">Sesler yükleniyor…</div>
@@ -344,50 +360,50 @@
 
 <!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
 <section id="ceviriler">
-  <div class="sec-head"><span class="no">2</span><h2>Çeviriler</h2><code>/editions.min.json</code></div>
+  <div class="sec-head"><span class="no">2</span><h2 data-t="s2_title">Çeviriler</h2><code>/editions.min.json</code></div>
   <div class="sec-body">
-    <p class="desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
+    <p class="desc" data-t="s2_desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
     <div class="controls">
-      <div class="ctl"><label>Dil</label><select id="f-dil" onchange="renderEditions()"></select></div>
-      <div class="ctl"><label>Ara (yazar / ad)</label><input type="text" id="f-ara" placeholder="Diyanet, Gölpınarlı…" oninput="renderEditions()"></div>
-      <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="resetFilter()">Sıfırla</button></div>
+      <div class="ctl"><label data-t="s2_dil">Dil</label><select id="f-dil" onchange="renderEditions()"></select></div>
+      <div class="ctl"><label data-t="s2_ara">Ara (yazar / ad)</label><input type="text" id="f-ara" placeholder="Diyanet, Gölpınarlı…" oninput="renderEditions()"></div>
+      <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="resetFilter()" data-t="s2_sifirla">Sıfırla</button></div>
     </div>
     <div class="status" id="ed-status" role="status" aria-live="polite"></div>
-    <div class="table-wrap"><table><thead><tr><th>Çeviri</th><th>Yazar / Kaynak</th><th>Dil</th><th></th></tr></thead><tbody id="ed-body"></tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th data-t="s2_th1">Çeviri</th><th data-t="s2_th2">Yazar / Kaynak</th><th data-t="s2_th3">Dil</th><th></th></tr></thead><tbody id="ed-body"></tbody></table></div>
   </div>
 </section>
 
 <!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
 <section id="okuyucu">
-  <div class="sec-head"><span class="no">3</span><h2>Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
+  <div class="sec-head"><span class="no">3</span><h2 data-t="s3_title">Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
   <div class="sec-body">
-    <p class="desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
+    <p class="desc" data-t="s3_desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
     <div class="controls">
-      <div class="ctl"><label>Dil</label><select id="ok-dil" onchange="fillEditionSel()"></select></div>
-      <div class="ctl"><label>Çeviri</label><select id="ok-ed"></select></div>
-      <div class="ctl"><label>Latin (_la)</label><input type="checkbox" id="ok-la" style="width:20px; height:20px; margin-top:6px"></div>
-      <div class="ctl"><label>Sure</label><select id="ok-sure"></select></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="loadSure()">Yükle</button></div>
+      <div class="ctl"><label data-t="s3_dil">Dil</label><select id="ok-dil" onchange="fillEditionSel()"></select></div>
+      <div class="ctl"><label data-t="s3_ceviri">Çeviri</label><select id="ok-ed"></select></div>
+      <div class="ctl"><label data-t="s3_latin">Latin (_la)</label><input type="checkbox" id="ok-la" style="width:20px; height:20px; margin-top:6px"></div>
+      <div class="ctl"><label data-t="s3_sure">Sure</label><select id="ok-sure"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="loadSure()" data-t="s3_yukle">Yükle</button></div>
     </div>
     <div class="status" id="ok-status" role="status" aria-live="polite"></div>
     <div id="ok-list"></div>
     <div class="nav-sure">
-      <button class="ghost small" onclick="sureAtla(-1)">← Önceki sure</button>
-      <button class="ghost small" onclick="sureAtla(1)">Sonraki sure →</button>
+      <button class="ghost small" onclick="sureAtla(-1)" data-t="s3_onceki">← Önceki sure</button>
+      <button class="ghost small" onclick="sureAtla(1)" data-t="s3_sonraki">Sonraki sure →</button>
     </div>
   </div>
 </section>
 
 <!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
 <section id="ayet">
-  <div class="sec-head"><span class="no">4</span><h2>Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
+  <div class="sec-head"><span class="no">4</span><h2 data-t="s4_title">Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
   <div class="sec-body">
-    <p class="desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
+    <p class="desc" data-t="s4_desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
     <div class="controls">
-      <div class="ctl"><label>Çeviri</label><select id="ay-ed"></select></div>
-      <div class="ctl"><label>Sure</label><select id="ay-sure"></select></div>
-      <div class="ctl"><label>Ayet</label><input type="number" id="ay-no" value="1" min="1" style="width:90px"></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="tekAyet()">Getir</button></div>
+      <div class="ctl"><label data-t="s4_ceviri">Çeviri</label><select id="ay-ed"></select></div>
+      <div class="ctl"><label data-t="s4_sure">Sure</label><select id="ay-sure"></select></div>
+      <div class="ctl"><label data-t="s4_ayet">Ayet</label><input type="number" id="ay-no" value="1" min="1" style="width:90px"></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="tekAyet()" data-t="s4_getir">Getir</button></div>
     </div>
     <div class="status" id="ay-status" role="status" aria-live="polite"></div>
     <div id="ay-sonuc"></div>
@@ -396,20 +412,20 @@
 
 <!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
 <section id="bolumler">
-  <div class="sec-head"><span class="no">5</span><h2>Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
+  <div class="sec-head"><span class="no">5</span><h2 data-t="s5_title">Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
   <div class="sec-body">
-    <p class="desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
+    <p class="desc" data-t="s5_desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
     <div class="controls">
-      <div class="ctl"><label>Parça tipi</label><select id="bl-tip" onchange="blMax()">
+      <div class="ctl"><label data-t="s5_tip">Parça tipi</label><select id="bl-tip" onchange="blMax()">
         <option value="juzs" data-max="30">Cüz (juzs)</option>
         <option value="rukus" data-max="556">Rükû (rukus)</option>
         <option value="pages" data-max="604">Sayfa (pages)</option>
         <option value="manzils" data-max="7">Menzil (manzils)</option>
         <option value="maqras" data-max="240">Maqra (maqras)</option>
       </select></div>
-      <div class="ctl"><label>Numara</label><input type="number" id="bl-no" value="1" min="1" style="width:90px"></div>
-      <div class="ctl"><label>Çeviri</label><select id="bl-ed"></select></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="bolumYukle()">Yükle</button></div>
+      <div class="ctl"><label data-t="s5_no">Numara</label><input type="number" id="bl-no" value="1" min="1" style="width:90px"></div>
+      <div class="ctl"><label data-t="s5_dil">Çeviri</label><select id="bl-ed"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="bolumYukle()" data-t="s5_yukle">Yükle</button></div>
     </div>
     <div class="status" id="bl-status" role="status" aria-live="polite"></div>
     <div id="bl-list"></div>
@@ -418,14 +434,14 @@
 
 <!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
 <section id="yanyana">
-  <div class="sec-head"><span class="no">6</span><h2>Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
+  <div class="sec-head"><span class="no">6</span><h2 data-t="s6_title">Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
   <div class="sec-body">
-    <p class="desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
+    <p class="desc" data-t="s6_desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
     <div class="controls">
-      <div class="ctl"><label>Sure</label><select id="ya-sure"></select></div>
-      <div class="ctl"><label>Arapça metin</label><select id="ya-ara"></select></div>
-      <div class="ctl"><label>Türkçe meal</label><select id="ya-tur"></select></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="yanyanaYukle()">Yükle</button></div>
+      <div class="ctl"><label data-t="s6_sure">Sure</label><select id="ya-sure"></select></div>
+      <div class="ctl"><label data-t="s6_arapca">Arapça metin</label><select id="ya-ara"></select></div>
+      <div class="ctl"><label data-t="s6_turkce">Türkçe meal</label><select id="ya-tur"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="yanyanaYukle()" data-t="s6_yukle">Yükle</button></div>
     </div>
     <div class="status" id="ya-status" role="status" aria-live="polite"></div>
     <div id="ya-sonuc"></div>
@@ -434,31 +450,31 @@
 
 <!-- ============ BÖLÜM 7: KUR'AN'DA ARA / tam metin arama ============ -->
 <section id="arama">
-  <div class="sec-head"><span class="no">7</span><h2>Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
+  <div class="sec-head"><span class="no">7</span><h2 data-t="s7_title">Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
   <div class="sec-body">
-    <p class="desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
+    <p class="desc" data-t="s7_desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
     <div class="controls">
-      <div class="ctl"><label>Mod</label><select id="ara-mod" onchange="araModDegisti()">
-        <option value="kelime">Kelime</option>
-        <option value="cumle">Cümle</option>
-        <option value="konu">Konu</option>
+      <div class="ctl"><label data-t="s7_mod">Mod</label><select id="ara-mod" onchange="araModDegisti()">
+        <option value="kelime" data-t="s7_kelime">Kelime</option>
+        <option value="cumle" data-t="s7_cumle">Cümle</option>
+        <option value="konu" data-t="s7_konu">Konu</option>
       </select></div>
-      <div class="ctl"><label>Dil</label><select id="ara-dil">
-        <option value="tur">Türkçe (Diyanet)</option>
-        <option value="ara">Arapça (asıl metin)</option>
+      <div class="ctl"><label data-t="s7_dil">Dil</label><select id="ara-dil">
+        <option value="tur" data-t="s7_turkce">Türkçe (Diyanet)</option>
+        <option value="ara" data-t="s7_arapca">Arapça (asıl metin)</option>
       </select></div>
-      <div class="ctl"><label>Aratılacak metin</label><input type="text" id="ara-kutu" placeholder="kelime veya cümle…" onkeydown="if(event.key==='Enter')araYap()"></div>
-      <div class="ctl"><label>&nbsp;</label><button id="ara-btn" onclick="araYap()">Ara</button></div>
+      <div class="ctl"><label data-t="s7_ara_label">Aratılacak metin</label><input type="text" id="ara-kutu" placeholder="kelime veya cümle…" onkeydown="if(event.key==='Enter')araYap()"></div>
+      <div class="ctl"><label>&nbsp;</label><button id="ara-btn" onclick="araYap()" data-t="s7_ara">Ara</button></div>
     </div>
     <div id="ara-konular" style="display:none; margin-bottom:12px"></div>
     <div class="status" id="ara-status" role="status" aria-live="polite"></div>
     <div class="grid2">
       <div>
-        <div class="col-head">Sonuçlar (<span id="ara-sayac">0</span>)</div>
+        <div class="col-head"><span data-t="s7_sonuclar">Sonuçlar</span> (<span id="ara-sayac">0</span>)</div>
         <div class="table-wrap" id="ara-list"></div>
       </div>
       <div>
-        <div class="col-head" id="ara-panel-baslik">Seçili Ayet</div>
+        <div class="col-head" id="ara-panel-baslik"><span data-t="s7_secili">Seçili Ayet</span></div>
         <div style="padding:12px" id="ara-panel"></div>
       </div>
     </div>
@@ -467,37 +483,37 @@
 
 <!-- ============ BÖLÜM 8: YÖNETİCİYE MESAJ GÖNDER ============ -->
 <section id="mesaj">
-  <div class="sec-head"><span class="no">8</span><h2>Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
+  <div class="sec-head"><span class="no">8</span><h2 data-t="s8_title">Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
   <div class="sec-body">
-    <p class="desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
+    <p class="desc" data-t="s8_desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
     <div class="controls">
-      <div class="ctl"><label>Ad Soyad</label><input type="text" id="msj-ad" placeholder="Adınız ve soyadınız"></div>
-      <div class="ctl"><label>Mesajın Konusu</label><input type="text" id="msj-konu" placeholder="Mesajınızın konusu"></div>
+      <div class="ctl"><label data-t="s8_ad">Ad Soyad</label><input type="text" id="msj-ad" placeholder="Adınız ve soyadınız"></div>
+      <div class="ctl"><label data-t="s8_konu">Mesajın Konusu</label><input type="text" id="msj-konu" placeholder="Mesajınızın konusu"></div>
     </div>
-    <div class="ctl" style="margin-bottom:12px"><label>Mesajınız</label><textarea id="msj-metin" rows="6" style="width:100%; resize:vertical" placeholder="Mesajınızı buraya yazabilirsiniz…"></textarea></div>
+    <div class="ctl" style="margin-bottom:12px"><label data-t="s8_mesaj">Mesajınız</label><textarea id="msj-metin" rows="6" style="width:100%; resize:vertical" placeholder="Mesajınızı buraya yazabilirsiniz…"></textarea></div>
     <div class="controls">
-      <div class="ctl"><label>&nbsp;</label><button id="msj-gonder" onclick="msjGonder()">Mesajı Gönder</button></div>
-      <div class="ctl"><label>&nbsp;</label><button class="ghost" id="msj-temizle" onclick="msjFormuTemizle()">Formu Temizle</button></div>
+      <div class="ctl"><label>&nbsp;</label><button id="msj-gonder" onclick="msjGonder()" data-t="s8_gonder">Mesajı Gönder</button></div>
+      <div class="ctl"><label>&nbsp;</label><button class="ghost" id="msj-temizle" onclick="msjFormuTemizle()" data-t="s8_temizle">Formu Temizle</button></div>
     </div>
     <div class="status" id="msj-durum" role="status" aria-live="polite"></div>
 
     <hr style="border:none; border-top:1px solid var(--border); margin:4px 0 16px">
 
-    <div class="col-head" style="margin-bottom:8px">Yönetici İşlemleri</div>
-    <button class="ghost" id="yon-giris-buton" onclick="yonGirisToggle()">🔒 Yönetici Girişi</button>
+    <div class="col-head" style="margin-bottom:8px" data-t="s8_yonetici">Yönetici İşlemleri</div>
+    <button class="ghost" id="yon-giris-buton" onclick="yonGirisToggle()" data-t="s8_girisi">🔒 Yönetici Girişi</button>
     <div id="yon-giris-alan" style="display:none; margin-top:10px">
       <div class="controls">
-        <div class="ctl"><label>Yönetici Şifresi</label><input type="password" id="yon-sifre" placeholder="Şifre" onkeydown="if(event.key==='Enter')yonGirisYap()"></div>
-        <div class="ctl"><label>&nbsp;</label><button id="yon-giris-btn" onclick="yonGirisYap()">Giriş Yap</button></div>
+        <div class="ctl"><label data-t="s8_sifre">Yönetici Şifresi</label><input type="password" id="yon-sifre" placeholder="Şifre" onkeydown="if(event.key==='Enter')yonGirisYap()"></div>
+        <div class="ctl"><label>&nbsp;</label><button id="yon-giris-btn" onclick="yonGirisYap()" data-t="s8_giris">Giriş Yap</button></div>
       </div>
       <div class="status" id="yon-hata" role="status" aria-live="polite"></div>
     </div>
     <div id="yon-panel" style="display:none; margin-top:14px">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px">
-        <div class="col-head" style="margin:0">Gelen Mesajlar (<span id="yon-sayac">0</span>)</div>
+        <div class="col-head" style="margin:0"><span data-t="s8_gelen">Gelen Mesajlar</span> (<span id="yon-sayac">0</span>)</div>
         <div>
-          <button class="ghost small" id="yon-temizle" onclick="yonTemizle()">Tümünü Sil</button>
-          <button class="ghost small" onclick="yonCik()">Çıkış</button>
+          <button class="ghost small" id="yon-temizle" onclick="yonTemizle()" data-t="s8_sil">Tümünü Sil</button>
+          <button class="ghost small" onclick="yonCik()" data-t="s8_cikis">Çıkış</button>
         </div>
       </div>
       <div id="yon-liste"></div>
@@ -508,14 +524,118 @@
 </main>
 
 <div class="footer">
-  Kaynak: <a href="https://github.com/fawazahmed0/quran-api" target="_blank">github.com/fawazahmed0/quran-api</a> ·
-  Tüm veriler <code style="font-size:11px">cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/</code> üzerinden canlı çekilir ·
-  Lisans: Unlicense (kamu malı) · Bu sayfa: <b id="f-sure">—</b> ms
+  <span data-t="ft_kaynak">Kaynak:</span> <a href="https://github.com/fawazahmed0/quran-api" target="_blank">github.com/fawazahmed0/quran-api</a> ·
+  <span data-t="ft_veriler">Tüm veriler</span> <code style="font-size:11px">cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/</code> <span data-t="ft_uzerin">üzerinden canlı çekilir</span> ·
+  <span data-t="ft_lisans">Lisans:</span> Unlicense (kamu malı) · Bu sayfa: <b id="f-sure">—</b> ms
 </div>
 
 <script>
 "use strict";
 const BASE = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
+
+// ===== DİL DESTEĞİ (TR / AR / EN) =====
+const LANG = {
+  tr: {},
+  ar: {
+    'subtitle':'مركز بيانات القرآن المجاني غير المحدود','header_desc':'فواز أحمد / القرآن API · 98 لغة · 486 ترجمة · مجاني عبر jsDelivr CDN',
+    'stat_ed':'ترجمات','stat_sur':'سور','stat_ayet':'آيات','stat_cuz':'أجزاء','stat_sayfa':'صفحات',
+    'nav_1':'1 · القراءة بصوت عالٍ','nav_2':'2 · الترجمات','nav_3':'3 · القارئ','nav_4':'4 · آية واحدة',
+    'nav_5':'5 · الأقسام','nav_6':'6 · العربية + التركية','nav_7':'7 · البحث في القرآن',
+    'nav_8':'8 · إرسال رسالة للمسؤول','nav_0':'0 · المظهر والثيم',
+    's0_title':'المظهر والثيم','s0_desc':'خصص مظهر الصفحة: الوضع الفاتح/الداكن واللون المستقل لكل منطقة. يتم حفظ الاختيارات في المتصفح. استخدم ☀️/🌙 في الأعلى لتبديل سريع.',
+    's0_gorunum':'المظهر','s0_vurgu':'🎨 التمييز','s0_vurgu_info':'الأزرار والروابط والحالات النشطة',
+    's0_bg':'🖼️ الخلفية','s0_bg_info':'خلفية الصفحة والشريط',
+    's0_panel':'📋 اللوحة','s0_panel_info':'خلفية البطاقات والأقسام',
+    's0_border':'🔲 الحدود','s0_border_info':'الإطارات والخطوط الفاصلة',
+    's0_komb':'مجموعات جاهزة',
+    's1_title':'القراءة بصوت عالٍ','s1_desc':'1A: <b>تلاوة القرآن</b> — قراءة السور العربية، CDN مجاني. 1B: <b>TTS</b> — قراءة نصوص الترجمة بأي لغة.',
+    's1_tilavet':'🎧 التلاوة — قراءة القرآن (عربي)','s1_okuyucu':'القارئ','s1_sure':'السورة',
+    's1_cal':'▶ تشغيل','s1_durdur':'⏹ إيقاف','s1_ses':'مستوى الصوت',
+    's1_tts':'🗣️ TTS — قراءة النص بصوت عالٍ','s1_dil':'اللغة','s1_hiz':'السرعة',
+    's1_oku':'▶ اقرأ','s1_duraklat':'⏸ إيقاف مؤقت / استئناف',
+    's2_title':'الترجمات','s2_desc':'جميع الترجمات (486). استخدم فلتر <b>اللغة</b> + <b>البحث</b>، ثم <b>اقرأ</b> للانتقال إلى القسم 3.',
+    's2_dil':'اللغة','s2_ara':'بحث (مؤلف / اسم)','s2_sifirla':'إعادة ضبط',
+    's2_th1':'الترجمة','s2_th2':'المؤلف / المصدر','s2_th3':'اللغة',
+    's3_title':'قارئ الترجمات','s3_desc':'القراءة حسب السورة في الترجمة المحددة. <b>_la</b> = نسخ بالحروف اللاتينية.',
+    's3_dil':'اللغة','s3_ceviri':'الترجمة','s3_latin':'لاتيني (_la)','s3_sure':'السورة',
+    's3_yukle':'تحميل','s3_onceki':'← السورة السابقة','s3_sonraki':'السورة التالية →',
+    's4_title':'استعلام آية واحدة','s4_desc':'جلب آية واحدة — مثالي لبطاقة <b>آية اليوم</b>.',
+    's4_ceviri':'الترجمة','s4_sure':'السورة','s4_ayet':'الآية','s4_getir':'جلب',
+    's5_title':'مستكشف الأقسام','s5_desc':'اقرأ القرآن مقسّماً: <b>30 جزءاً</b> · <b>556 ركوعاً</b> · <b>604 صفحات</b> · <b>7 منازل</b> · <b>240 مقراً</b>.',
+    's5_tip':'نوع القسم','s5_no':'الرقم','s5_dil':'الترجمة','s5_yukle':'تحميل',
+    's5_cuz':'جزء (juzs)','s5_ruku':'ركوع (rukus)','s5_sayfa':'صفحة (pages)',
+    's5_menzil':'منزل (manzils)','s5_maqra':'مقرأة (maqras)',
+    's6_title':'العربية + التركية جنباً إلى جنب','s6_desc':'النص العربي الأصلي والترجمة التركية <b>آية بآية للمقارنة</b>.',
+    's6_sure':'السورة','s6_arapca':'النص العربي','s6_turkce':'الترجمة التركية','s6_yukle':'تحميل',
+    's7_title':'البحث في القرآن','s7_desc':'<b>بحث في جميع القرآن</b> — ابحث بكلمة أو جملة أو موضوع؛ يتم سرد جميع الآيات المتطابقة.',
+    's7_mod':'الوضع','s7_kelime':'كلمة','s7_cumle':'جملة','s7_konu':'موضوع',
+    's7_dil':'اللغة','s7_turkce':'التركية (ديوان)','s7_arapca':'العربية (النص الأصلي)',
+    's7_ara_label':'النص المطلوب البحث عنه','s7_ara':'بحث','s7_sonuclar':'النتائج','s7_secili':'الآية المحددة',
+    's8_title':'إرسال رسالة للمسؤول','s8_desc':'يمكنك التواصل مع مسؤول الصفحة. شارك <b>اقتراحاتك</b> أو المشاكل أو أي مواضيع أخرى.',
+    's8_ad':'الاسم الكامل','s8_konu':'موضوع الرسالة','s8_mesaj':'رسالتك',
+    's8_gonder':'إرسال الرسالة','s8_temizle':'مسح النموذج',
+    's8_yonetici':'إجراءات المسؤول','s8_girisi':'🔒 دخول المسؤول','s8_sifre':'كلمة مرور المسؤول',
+    's8_giris':'تسجيل الدخول','s8_gelen':'الرسائل الواردة','s8_sil':'حذف الكل','s8_cikis':'خروج',
+    'ft_kaynak':'المصدر:','ft_veriler':'جميع البيانات','ft_uzerin':'يتم جلبها مباشرة من','ft_lisans':'الرخصة:'
+  },
+  en: {
+    'subtitle':'Free & Unlimited Quran Data Center','header_desc':'fawazahmed0/quran-api · 98 languages · 486 translations · free via jsDelivr CDN',
+    'stat_ed':'Translations','stat_sur':'Sures','stat_ayet':'Verses','stat_cuz':'Juz','stat_sayfa':'Pages',
+    'nav_1':'1 · Audio Reading','nav_2':'2 · Translations','nav_3':'3 · Reader','nav_4':'4 · Single Verse',
+    'nav_5':'5 · Sections','nav_6':'6 · Arabic + Turkish','nav_7':'7 · Search in Quran',
+    'nav_8':'8 · Message to Admin','nav_0':'0 · Theme & Appearance',
+    's0_title':'Theme & Appearance','s0_desc':'Customize page appearance: <b>light / dark mode</b> and <b>independent color</b> for each area. Choices are saved in your browser. Use ☀️/🌙 at top for quick switch.',
+    's0_gorunum':'Appearance','s0_vurgu':'🎨 Accent','s0_vurgu_info':'Buttons, links, active states',
+    's0_bg':'🖼️ Background','s0_bg_info':'Page and nav background',
+    's0_panel':'📋 Panel','s0_panel_info':'Card and section backgrounds',
+    's0_border':'🔲 Border','s0_border_info':'Frames and dividing lines',
+    's0_komb':'Preset Combinations',
+    's1_title':'Audio Reading','s1_desc':'1A: <b>Quran recitation</b> — Arabic surah recitation, free CDN. 1B: <b>TTS</b> — read translation texts in any language.',
+    's1_tilavet':'🎧 Tilavet — Quran recitation (Arabic)','s1_okuyucu':'Reciter','s1_sure':'Surah',
+    's1_cal':'▶ Play','s1_durdur':'⏹ Stop','s1_ses':'Volume',
+    's1_tts':'🗣️ TTS — Text to Speech','s1_dil':'Language','s1_hiz':'Speed',
+    's1_oku':'▶ Read','s1_duraklat':'⏸ Pause / Resume',
+    's2_title':'Translations','s2_desc':'All translations (486). Filter by <b>language</b> + <b>search</b>, then <b>Read</b> to go to Section 3.',
+    's2_dil':'Language','s2_ara':'Search (author / name)','s2_sifirla':'Reset',
+    's2_th1':'Translation','s2_th2':'Author / Source','s2_th3':'Language',
+    's3_title':'Translation Reader','s3_desc':'Read by surah in selected translation. <b>_la</b> = Latin transcription.',
+    's3_dil':'Language','s3_ceviri':'Translation','s3_latin':'Latin (_la)','s3_sure':'Surah',
+    's3_yukle':'Load','s3_onceki':'← Previous surah','s3_sonraki':'Next surah →',
+    's4_title':'Single Verse Query','s4_desc':'Fetch a single verse — ideal for <b>verse of the day</b> cards.',
+    's4_ceviri':'Translation','s4_sure':'Surah','s4_ayet':'Verse','s4_getir':'Fetch',
+    's5_title':'Section Explorer','s5_desc':'Read the Quran in sections: <b>30 juz</b> · <b>556 rukus</b> · <b>604 pages</b> · <b>7 manzils</b> · <b>240 maqras</b>.',
+    's5_tip':'Section type','s5_no':'Number','s5_dil':'Translation','s5_yukle':'Load',
+    's5_cuz':'Juz (juzs)','s5_ruku':'Ruku (rukus)','s5_sayfa':'Page (pages)',
+    's5_menzil':'Manzil (manzils)','s5_maqra':'Maqra (maqras)',
+    's6_title':'Arabic + Turkish Side by Side','s6_desc':'Original Arabic text and Turkish translation <b>verse by verse comparison</b>.',
+    's6_sure':'Surah','s6_arapca':'Arabic text','s6_turkce':'Turkish translation','s6_yukle':'Load',
+    's7_title':'Search in Quran','s7_desc':'<b>Search the entire Quran</b> — by word, sentence, or topic; all matching verses are listed.',
+    's7_mod':'Mode','s7_kelime':'Word','s7_cumle':'Sentence','s7_konu':'Topic',
+    's7_dil':'Language','s7_turkce':'Turkish (Diyanet)','s7_arapca':'Arabic (original text)',
+    's7_ara_label':'Search text','s7_ara':'Search','s7_sonuclar':'Results','s7_secili':'Selected Verse',
+    's8_title':'Message to Admin','s8_desc':'Contact the page administrator through this section. Share your <b>suggestions</b>, issues, or other topics.',
+    's8_ad':'Full Name','s8_konu':'Subject','s8_mesaj':'Your Message',
+    's8_gonder':'Send Message','s8_temizle':'Clear Form',
+    's8_yonetici':'Admin Operations','s8_girisi':'🔒 Admin Login','s8_sifre':'Admin Password',
+    's8_giris':'Log In','s8_gelen':'Inbox','s8_sil':'Delete All','s8_cikis':'Logout',
+    'ft_kaynak':'Source:','ft_veriler':'All data','ft_uzerin':'is fetched live from','ft_lisans':'License:'
+  }
+};
+let AKTIF_DIL = 'tr';
+function dilUygula(lang){
+  AKTIF_DIL = lang;
+  try{ localStorage.setItem('kuran_dil', lang); }catch(e){}
+  const t = LANG[lang] || {};
+  document.documentElement.lang = lang==='ar'?'ar':(lang==='en'?'en':'tr');
+  document.documentElement.dir = lang==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-t]').forEach(el => {
+    const k = el.getAttribute('data-t');
+    if(t[k] !== undefined) el.innerHTML = t[k];
+  });
+  document.querySelectorAll('#dil-sec button').forEach(b => b.classList.toggle('aktif', b.dataset.dil===lang));
+}
+// Dil yükleme (sayfa açılışında)
+try{ const l=localStorage.getItem('kuran_dil')||'tr'; if(l!=='tr') dilUygula(l); }catch(e){}
 
 // 114 sure: [Türkçe ad, ayet sayısı]
 const SURELER = [
