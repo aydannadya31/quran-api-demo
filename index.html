@@ -52,11 +52,15 @@
   nav a:hover{color:var(--txt); border-color:var(--border)}
   main{max-width:1100px; margin:0 auto; padding:24px 16px 60px}
   section{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin-bottom:26px; overflow:hidden}
-  .sec-head{display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--panel2)}
+  .sec-head{display:flex; align-items:center; gap:10px; padding:14px 18px; background:var(--panel2); cursor:pointer; user-select:none; border-radius:12px; transition:background .15s}
+  .sec-head:hover{background:var(--hover-bg)}
   .sec-head .no{background:var(--green); color:var(--on-vurgu); font-weight:700; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0}
-  .sec-head h2{font-size:16px; font-weight:600}
+  .sec-head h2{font-size:16px; font-weight:600; margin:0}
   .sec-head code{font-family:var(--mono); font-size:11.5px; color:var(--gold); margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px}
-  .sec-body{padding:16px 18px}
+  .sec-head .chevron{margin-left:8px; font-size:12px; color:var(--dim); transition:transform .2s}
+  section.acik .sec-head .chevron{transform:rotate(90deg)}
+  .sec-body{padding:16px 18px; display:none; border-top:1px solid var(--border)}
+  section.acik .sec-body{display:block}
   .desc{color:var(--dim); font-size:13px; margin-bottom:14px}
   .desc b{color:var(--gold); font-weight:600}
   .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:14px}
@@ -266,7 +270,7 @@
 
 <!-- ============ BÖLÜM 0: TEMA & GÖRÜNÜM ============ -->
 <section id="ayarlar">
-  <div class="sec-head"><span class="no">🎨</span><h2 data-t="s0_title">Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
+  <div class="sec-head"><span class="no">🎨</span><h2 data-t="s0_title">Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s0_desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve her bölge için <b>bağımsız renk</b>. Seçimler tarayıcında saklanır. Sağ üstteki 🌙/☀️ ile hızlı geçiş yapabilirsin.</p>
     <div class="controls">
@@ -318,7 +322,7 @@
 
 <!-- ============ BÖLÜM 1: SESLİ OKUMA / tilavet + TTS ============ -->
 <section id="ses">
-  <div class="sec-head"><span class="no">🎧</span><h2 data-t="s1_title">Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
+  <div class="sec-head"><span class="no">🎧</span><h2 data-t="s1_title">Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s1_desc">1A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 1B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
     <div class="grid2">
@@ -360,7 +364,7 @@
 
 <!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
 <section id="ceviriler">
-  <div class="sec-head"><span class="no">📚</span><h2 data-t="s2_title">Çeviriler</h2><code>/editions.min.json</code></div>
+  <div class="sec-head"><span class="no">📚</span><h2 data-t="s2_title">Çeviriler</h2><code>/editions.min.json</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s2_desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
     <div class="controls">
@@ -375,7 +379,7 @@
 
 <!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
 <section id="okuyucu">
-  <div class="sec-head"><span class="no">📖</span><h2 data-t="s3_title">Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
+  <div class="sec-head"><span class="no">📖</span><h2 data-t="s3_title">Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s3_desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
     <div class="controls">
@@ -396,7 +400,7 @@
 
 <!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
 <section id="ayet">
-  <div class="sec-head"><span class="no">📝</span><h2 data-t="s4_title">Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
+  <div class="sec-head"><span class="no">📝</span><h2 data-t="s4_title">Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s4_desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
     <div class="controls">
@@ -412,7 +416,7 @@
 
 <!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
 <section id="bolumler">
-  <div class="sec-head"><span class="no">🗂️</span><h2 data-t="s5_title">Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
+  <div class="sec-head"><span class="no">🗂️</span><h2 data-t="s5_title">Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s5_desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
     <div class="controls">
@@ -434,7 +438,7 @@
 
 <!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
 <section id="yanyana">
-  <div class="sec-head"><span class="no">🌙</span><h2 data-t="s6_title">Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
+  <div class="sec-head"><span class="no">🌙</span><h2 data-t="s6_title">Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s6_desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
     <div class="controls">
@@ -450,7 +454,7 @@
 
 <!-- ============ BÖLÜM 7: KUR'AN'DA ARA / tam metin arama ============ -->
 <section id="arama">
-  <div class="sec-head"><span class="no">🔍</span><h2 data-t="s7_title">Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
+  <div class="sec-head"><span class="no">🔍</span><h2 data-t="s7_title">Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s7_desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
     <div class="controls">
@@ -483,7 +487,7 @@
 
 <!-- ============ BÖLÜM 8: YÖNETİCİYE MESAJ GÖNDER ============ -->
 <section id="mesaj">
-  <div class="sec-head"><span class="no">✉️</span><h2 data-t="s8_title">Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
+  <div class="sec-head"><span class="no">✉️</span><h2 data-t="s8_title">Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code><span class="chevron">▸</span></div>
   <div class="sec-body">
     <p class="desc" data-t="s8_desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
     <div class="controls">
@@ -1483,6 +1487,16 @@ window.addEventListener('scroll', () => {
     el.style.transform = 'translateY(' + (y * 0.15) + 'px)';
   });
 });
+
+// ===== ACCORDION: Bölüm aç/kapat =====
+document.querySelectorAll('section').forEach(sec => {
+  const head = sec.querySelector('.sec-head');
+  if (!head) return;
+  head.addEventListener('click', () => sec.classList.toggle('acik'));
+});
+// Varsayılan olarak ilk açık bölüm (Tema) açılsın
+const ilkAcik = document.querySelector('section#ayarlar');
+if (ilkAcik) ilkAcik.classList.add('acik');
 </script>
 </body>
 </html>
