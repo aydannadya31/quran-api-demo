@@ -53,7 +53,7 @@
   main{max-width:1100px; margin:0 auto; padding:24px 16px 60px}
   section{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin-bottom:26px; overflow:hidden}
   .sec-head{display:flex; align-items:center; gap:10px; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--panel2)}
-  .sec-head .no{background:var(--green); color:var(--on-vurgu); font-weight:700; width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0}
+  .sec-head .no{background:var(--green); color:var(--on-vurgu); font-weight:700; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0}
   .sec-head h2{font-size:16px; font-weight:600}
   .sec-head code{font-family:var(--mono); font-size:11.5px; color:var(--gold); margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px}
   .sec-body{padding:16px 18px}
@@ -245,15 +245,15 @@
 </header>
 
 <nav>
-  <a href="#ses" data-t="nav_1">1 · Sesli Okuma</a>
-  <a href="#ceviriler" data-t="nav_2">2 · Çeviriler</a>
-  <a href="#okuyucu" data-t="nav_3">3 · Okuyucu</a>
-  <a href="#ayet" data-t="nav_4">4 · Tek Ayet</a>
-  <a href="#bolumler" data-t="nav_5">5 · Bölümler</a>
-  <a href="#yanyana" data-t="nav_6">6 · Arapça + Türkçe</a>
-  <a href="#arama" data-t="nav_7">7 · Kur'an'da Ara</a>
-  <a href="#mesaj" data-t="nav_8">8 · Yöneticiye Mesaj Gönder</a>
-  <a href="#ayarlar" data-t="nav_0">0 · Tema & Görünüm</a>
+  <a href="#ses" data-t="nav_1">🎧 Sesli Okuma</a>
+  <a href="#ceviriler" data-t="nav_2">📚 Çeviriler</a>
+  <a href="#okuyucu" data-t="nav_3">📖 Okuyucu</a>
+  <a href="#ayet" data-t="nav_4">📝 Tek Ayet</a>
+  <a href="#bolumler" data-t="nav_5">🗂️ Bölümler</a>
+  <a href="#yanyana" data-t="nav_6">🌙 Arapça + Türkçe</a>
+  <a href="#arama" data-t="nav_7">🔍 Kur'an'da Ara</a>
+  <a href="#mesaj" data-t="nav_8">✉️ Yöneticiye Mesaj Gönder</a>
+  <a href="#ayarlar" data-t="nav_0">🎨 Tema & Görünüm</a>
   <a href="javascript:void(0)" id="tema-hizli" onclick="temaUygula(document.documentElement.dataset.tema==='acik'?'koyu':'acik')" title="Açık / Koyu mod geçişi">☀️</a>
   <div class="dil-sec" id="dil-sec">
     <button data-dil="tr" onclick="dilUygula('tr')" class="aktif">TR</button>
@@ -266,7 +266,7 @@
 
 <!-- ============ BÖLÜM 0: TEMA & GÖRÜNÜM ============ -->
 <section id="ayarlar">
-  <div class="sec-head"><span class="no">0</span><h2 data-t="s0_title">Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
+  <div class="sec-head"><span class="no">🎨</span><h2 data-t="s0_title">Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s0_desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve her bölge için <b>bağımsız renk</b>. Seçimler tarayıcında saklanır. Sağ üstteki 🌙/☀️ ile hızlı geçiş yapabilirsin.</p>
     <div class="controls">
@@ -318,7 +318,7 @@
 
 <!-- ============ BÖLÜM 1: SESLİ OKUMA / tilavet + TTS ============ -->
 <section id="ses">
-  <div class="sec-head"><span class="no">1</span><h2 data-t="s1_title">Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
+  <div class="sec-head"><span class="no">🎧</span><h2 data-t="s1_title">Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s1_desc">1A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 1B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
     <div class="grid2">
@@ -360,7 +360,7 @@
 
 <!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
 <section id="ceviriler">
-  <div class="sec-head"><span class="no">2</span><h2 data-t="s2_title">Çeviriler</h2><code>/editions.min.json</code></div>
+  <div class="sec-head"><span class="no">📚</span><h2 data-t="s2_title">Çeviriler</h2><code>/editions.min.json</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s2_desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
     <div class="controls">
@@ -375,7 +375,7 @@
 
 <!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
 <section id="okuyucu">
-  <div class="sec-head"><span class="no">3</span><h2 data-t="s3_title">Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
+  <div class="sec-head"><span class="no">📖</span><h2 data-t="s3_title">Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s3_desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
     <div class="controls">
@@ -396,7 +396,7 @@
 
 <!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
 <section id="ayet">
-  <div class="sec-head"><span class="no">4</span><h2 data-t="s4_title">Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
+  <div class="sec-head"><span class="no">📝</span><h2 data-t="s4_title">Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s4_desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
     <div class="controls">
@@ -412,7 +412,7 @@
 
 <!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
 <section id="bolumler">
-  <div class="sec-head"><span class="no">5</span><h2 data-t="s5_title">Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
+  <div class="sec-head"><span class="no">🗂️</span><h2 data-t="s5_title">Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s5_desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
     <div class="controls">
@@ -434,7 +434,7 @@
 
 <!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
 <section id="yanyana">
-  <div class="sec-head"><span class="no">6</span><h2 data-t="s6_title">Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
+  <div class="sec-head"><span class="no">🌙</span><h2 data-t="s6_title">Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s6_desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
     <div class="controls">
@@ -450,7 +450,7 @@
 
 <!-- ============ BÖLÜM 7: KUR'AN'DA ARA / tam metin arama ============ -->
 <section id="arama">
-  <div class="sec-head"><span class="no">7</span><h2 data-t="s7_title">Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
+  <div class="sec-head"><span class="no">🔍</span><h2 data-t="s7_title">Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s7_desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
     <div class="controls">
@@ -483,7 +483,7 @@
 
 <!-- ============ BÖLÜM 8: YÖNETİCİYE MESAJ GÖNDER ============ -->
 <section id="mesaj">
-  <div class="sec-head"><span class="no">8</span><h2 data-t="s8_title">Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
+  <div class="sec-head"><span class="no">✉️</span><h2 data-t="s8_title">Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
   <div class="sec-body">
     <p class="desc" data-t="s8_desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
     <div class="controls">
@@ -539,9 +539,9 @@ const LANG = {
   ar: {
     'subtitle':'مركز بيانات القرآن المجاني غير المحدود','header_desc':'فواز أحمد / القرآن API · 98 لغة · 486 ترجمة · مجاني عبر jsDelivr CDN',
     'stat_ed':'ترجمات','stat_sur':'سور','stat_ayet':'آيات','stat_cuz':'أجزاء','stat_sayfa':'صفحات',
-    'nav_1':'1 · القراءة بصوت عالٍ','nav_2':'2 · الترجمات','nav_3':'3 · القارئ','nav_4':'4 · آية واحدة',
-    'nav_5':'5 · الأقسام','nav_6':'6 · العربية + التركية','nav_7':'7 · البحث في القرآن',
-    'nav_8':'8 · إرسال رسالة للمسؤول','nav_0':'0 · المظهر والثيم',
+    'nav_1':'🎧 القراءة بصوت عالٍ','nav_2':'📚 الترجمات','nav_3':'📖 القارئ','nav_4':'📝 آية واحدة',
+    'nav_5':'🗂️ الأقسام','nav_6':'🌙 العربية + التركية','nav_7':'🔍 البحث في القرآن',
+    'nav_8':'✉️ إرسال رسالة للمسؤول','nav_0':'🎨 المظهر والثيم',
     's0_title':'المظهر والثيم','s0_desc':'خصص مظهر الصفحة: الوضع الفاتح/الداكن واللون المستقل لكل منطقة. يتم حفظ الاختيارات في المتصفح. استخدم ☀️/🌙 في الأعلى لتبديل سريع.',
     's0_gorunum':'المظهر','s0_vurgu':'🎨 التمييز','s0_vurgu_info':'الأزرار والروابط والحالات النشطة',
     's0_bg':'🖼️ الخلفية','s0_bg_info':'خلفية الصفحة والشريط',
@@ -581,9 +581,9 @@ const LANG = {
   en: {
     'subtitle':'Free & Unlimited Quran Data Center','header_desc':'fawazahmed0/quran-api · 98 languages · 486 translations · free via jsDelivr CDN',
     'stat_ed':'Translations','stat_sur':'Sures','stat_ayet':'Verses','stat_cuz':'Juz','stat_sayfa':'Pages',
-    'nav_1':'1 · Audio Reading','nav_2':'2 · Translations','nav_3':'3 · Reader','nav_4':'4 · Single Verse',
-    'nav_5':'5 · Sections','nav_6':'6 · Arabic + Turkish','nav_7':'7 · Search in Quran',
-    'nav_8':'8 · Message to Admin','nav_0':'0 · Theme & Appearance',
+    'nav_1':'🎧 Audio Reading','nav_2':'📚 Translations','nav_3':'📖 Reader','nav_4':'📝 Single Verse',
+    'nav_5':'🗂️ Sections','nav_6':'🌙 Arabic + Turkish','nav_7':'🔍 Search in Quran',
+    'nav_8':'✉️ Message to Admin','nav_0':'🎨 Theme & Appearance',
     's0_title':'Theme & Appearance','s0_desc':'Customize page appearance: <b>light / dark mode</b> and <b>independent color</b> for each area. Choices are saved in your browser. Use ☀️/🌙 at top for quick switch.',
     's0_gorunum':'Appearance','s0_vurgu':'🎨 Accent','s0_vurgu_info':'Buttons, links, active states',
     's0_bg':'🖼️ Background','s0_bg_info':'Page and nav background',
