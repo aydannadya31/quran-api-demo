@@ -1487,16 +1487,19 @@ window.addEventListener('scroll', () => {
     el.style.transform = 'translateY(' + (y * 0.15) + 'px)';
   });
 });
+</script>
 
-// ===== ACCORDION: Bölüm aç/kapat =====
-document.querySelectorAll('section').forEach(sec => {
-  const head = sec.querySelector('.sec-head');
-  if (!head) return;
-  head.addEventListener('click', () => sec.classList.toggle('acik'));
-});
-// Varsayılan olarak ilk açık bölüm (Tema) açılsın
-const ilkAcik = document.querySelector('section#ayarlar');
-if (ilkAcik) ilkAcik.classList.add('acik');
+<!-- Accordion: bağımsız script, ana script hatalarından etkilenmez -->
+<script>
+(function(){
+  document.querySelectorAll('section').forEach(function(sec){
+    var head = sec.querySelector('.sec-head');
+    if(!head) return;
+    head.addEventListener('click', function(){ sec.classList.toggle('acik'); });
+  });
+  var ayarlar = document.querySelector('section#ayarlar');
+  if(ayarlar) ayarlar.classList.add('acik');
+})();
 </script>
 </body>
 </html>
