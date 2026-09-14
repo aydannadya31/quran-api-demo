@@ -622,7 +622,14 @@ const LANG = {
   }
 };
 let AKTIF_DIL = 'tr';
+const ORIG = {}; let origCached = false;
 function dilUygula(lang){
+  if(!origCached){
+    document.querySelectorAll('[data-t]').forEach(el => {
+      ORIG[el.getAttribute('data-t')] = el.innerHTML;
+    });
+    origCached = true;
+  }
   AKTIF_DIL = lang;
   try{ localStorage.setItem('kuran_dil', lang); }catch(e){}
   const t = LANG[lang] || {};
@@ -630,7 +637,7 @@ function dilUygula(lang){
   document.documentElement.dir = lang==='ar'?'rtl':'ltr';
   document.querySelectorAll('[data-t]').forEach(el => {
     const k = el.getAttribute('data-t');
-    if(t[k] !== undefined) el.innerHTML = t[k];
+    el.innerHTML = (lang === 'tr') ? (ORIG[k] || '') : (t[k] !== undefined ? t[k] : ORIG[k] || '');
   });
   document.querySelectorAll('#dil-sec button').forEach(b => b.classList.toggle('aktif', b.dataset.dil===lang));
 }
