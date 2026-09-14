@@ -1162,12 +1162,28 @@ function bolgeYaz(bolge,hex){
   try{localStorage.setItem(BOLGE_BASLIK[bolge],hex)}catch(e){}
 }
 
+const RENK_MOD_DEFAULTS={koyu:{bg:'#0b1210',panel:'#101a16',border:'#1f352c'},acik:{bg:'#f5f0e4',panel:'#faf6eb',border:'#d4c9a8'}};
 function temaUygula(t){
+  const onceki=document.documentElement.dataset.tema;
   document.documentElement.dataset.tema=t;
   try{localStorage.setItem('kuran_tema',t)}catch(e){}
   document.querySelectorAll('#tema-sec button').forEach(b=>b.classList.toggle('aktif',b.id==='tema-'+t));
   const h=$('tema-hizli');
   if(h)h.textContent=t==='acik'?'🌙':'☀️';
+  if(onceki && onceki!==t){
+    ['bg','panel','border'].forEach(bolge=>{
+      const simdi='renk_'+bolge,oncekiKey=simdi+'_'+onceki,yeniKey=simdi+'_'+t;
+      try{
+        const mevcut=localStorage.getItem(simdi);
+        if(mevcut) localStorage.setItem(oncekiKey,mevcut);
+        const yeni=localStorage.getItem(yeniKey)||RENK_MOD_DEFAULTS[t][bolge];
+        localStorage.setItem(simdi,yeni);
+      }catch(e){}
+    });
+    bolgePaletiKur('bg',BG_RENKLER);
+    bolgePaletiKur('panel',PANEL_RENKLER);
+    bolgePaletiKur('border',BORDER_RENKLER);
+  }
   temaHesapla();
 }
 
