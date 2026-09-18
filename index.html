@@ -27,10 +27,10 @@
   /* İslami tessellation arka plan deseni */
   body::before{content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
     background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23d4a853' stroke-width='0.5' opacity='0.04'%3E%3Cpath d='M60 0L75 15L60 30L45 15Z'/%3E%3Cpath d='M0 60L15 45L30 60L15 75Z'/%3E%3Cpath d='M60 90L75 105L60 120L45 105Z'/%3E%3Cpath d='M90 60L105 45L120 60L105 75Z'/%3E%3Cpath d='M60 30L90 60L60 90L30 60Z'/%3E%3Ccircle cx='60' cy='60' r='8'/%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Cpath d='M40 0L60 20L80 0'/%3E%3Cpath d='M120 40L100 60L120 80'/%3E%3Cpath d='M80 120L60 100L40 120'/%3E%3Cpath d='M0 80L20 60L0 40'/%3E%3C/g%3E%3C/svg%3E"),
-      radial-gradient(ellipse at 20% 20%, rgba(212,168,83,0.04) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 80%, rgba(61,220,151,0.03) 0%, transparent 50%);
-    background-size:120px 120px, 100% 100%, 100% 100%;
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23d4a853' stroke-width='0.6' opacity='0.08'%3E%3Cpath d='M60 0L75 15L60 30L45 15Z'/%3E%3Cpath d='M0 60L15 45L30 60L15 75Z'/%3E%3Cpath d='M60 90L75 105L60 120L45 105Z'/%3E%3Cpath d='M90 60L105 45L120 60L105 75Z'/%3E%3Cpath d='M60 30L90 60L60 90L30 60Z'/%3E%3Ccircle cx='60' cy='60' r='8'/%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Cpath d='M40 0L60 20L80 0'/%3E%3Cpath d='M120 40L100 60L120 80'/%3E%3Cpath d='M80 120L60 100L40 120'/%3E%3Cpath d='M0 80L20 60L0 40'/%3E%3C/g%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 20% 20%, rgba(212,168,83,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(61,220,151,0.04) 0%, transparent 50%);
+    background-size:100px 100px, 100% 100%, 100% 100%;
   }
 
   a{color:var(--gold); text-decoration:none; transition:color .2s}
@@ -110,6 +110,7 @@
   .sec-head code{
     font-family:var(--mono); font-size:11px; color:var(--gold); opacity:0.7;
     margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px;
+    display:none;
   }
   .sec-body{padding:20px}
   .desc{color:var(--dim); font-size:13.5px; margin-bottom:16px; line-height:1.7}
@@ -342,7 +343,7 @@
 
   /* ===== DEKORASYON ===== */
   #dekor-sol,#dekor-sag{position:fixed; top:0; height:100vh; pointer-events:none; user-select:none; z-index:40; transition:opacity .4s, filter .4s}
-  #dekor-sol{left:0; width:200px; overflow:hidden;
+  #dekor-sol{left:0; width:160px; overflow:hidden;
     background:
       repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 40deg, var(--gold) 40deg 41deg, transparent 41deg 80deg),
       conic-gradient(from 45deg, transparent 0deg, var(--gold) 0.5deg, transparent 1deg, transparent 89deg, var(--gold) 89.5deg, transparent 90deg, transparent 179deg, var(--gold) 179.5deg, transparent 180deg, transparent 269deg, var(--gold) 269.5deg, transparent 270deg),
@@ -351,60 +352,67 @@
       radial-gradient(circle at 0% 100%, var(--gold) 1.5px, transparent 1.5px),
       radial-gradient(circle at 100% 100%, var(--gold) 1.5px, transparent 1.5px),
       radial-gradient(circle at 50% 50%, var(--gold) 1px, transparent 1px);
-    background-size: 120px 120px, 120px 120px, 120px 120px, 120px 120px, 120px 120px, 120px 120px, 60px 60px;
-    opacity:.35;
-    mask-image: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+    background-size: 100px 100px, 100px 100px, 100px 100px, 100px 100px, 100px 100px, 100px 100px, 50px 50px;
+    opacity:.55;
+    mask-image: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
     animation: dekorSolHareket 60s linear infinite;
+    border-right:1px solid rgba(212,168,83,0.12);
   }
-  #dekor-sol:hover{opacity:.6; filter:drop-shadow(0 0 15px var(--glow)); pointer-events:auto}
+  #dekor-sol:hover{opacity:.75; filter:drop-shadow(0 0 15px var(--glow)); pointer-events:auto}
   #dekor-sol::before,#dekor-sol::after{
-    content:''; position:absolute; left:10px; width:140px; height:140px;
-    border:1.5px solid var(--gold); opacity:.2;
-    background:radial-gradient(circle, var(--gold) 1px, transparent 1px); background-size:12px 12px;
+    content:''; position:absolute; left:10px; width:130px; height:130px;
+    border:2px solid var(--gold); opacity:.3;
+    background:radial-gradient(circle, var(--gold) 1px, transparent 1px); background-size:10px 10px;
   }
-  #dekor-sol::before{top:20px; border-radius:50%; transform:rotate(15deg); animation:dekorRozet 20s linear infinite}
-  #dekor-sol::after{bottom:20px; border-radius:50%; transform:rotate(-15deg); animation:dekorRozet 25s linear infinite reverse}
+  #dekor-sol::before{top:40px; border-radius:50%; transform:rotate(15deg); animation:dekorRozet 20s linear infinite}
+  #dekor-sol::after{bottom:40px; border-radius:50%; transform:rotate(-15deg); animation:dekorRozet 25s linear infinite reverse}
   @keyframes dekorRozet{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-  @keyframes dekorSolHareket{from{background-position:0 0}to{background-position:0 120px}}
+  @keyframes dekorSolHareket{from{background-position:0 0}to{background-position:0 100px}}
 
-  #dekor-sag{right:0; width:220px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px;
+  #dekor-sag{right:0; width:180px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px;
     background:
-      radial-gradient(ellipse at center, rgba(212,168,83,0.06) 0%, transparent 65%),
-      linear-gradient(to left, rgba(212,168,83,0.08) 0%, transparent 3px);
+      repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 40deg, var(--gold) 40deg 41deg, transparent 41deg 80deg),
+      radial-gradient(ellipse at center, rgba(212,168,83,0.08) 0%, transparent 65%),
+      linear-gradient(to left, rgba(212,168,83,0.12) 0%, transparent 4px);
+    background-size: 100px 100px, 100% 100%, 100% 100%;
     pointer-events:auto; cursor:default;
+    opacity:.5;
+    border-left:1px solid rgba(212,168,83,0.12);
+    animation: dekorSagSoluk 4s ease-in-out infinite;
   }
+  @keyframes dekorSagSoluk{0%,100%{opacity:.5}50%{opacity:.65}}
   #dekor-sag:hover{opacity:.85; filter:drop-shadow(0 0 20px var(--glow))}
   #dekor-sag span{font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
-    writing-mode:vertical-rl; direction:rtl; font-size:48px; color:var(--gold); opacity:.4;
-    letter-spacing:10px; line-height:1.5;
-    text-shadow:0 0 20px var(--glow), 0 0 40px rgba(212,168,83,0.08);
+    writing-mode:vertical-rl; direction:rtl; font-size:52px; color:var(--gold); opacity:.45;
+    letter-spacing:12px; line-height:1.5;
+    text-shadow:0 0 20px var(--glow), 0 0 40px rgba(212,168,83,0.12);
     animation: dekorSagNefes 8s ease-in-out infinite;
   }
-  @keyframes dekorSagNefes{0%,100%{opacity:.4}50%{opacity:.6}}
+  @keyframes dekorSagNefes{0%,100%{opacity:.45}50%{opacity:.65}}
 
   #dekor-ayet{
     font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
-    writing-mode:vertical-rl; direction:rtl; font-size:16px; color:var(--gold); opacity:.3;
-    letter-spacing:3px; line-height:1.8; max-height:40vh; overflow:hidden;
+    writing-mode:vertical-rl; direction:rtl; font-size:18px; color:var(--gold); opacity:.35;
+    letter-spacing:4px; line-height:1.8; max-height:40vh; overflow:hidden;
     animation: dekorAyetDonus 20s linear infinite;
   }
-  @keyframes dekorAyetDonus{0%{opacity:.3;transform:translateY(0)}50%{opacity:.45;transform:translateY(-5px)}100%{opacity:.3;transform:translateY(0)}}
+  @keyframes dekorAyetDonus{0%{opacity:.35;transform:translateY(0)}50%{opacity:.5;transform:translateY(-5px)}100%{opacity:.35;transform:translateY(0)}}
 
   #dekor-sag::before,#dekor-sag::after{
-    content:''; position:absolute; right:15px; width:100px; height:100px;
-    border:1px solid var(--gold); opacity:.15;
+    content:''; position:absolute; right:15px; width:110px; height:110px;
+    border:1.5px solid var(--gold); opacity:.25;
     background:conic-gradient(from 0deg, transparent 0deg 88deg, var(--gold) 88deg 92deg, transparent 92deg 178deg, var(--gold) 178deg 182deg, transparent 182deg 268deg, var(--gold) 268deg 272deg, transparent 272deg 360deg);
   }
-  #dekor-sag::before{top:30px; border-radius:50%; transform:rotate(22.5deg); animation:dekorRozet 30s linear infinite}
-  #dekor-sag::after{bottom:30px; border-radius:50%; transform:rotate(-22.5deg); animation:dekorRozet 35s linear infinite reverse}
+  #dekor-sag::before{top:40px; border-radius:50%; transform:rotate(22.5deg); animation:dekorRozet 30s linear infinite}
+  #dekor-sag::after{bottom:40px; border-radius:50%; transform:rotate(-22.5deg); animation:dekorRozet 35s linear infinite reverse}
 
   #dekor-glow{position:fixed; width:300px; height:300px; border-radius:50%; pointer-events:none; z-index:39;
     background:radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 70%);
     transform:translate(-50%,-50%); opacity:0; transition:opacity .6s;
   }
 
-  @media(max-width:1200px){#dekor-sol{width:120px;opacity:.25}#dekor-sag{width:140px}}
+  @media(max-width:1200px){#dekor-sol{width:100px;opacity:.35}#dekor-sag{width:120px;opacity:.35}}
   @media(max-width:900px){#dekor-sol,#dekor-sag{display:none}#dekor-glow{display:none}}
 
   /* ===== İSLAMİ SÜSLEMELER — GÖRSEL DÖNÜŞÜM ===== */
@@ -799,20 +807,63 @@
 <!-- Parçacık container'ı -->
 <div id="particles" aria-hidden="true"></div>
 
-<!-- DEKOR: Kur'an deseni (sol) + hat sanatı (sağ) -->
-<div id="dekor-sol" aria-hidden="true"></div>
-<div id="dekor-sag" aria-hidden="true"><span>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span></div>
+<!-- DEKOR: Sol tarafta İslami geometrik rozet deseni -->
+<div id="dekor-sol" aria-hidden="true">
+  <svg width="160" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%">
+    <defs>
+      <pattern id="geo-sol" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+        <circle cx="40" cy="40" r="30" fill="none" stroke="#d4a853" stroke-width="0.5" opacity="0.2"/>
+        <circle cx="40" cy="40" r="18" fill="none" stroke="#d4a853" stroke-width="0.4" opacity="0.15"/>
+        <circle cx="40" cy="40" r="6" fill="none" stroke="#d4a853" stroke-width="0.3" opacity="0.2"/>
+        <path d="M40 10L55 25L70 40L55 55L40 70L25 55L10 40L25 25Z" fill="none" stroke="#d4a853" stroke-width="0.4" opacity="0.15"/>
+        <path d="M40 20L50 30L60 40L50 50L40 60L30 50L20 40L30 30Z" fill="none" stroke="#d4a853" stroke-width="0.3" opacity="0.12"/>
+        <line x1="0" y1="0" x2="40" y2="40" stroke="#d4a853" stroke-width="0.2" opacity="0.08"/>
+        <line x1="80" y1="0" x2="40" y2="40" stroke="#d4a853" stroke-width="0.2" opacity="0.08"/>
+        <line x1="0" y1="80" x2="40" y2="40" stroke="#d4a853" stroke-width="0.2" opacity="0.08"/>
+        <line x1="80" y1="80" x2="40" y2="40" stroke="#d4a853" stroke-width="0.2" opacity="0.08"/>
+      </pattern>
+      <linearGradient id="sol-fade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="white" stop-opacity="0.6"/>
+        <stop offset="60%" stop-color="white" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </linearGradient>
+      <mask id="sol-mask"><rect width="160" height="100%" fill="url(#sol-fade)"/></mask>
+    </defs>
+    <rect width="160" height="100%" fill="url(#geo-sol)" mask="url(#sol-mask)"/>
+  </svg>
+</div>
+
+<!-- DEKOR: Sağ tarafta hat sanatı + geometrik rozetler -->
+<div id="dekor-sag" aria-hidden="true">
+  <svg width="180" height="100%" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;width:100%;height:100%">
+    <defs>
+      <pattern id="geo-sag" x="0" y="0" width="90" height="90" patternUnits="userSpaceOnUse">
+        <circle cx="45" cy="45" r="35" fill="none" stroke="#d4a853" stroke-width="0.4" opacity="0.15"/>
+        <circle cx="45" cy="45" r="22" fill="none" stroke="#d4a853" stroke-width="0.3" opacity="0.12"/>
+        <path d="M45 10L65 30L45 50L25 30Z" fill="none" stroke="#d4a853" stroke-width="0.35" opacity="0.12"/>
+        <path d="M45 40L55 50L45 60L35 50Z" fill="none" stroke="#d4a853" stroke-width="0.25" opacity="0.1"/>
+      </pattern>
+      <linearGradient id="sag-fade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="white" stop-opacity="0"/>
+        <stop offset="40%" stop-color="white" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0.55"/>
+      </linearGradient>
+      <mask id="sag-mask"><rect width="180" height="100%" fill="url(#sag-fade)"/></mask>
+    </defs>
+    <rect width="180" height="100%" fill="url(#geo-sag)" mask="url(#sag-mask)"/>
+  </svg>
+  <span>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span>
+  <div id="dekor-ayet" style="font-family:'Amiri','Scheherazade New',serif;writing-mode:vertical-rl;direction:rtl;font-size:16px;color:#d4a853;opacity:.3;letter-spacing:3px;line-height:1.8;max-height:40vh;overflow:hidden">إِنَّ هَذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ</div>
+</div>
 
 <header>
-  <h1>📖 Kuran API <span>Ücretsiz & Limitsiz Kur'an Veri Merkezi</span></h1>
-  <div class="bismillah-decor">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
-  <p>fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
-  <div class="stats">
-    <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
-    <div class="stat"><b>114</b><i>Sure</i></div>
-    <div class="stat"><b>6236</b><i>Ayet</i></div>
-    <div class="stat"><b>30</b><i>Cüz</i></div>
-    <div class="stat"><b>604</b><i>Sayfa</i></div>
+  <h1 style="line-height:1.4"><img src="img/tr-flag.png" alt="🇹🇷" style="height:1em;vertical-align:middle;margin:0 6px;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,0.3)"><span style="position:relative;display:inline-block"><span style="font-weight:700">FG</span><span style="display:block;font-size:10px;font-weight:400;color:var(--dim);letter-spacing:1.5px;font-style:italic;white-space:nowrap">Bu harflerin Gizemi</span></span><img src="img/tr-flag.png" alt="🇹🇷" style="height:1em;vertical-align:middle;margin:0 6px;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,0.3)"> 📖 Ücretsiz & Limitsiz Kur'an-ı Kerim Veri Merkezi <img src="img/tr-flag.png" alt="🇹🇷" style="height:1em;vertical-align:middle;margin:0 6px;border-radius:2px;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></h1>
+  <div class="bismillah-decor">
+    بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+    <div style="font-family:Inter,sans-serif;font-size:12px;color:var(--dim);margin-top:6px;letter-spacing:0.5px;font-style:italic">Rahman ve Rahim olan Allah'ın adıyla</div>
+  </div>
+  <div id="anma-yazisi" style="display:none;position:absolute;left:0;right:0;top:8px;text-align:center;padding:20px 24px;font-family:Inter,sans-serif;font-size:13px;color:var(--gold);opacity:0;transition:opacity 1.2s ease;letter-spacing:0.5px;line-height:1.6;font-style:italic;z-index:2">
+    🕊️ Bu sayfa babam <b>Ferudun GÜBE</b> adına geleceğe bir miras kalması için yapılmıştır 🕊️
   </div>
 </header>
 
@@ -1083,6 +1134,7 @@
         <button onclick="kombinasyonUygula('altin')">✨ Altın</button>
         <button onclick="kombinasyonUygula('kirmizi')">🔥 Kırmızı</button>
         <button onclick="kombinasyonUygula('lila')">💜 Lila</button>
+        <button onclick="kombinasyonUygula('gizem')">✨ Harflerin Gizemi</button>
       </div>
     </div>
   </div>
@@ -1090,7 +1142,18 @@
 
 </main>
 
-<div class="footer">
+<div class="footer" style="text-align:center">
+  <div style="margin-bottom:16px">
+    <p style="color:var(--dim);font-size:13px;margin-bottom:12px">fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
+    <div class="stats" style="justify-content:center">
+      <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
+      <div class="stat"><b>114</b><i>Sure</i></div>
+      <div class="stat"><b>6236</b><i>Ayet</i></div>
+      <div class="stat"><b>30</b><i>Cüz</i></div>
+      <div class="stat"><b>604</b><i>Sayfa</i></div>
+    </div>
+  </div>
+  <hr style="border:none;border-top:1px solid var(--border);margin-bottom:12px">
   Kaynak: <a href="https://github.com/fawazahmed0/quran-api" target="_blank">github.com/fawazahmed0/quran-api</a> ·
   Tüm veriler <code style="font-size:11px">cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/</code> üzerinden canlı çekilir ·
   Lisans: Unlicense (kamu malı) · Bu sayfa: <b id="f-sure">—</b> ms
@@ -1752,6 +1815,8 @@ function temaUygula(t){
   const h=$('tema-hizli');
   if(h)h.textContent=t==='acik'?'🌙':'☀️';
   temaHesapla();
+  const anma=document.getElementById('anma-yazisi');
+  if(anma){anma.style.opacity='0';setTimeout(()=>anma.style.display='none',1300)}
 }
 
 function temaHesapla(){
@@ -1803,6 +1868,8 @@ function bolgeRenkUygula(bolge,hex){
   const ozId={vurgu:'renk-vurgu-ozel',bg:'renk-bg-ozel',panel:'renk-panel-ozel',border:'renk-border-ozel'}[bolge];
   const oz=$(ozId);
   if(oz)oz.value=hex;
+  const anma=document.getElementById('anma-yazisi');
+  if(anma && !_kombIci && anma.style.display!=='none'){_aktifKombinasyon='';anma.style.opacity='0';setTimeout(()=>anma.style.display='none',1300)}
 }
 
 const KOMBINASYONLAR={
@@ -1813,12 +1880,31 @@ const KOMBINASYONLAR={
   cicek:{vurgu:'#d4488e',bg:'#120e14',panel:'#1a1420',border:'#302040'},
   altin:{vurgu:'#c9a35c',bg:'#12100a',panel:'#1a1610',border:'#302818'},
   kirmizi:{vurgu:'#e05252',bg:'#120c0c',panel:'#1a1212',border:'#301a1a'},
-  lila:{vurgu:'#b58ae0',bg:'#100e14',panel:'#181420',border:'#281e38'}
+  lila:{vurgu:'#b58ae0',bg:'#100e14',panel:'#181420',border:'#281e38'},
+  gizem:{vurgu:'#d4a853',bg:'#06090e',panel:'rgba(12,20,30,0.85)',border:'rgba(212,168,83,0.15)'}
 };
+let _aktifKombinasyon='';
+let _kombIci=false;
 function kombinasyonUygula(id){
   const k=KOMBINASYONLAR[id];
   if(!k)return;
+  _aktifKombinasyon=id;
+  _kombIci=true;
   Object.keys(k).forEach(b=>bolgeRenkUygula(b,k[b]));
+  _kombIci=false;
+  const anma=document.getElementById('anma-yazisi');
+  if(id==='gizem'){
+    window.scrollTo({top:document.body.scrollHeight,behavior:'instant'});
+    setTimeout(()=>{
+      window.scrollTo({top:0,behavior:'smooth'});
+      setTimeout(()=>{
+        if(anma){anma.style.display='block';setTimeout(()=>anma.style.opacity='1',50)}
+      },2200);
+    },400);
+  } else if(anma){
+    anma.style.opacity='0';
+    setTimeout(()=>anma.style.display='none',1300);
+  }
 }
 
 function bolgePaletiKur(bolge,renkler){
