@@ -5,134 +5,343 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <title>Kuran API — Ücretsiz & Limitsiz Kur'an Veri Merkezi</title>
 <script>try{var t=localStorage.getItem('kuran_tema')||'koyu';document.documentElement.dataset.tema=t;}catch(e){}</script>
-<script>try{var l=localStorage.getItem('kuran_dil')||'tr';document.documentElement.lang=l==='ar'?'ar':(l==='en'?'en':'tr');if(l==='ar')document.documentElement.dir='rtl';}catch(e){}</script>
 <style>
   /* ===== DİNAMİK TEMA SİSTEMİ ===== */
-  /* Tüm renkler JavaScript ile HSL'den türetilir. CSS'de sadece sabit olmayan değerler kalır. */
   :root{
-    --mono:'Consolas','Courier New',monospace;
-    /* Varsayılanlar JS tarafından üzerine yazılır */
-    --bg:#0b1210; --panel:#101a16; --panel2:#15231d; --border:#1f352c;
-    --txt:#dce9e2; --dim:#8aa398; --gold:#c9a35c; --green:#3ddc97;
-    --green2:#2a8f68; --red:#e06c6c;
-    --on-vurgu:#06281a; --header-bg:linear-gradient(160deg,#0d1a14 0%,#123027 60%,#0d1a14 100%);
-    --nav-bg:rgba(11,18,16,.96); --pre-bg:#0a0f0d; --hover-bg:rgba(61,220,151,.05);
+    --mono:'SF Mono','Fira Code','Consolas',monospace;
+    --bg:#06090e; --panel:rgba(12,20,30,0.85); --panel2:rgba(16,26,40,0.9); --border:rgba(255,255,255,0.06);
+    --txt:#e8edf2; --dim:#7b8fa3; --gold:#d4a853; --green:#3ddc97;
+    --green2:#2a8f68; --red:#ff6b6b;
+    --on-vurgu:#041a10; --header-bg:linear-gradient(135deg,#06090e 0%,#0c1a14 40%,#0f2018 70%,#06090e 100%);
+    --nav-bg:rgba(6,9,14,0.92); --pre-bg:rgba(8,14,22,0.95); --hover-bg:rgba(212,168,83,0.06);
+    --glass:rgba(255,255,255,0.03); --glow:rgba(212,168,83,0.15);
+    --radius:16px; --radius-sm:10px;
   }
-  .renkler{display:flex; flex-wrap:wrap; gap:8px}
-  .renk{width:30px; height:30px; border-radius:50%; background:var(--r); border:2px solid transparent; padding:0; cursor:pointer}
-  .renk:hover{transform:scale(1.12)}
-  .renk.aktif{border-color:var(--txt); transform:scale(1.12)}
-  .renk-ozel{font-size:14px; color:var(--txt); display:flex; align-items:center; justify-content:center}
-  .tema-bolgeler{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:14px}
-  .tema-bolge{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px}
-  .tema-bolge label{font-size:13px; font-weight:600; color:var(--txt); display:flex; align-items:center; gap:6px; margin-bottom:8px}
-  .tema-bolge-info{font-weight:400; font-size:11px; color:var(--dim)}
-  .tema-bolge .renkler{display:flex;flex-wrap:wrap;gap:6px}
-  .tema-bolge .renk{width:26px;height:26px}
-  .tema-bolge input[type="color"]{display:none}
-  .tema-kombinasyonlar{margin-top:14px}
-  .tema-kombinasyonlar label{font-size:13px; font-weight:600; color:var(--dim); display:block; margin-bottom:6px}
-  .tema-kombinasyonlar .chips button{font-size:12px;padding:4px 10px}
   *{box-sizing:border-box; margin:0; padding:0}
-  body{background:var(--bg); color:var(--txt); font-family:'Segoe UI',system-ui,sans-serif; line-height:1.5}
-  a{color:var(--green)}
-  header{background:var(--header-bg); border-bottom:1px solid var(--border); padding:28px 20px 20px; text-align:center}
-  header h1{font-size:26px; letter-spacing:.5px}
-  header h1 span{color:var(--gold)}
-  header p{color:var(--dim); font-size:13px; margin-top:6px}
-  .stats{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:16px}
-  .stat{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:8px 16px; text-align:center; min-width:92px}
-  .stat b{display:block; font-size:20px; color:var(--green)}
-  .stat i{font-style:normal; font-size:11px; color:var(--dim)}
-  nav{position:sticky; top:0; z-index:50; background:var(--nav-bg); border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:4px; padding:8px 12px; justify-content:center}
-  nav a{color:var(--dim); text-decoration:none; font-size:12.5px; padding:5px 11px; border-radius:20px; border:1px solid transparent}
-  nav a:hover{color:var(--txt); border-color:var(--border)}
-  main{max-width:1100px; margin:0 auto; padding:24px 16px 60px}
-  section{background:var(--panel); border:1px solid var(--border); border-radius:14px; margin-bottom:26px; overflow:hidden}
-  .sec-head{display:flex; align-items:center; gap:10px; padding:14px 18px; background:var(--panel2); cursor:pointer; user-select:none; border-radius:12px; transition:background .15s}
-  .sec-head:hover{background:var(--hover-bg)}
-  .sec-head .no{background:var(--green); color:var(--on-vurgu); font-weight:700; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0}
-  .sec-head h2{font-size:16px; font-weight:600; margin:0}
-  .sec-head code{font-family:var(--mono); font-size:11.5px; color:var(--gold); margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px}
-  .sec-head .chevron{margin-left:8px; font-size:12px; color:var(--dim); transition:transform .2s}
-  section.acik .sec-head .chevron{transform:rotate(90deg)}
-  .sec-body{padding:16px 18px; display:none; border-top:1px solid var(--border)}
-  section.acik .sec-body{display:block}
-  .desc{color:var(--dim); font-size:13px; margin-bottom:14px}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg); color:var(--txt); font-family:'Inter','Segoe UI',system-ui,sans-serif; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased}
+
+  /* İslami tessellation arka plan deseni */
+  body::before{content:''; position:fixed; inset:0; pointer-events:none; z-index:-1;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23d4a853' stroke-width='0.5' opacity='0.04'%3E%3Cpath d='M60 0L75 15L60 30L45 15Z'/%3E%3Cpath d='M0 60L15 45L30 60L15 75Z'/%3E%3Cpath d='M60 90L75 105L60 120L45 105Z'/%3E%3Cpath d='M90 60L105 45L120 60L105 75Z'/%3E%3Cpath d='M60 30L90 60L60 90L30 60Z'/%3E%3Ccircle cx='60' cy='60' r='8'/%3E%3Ccircle cx='60' cy='60' r='20'/%3E%3Cpath d='M40 0L60 20L80 0'/%3E%3Cpath d='M120 40L100 60L120 80'/%3E%3Cpath d='M80 120L60 100L40 120'/%3E%3Cpath d='M0 80L20 60L0 40'/%3E%3C/g%3E%3C/svg%3E"),
+      radial-gradient(ellipse at 20% 20%, rgba(212,168,83,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(61,220,151,0.03) 0%, transparent 50%);
+    background-size:120px 120px, 100% 100%, 100% 100%;
+  }
+
+  a{color:var(--gold); text-decoration:none; transition:color .2s}
+  a:hover{color:var(--green)}
+
+  /* ===== HEADER ===== */
+  header{
+    background:var(--header-bg);
+    border-bottom:1px solid var(--border);
+    padding:48px 24px 36px; text-align:center;
+    position:relative; overflow:hidden;
+  }
+  header::before{
+    content:''; position:absolute; inset:0;
+    background:
+      repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 44deg, rgba(212,168,83,0.03) 44deg 46deg, transparent 46deg 90deg);
+    background-size:80px 80px;
+    animation:headerPattern 120s linear infinite;
+  }
+  @keyframes headerPattern{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  header>*{position:relative; z-index:1}
+  header h1{font-size:32px; font-weight:700; letter-spacing:-0.5px; margin-bottom:4px}
+  header h1 span{
+    background:linear-gradient(135deg,var(--gold),#f0d890,var(--gold));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  }
+  header p{color:var(--dim); font-size:13px; font-weight:400; letter-spacing:0.3px}
+  .stats{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:24px}
+  .stat{
+    background:var(--glass); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:12px 20px; text-align:center; min-width:100px;
+    transition:transform .2s, border-color .2s;
+  }
+  .stat:hover{transform:translateY(-2px); border-color:rgba(212,168,83,0.2)}
+  .stat b{display:block; font-size:24px; font-weight:700; color:var(--gold); line-height:1.2}
+  .stat i{font-style:normal; font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1px; font-weight:500}
+
+  /* ===== NAVIGATION ===== */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(6,9,14,0.88); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    display:flex; flex-wrap:wrap; gap:4px; padding:10px 16px; justify-content:center;
+  }
+  nav a{
+    color:var(--dim); text-decoration:none; font-size:12.5px; font-weight:500;
+    padding:6px 14px; border-radius:24px; border:1px solid transparent;
+    transition:all .2s;
+  }
+  nav a:hover{color:var(--txt); border-color:var(--border); background:var(--glass)}
+
+  /* ===== MAIN ===== */
+  main{max-width:1100px; margin:0 auto; padding:32px 20px 80px}
+
+  /* ===== SECTIONS ===== */
+  section{
+    background:var(--panel); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    border:1px solid var(--border); border-radius:var(--radius);
+    margin-bottom:28px; overflow:hidden;
+    transition:border-color .3s;
+  }
+  section:hover{border-color:rgba(255,255,255,0.08)}
+  .sec-head{
+    display:flex; align-items:center; gap:12px;
+    padding:16px 20px; border-bottom:1px solid var(--border);
+    background:linear-gradient(135deg, rgba(212,168,83,0.04) 0%, transparent 100%);
+  }
+  .sec-head .no{
+    background:linear-gradient(135deg,var(--gold),#f0d890); color:#1a1a2e;
+    font-weight:700; width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; flex-shrink:0;
+    box-shadow:0 2px 8px rgba(212,168,83,0.2);
+  }
+  .sec-head h2{font-size:17px; font-weight:600; letter-spacing:-0.3px}
+  .sec-head code{
+    font-family:var(--mono); font-size:11px; color:var(--gold); opacity:0.7;
+    margin-left:auto; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:340px;
+  }
+  .sec-body{padding:20px}
+  .desc{color:var(--dim); font-size:13.5px; margin-bottom:16px; line-height:1.7}
   .desc b{color:var(--gold); font-weight:600}
-  .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end; margin-bottom:14px}
-  .ctl{display:flex; flex-direction:column; gap:4px}
-  .ctl label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:.5px}
-  select,input[type=text],input[type=password],input[type=number],textarea{background:var(--panel2); color:var(--txt); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-size:13.5px; min-width:150px; outline:none}
-  select:focus,input:focus,textarea:focus{border-color:var(--green2)}
-  input[type=range]{accent-color:var(--green); background:transparent; cursor:pointer}
-  button{background:var(--green); color:var(--on-vurgu); border:none; border-radius:8px; padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer}
-  button:hover{filter:brightness(1.1)}
-  button.ghost{background:transparent; color:var(--green); border:1px solid var(--green2)}
-  button.ghost:hover{background:var(--panel2)}
-  button.small{padding:5px 10px; font-size:12px; border-radius:6px}
-  button:disabled{opacity:.45; cursor:not-allowed}
+
+  /* ===== CONTROLS ===== */
+  .controls{display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin-bottom:16px}
+  .ctl{display:flex; flex-direction:column; gap:5px}
+  .ctl label{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:0.8px; font-weight:500}
+  select,input[type=text],input[type=password],input[type=number],textarea{
+    background:rgba(255,255,255,0.04); color:var(--txt);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:10px 14px; font-size:13.5px; font-family:inherit;
+    min-width:150px; outline:none;
+    transition:border-color .2s, background .2s;
+  }
+  select:focus,input:focus,textarea:focus{border-color:var(--gold); background:rgba(212,168,83,0.04)}
+  input[type=range]{accent-color:var(--gold); background:transparent; cursor:pointer; height:6px}
+
+  /* ===== BUTTONS ===== */
+  button{
+    background:linear-gradient(135deg,var(--gold),#c99a40); color:#1a1a2e;
+    border:none; border-radius:var(--radius-sm);
+    padding:10px 22px; font-size:13.5px; font-weight:600; font-family:inherit;
+    cursor:pointer; transition:all .2s;
+    box-shadow:0 2px 8px rgba(212,168,83,0.15);
+  }
+  button:hover{filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 4px 12px rgba(212,168,83,0.25)}
+  button:active{transform:translateY(0)}
+  button.ghost{
+    background:transparent; color:var(--gold);
+    border:1px solid rgba(212,168,83,0.3);
+    box-shadow:none;
+  }
+  button.ghost:hover{background:rgba(212,168,83,0.08); border-color:var(--gold)}
+  button.small{padding:6px 14px; font-size:12px; border-radius:8px}
+  button:disabled{opacity:.4; cursor:not-allowed; transform:none}
+
+  /* ===== STATUS ===== */
   .status{font-family:var(--mono); font-size:12px; color:var(--dim); margin-bottom:10px; min-height:18px}
   .status.ok{color:var(--green)} .status.err{color:var(--red)}
-  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+
+  /* ===== GRID & TABLES ===== */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:18px}
   @media(max-width:760px){.grid2{grid-template-columns:1fr}}
-  .table-wrap{max-height:420px; overflow:auto; border:1px solid var(--border); border-radius:10px}
+  .table-wrap{
+    max-height:420px; overflow:auto;
+    border:2px solid rgba(212,168,83,0.12); border-radius:var(--radius-sm);
+    scrollbar-width:thin; scrollbar-color:rgba(212,168,83,0.2) transparent;
+    position:relative; background:rgba(12,20,30,0.4);
+    box-shadow:inset 0 0 20px rgba(0,0,0,0.15);
+  }
+  .table-wrap::before{
+    content:''; position:absolute; inset:3px;
+    border:1px solid rgba(212,168,83,0.06); border-radius:8px; pointer-events:none; z-index:1;
+  }
+  .table-wrap::-webkit-scrollbar{width:6px}
+  .table-wrap::-webkit-scrollbar-thumb{background:var(--border); border-radius:3px}
   table{width:100%; border-collapse:collapse; font-size:13px}
-  th{position:sticky; top:0; background:var(--panel2); text-align:left; padding:8px 10px; font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--dim)}
-  td{padding:7px 10px; border-top:1px solid var(--border); vertical-align:top}
+  th{
+    position:sticky; top:0;
+    background:rgba(12,20,30,0.95); backdrop-filter:blur(8px);
+    text-align:left; padding:10px 14px;
+    font-size:11px; text-transform:uppercase; letter-spacing:0.8px;
+    color:var(--dim); font-weight:600;
+    border-bottom:1px solid var(--border);
+  }
+  td{padding:9px 14px; border-top:1px solid var(--border); vertical-align:top}
+  tr{transition:background .15s}
   tr:hover td{background:var(--hover-bg)}
-  .verse{display:flex; gap:10px; padding:8px 12px; border-bottom:1px solid var(--border); font-size:14px}
+
+  /* ===== VERSES ===== */
+  .verse{
+    display:flex; gap:12px; padding:10px 16px;
+    border-bottom:1px solid var(--border);
+    font-size:14px; transition:background .15s;
+  }
   .verse:last-child{border-bottom:none}
-  .verse .vn{color:var(--gold); font-family:var(--mono); font-size:12px; min-width:34px; text-align:right; padding-top:2px}
+  .verse:hover{background:var(--hover-bg)}
+  .verse .vn{
+    color:var(--gold); font-family:var(--mono); font-size:12px;
+    min-width:36px; text-align:right; padding-top:3px; font-weight:600;
+  }
   .verse.arabic{flex-direction:row-reverse; text-align:right}
-  .verse.arabic .vt{font-family:'Scheherazade New','Traditional Arabic','Amiri','Noto Naskh Arabic',serif; font-size:24px; line-height:2; direction:rtl}
-  .verse .vt{flex:1}
-  pre{background:var(--pre-bg); border:1px solid var(--border); border-radius:10px; padding:12px; font-family:var(--mono); font-size:12px; overflow:auto; max-height:340px; white-space:pre-wrap; word-break:break-all}
-  .cards{display:flex; flex-wrap:wrap; gap:10px}
-  .card{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; min-width:110px}
-  .card b{display:block; font-size:22px; color:var(--green)}
+  .verse.arabic .vt{
+    font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
+    font-size:26px; line-height:2.1; direction:rtl;
+  }
+  .verse .vt{flex:1; line-height:1.7}
+
+  /* ===== CODE ===== */
+  pre{
+    background:var(--pre-bg); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:14px; font-family:var(--mono); font-size:12px;
+    overflow:auto; max-height:340px; white-space:pre-wrap; word-break:break-all;
+  }
+
+  /* ===== CARDS ===== */
+  .cards{display:flex; flex-wrap:wrap; gap:12px}
+  .card{
+    background:var(--glass); backdrop-filter:blur(8px);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:14px 18px; min-width:120px;
+    transition:transform .2s, border-color .2s;
+  }
+  .card:hover{transform:translateY(-2px); border-color:rgba(212,168,83,0.15)}
+  .card b{display:block; font-size:24px; color:var(--gold); font-weight:700}
   .card span{font-size:11.5px; color:var(--dim)}
+
+  /* ===== PAIR (yan yana) ===== */
   .pair{display:grid; grid-template-columns:1fr 1fr; gap:0}
-  .pair .col{border:1px solid var(--border); border-radius:10px; overflow:hidden}
-  .pair .col .col-head{padding:8px 12px; font-size:12.5px; font-weight:600; background:var(--panel2); border-bottom:1px solid var(--border)}
-  .pair .col .col-head.rtl{direction:rtl; text-align:right; font-family:'Scheherazade New','Traditional Arabic',serif; font-size:14px}
-  .col-head{padding:10px 12px; font-size:12.5px; font-weight:600; background:var(--panel2); border:1px solid var(--border); border-radius:10px 10px 0 0; border-bottom:none}
+  .pair .col{border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden}
+  .pair .col .col-head{
+    padding:10px 14px; font-size:12.5px; font-weight:600;
+    background:linear-gradient(135deg, rgba(212,168,83,0.04) 0%, transparent 100%);
+    border-bottom:1px solid var(--border);
+  }
+  .pair .col .col-head.rtl{direction:rtl; text-align:right; font-family:'Amiri','Scheherazade New',serif; font-size:15px}
+  .col-head{
+    padding:12px 16px; font-size:12.5px; font-weight:600;
+    background:linear-gradient(135deg, rgba(212,168,83,0.04) 0%, transparent 100%);
+    border:1px solid var(--border); border-radius:var(--radius-sm) var(--radius-sm) 0 0; border-bottom:none;
+  }
   @media(max-width:760px){.pair{grid-template-columns:1fr}}
-  .nav-sure{display:flex; gap:8px; margin-top:10px}
-  .footer{color:var(--dim); font-size:12px; text-align:center; padding:20px; border-top:1px solid var(--border)}
-  .chips{display:flex; flex-wrap:wrap; gap:6px}
-  .chips button{background:var(--panel2); color:var(--dim); border:1px solid var(--border); border-radius:16px; padding:4px 12px; font-size:12px; font-weight:500; cursor:pointer}
-  .chips button:hover{color:var(--txt); border-color:var(--green2)}
-  .chips button.aktif{background:var(--green); color:var(--on-vurgu); border-color:var(--green)}
+  .nav-sure{display:flex; gap:10px; margin-top:12px}
+
+  /* ===== CHIPS ===== */
+  .chips{display:flex; flex-wrap:wrap; gap:8px}
+  .chips button{
+    background:var(--glass); color:var(--dim); border:1px solid var(--border);
+    border-radius:20px; padding:5px 16px; font-size:12.5px; font-weight:500;
+    cursor:pointer; transition:all .2s; box-shadow:none;
+  }
+  .chips button:hover{color:var(--txt); border-color:rgba(212,168,83,0.3); background:rgba(212,168,83,0.06)}
+  .chips button.aktif{
+    background:linear-gradient(135deg,var(--gold),#c99a40); color:#1a1a2e;
+    border-color:var(--gold); box-shadow:0 2px 8px rgba(212,168,83,0.2);
+  }
+
+  /* ===== SEARCH ===== */
   .ara-satir{cursor:pointer}
-  .ara-panel-arapca{font-size:24px; line-height:2; direction:rtl; text-align:right; font-family:'Scheherazade New','Traditional Arabic','Amiri','Noto Naskh Arabic',serif; word-break:break-word}
-  .footer a{color:var(--gold)}
-  .badge{display:inline-block; background:var(--panel2); border:1px solid var(--border); border-radius:6px; font-size:11px; padding:1px 7px; margin-left:6px; color:var(--dim)}
-  .badge.la{color:var(--gold); border-color:#5a4a26}
-  .badge.info{color:var(--gold); border-color:var(--gold); cursor:help}
-  .spin{display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:sp .7s linear infinite; vertical-align:-2px; margin-right:6px}
+  .ara-panel-arapca{
+    font-size:26px; line-height:2.1; direction:rtl; text-align:right;
+    font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
+    word-break:break-word; padding:16px;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer{
+    color:var(--dim); font-size:12px; text-align:center;
+    padding:28px 20px; border-top:1px solid var(--border);
+    background:linear-gradient(180deg, transparent 0%, rgba(212,168,83,0.02) 100%);
+  }
+  .footer a{color:var(--gold); font-weight:500}
+  .footer code{font-family:var(--mono); font-size:11px; background:var(--glass); padding:2px 6px; border-radius:4px}
+
+  /* ===== BADGES ===== */
+  .badge{
+    display:inline-block; background:var(--glass);
+    border:1px solid var(--border); border-radius:6px;
+    font-size:11px; padding:2px 8px; margin-left:6px; color:var(--dim);
+  }
+  .badge.la{color:var(--gold); border-color:rgba(212,168,83,0.3)}
+  .badge.info{color:var(--gold); border-color:rgba(212,168,83,0.3); cursor:help}
+
+  /* ===== SPINNER ===== */
+  .spin{
+    display:inline-block; width:12px; height:12px;
+    border:2px solid var(--border); border-top-color:var(--gold);
+    border-radius:50%; animation:sp .7s linear infinite;
+    vertical-align:-2px; margin-right:6px;
+  }
   @keyframes sp{to{transform:rotate(360deg)}}
-  .msj-kart{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:10px}
-  /* ===== MOBİL HAMBURGER MENÜ ===== */
-  .nav-hamburger{display:none; background:none; color:var(--dim); border:1px solid var(--border); border-radius:8px; padding:6px 10px; font-size:18px; cursor:pointer; line-height:1}
-  .nav-hamburger:hover{color:var(--txt); border-color:var(--green2)}
+
+  /* ===== MESSAGE CARD ===== */
+  .msj-kart{
+    background:var(--glass); backdrop-filter:blur(8px);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:14px 16px; margin-bottom:12px;
+    transition:border-color .2s;
+  }
+  .msj-kart:hover{border-color:rgba(212,168,83,0.15)}
+
+  /* ===== HAMBURGER ===== */
+  .nav-hamburger{
+    display:none; background:none; color:var(--dim);
+    border:1px solid var(--border); border-radius:8px;
+    padding:7px 12px; font-size:18px; cursor:pointer; line-height:1;
+    transition:all .2s;
+  }
+  .nav-hamburger:hover{color:var(--txt); border-color:rgba(212,168,83,0.3)}
   .nav-links{display:flex; flex-wrap:wrap; gap:4px; justify-content:center}
   @media(max-width:900px){
     .nav-hamburger{display:block}
-    .nav-links{display:none; position:absolute; top:100%; left:0; right:0; background:var(--nav-bg); border-bottom:1px solid var(--border); padding:8px 12px; z-index:60; flex-direction:column; align-items:stretch}
+    .nav-links{
+      display:none; position:absolute; top:100%; left:0; right:0;
+      background:rgba(6,9,14,0.96); backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border); padding:12px 16px;
+      z-index:60; flex-direction:column; align-items:stretch;
+    }
     .nav-links.acik{display:flex}
-    .nav-links a{padding:8px 12px; border-radius:8px; text-align:left}
+    .nav-links a{padding:10px 14px; border-radius:8px; text-align:left}
   }
-  /* ===== MİHRAB DEKORATİF ÇERÇEVE ===== */
+
+  /* ===== TEMA SİSTEMİ ===== */
+  .renkler{display:flex; flex-wrap:wrap; gap:8px}
+  .renk{width:30px; height:30px; border-radius:50%; background:var(--r); border:2px solid transparent; padding:0; cursor:pointer; transition:all .2s}
+  .renk:hover{transform:scale(1.15); box-shadow:0 0 12px rgba(255,255,255,0.1)}
+  .renk.aktif{border-color:var(--txt); transform:scale(1.15); box-shadow:0 0 12px rgba(255,255,255,0.15)}
+  .renk-ozel{font-size:14px; color:var(--txt); display:flex; align-items:center; justify-content:center}
+  .tema-bolgeler{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px; margin-top:16px}
+  .tema-bolge{
+    background:var(--glass); backdrop-filter:blur(8px);
+    border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:14px; transition:border-color .2s;
+  }
+  .tema-bolge:hover{border-color:rgba(255,255,255,0.08)}
+  .tema-bolge label{font-size:13px; font-weight:600; color:var(--txt); display:flex; align-items:center; gap:6px; margin-bottom:10px}
+  .tema-bolge-info{font-weight:400; font-size:11px; color:var(--dim)}
+  .tema-bolge .renkler{display:flex;flex-wrap:wrap;gap:6px}
+  .tema-bolge .renk{width:28px;height:28px}
+  .tema-bolge input[type="color"]{display:none}
+  .tema-kombinasyonlar{margin-top:16px}
+  .tema-kombinasyonlar label{font-size:13px; font-weight:600; color:var(--dim); display:block; margin-bottom:8px}
+  .tema-kombinasyonlar .chips button{font-size:12px;padding:5px 12px}
+
+  /* ===== MİHRAB ÇERÇEVE ===== */
   .mihrab-frame{position:relative; display:inline-block}
   .mihrab-frame::before{content:''; position:absolute; top:-4px; left:50%; transform:translateX(-50%); width:60%; height:8px; border-radius:50% 50% 0 0; border:1px solid var(--gold); border-bottom:none; opacity:.3}
-  /* ===== DEKOR: sol İslami desen + sağ hat sanatı (tema-renk uyumlu, etkileşimli) ===== */
-  #dekor-sol,#dekor-sag{position:fixed; top:0; height:100vh; pointer-events:none; user-select:none; z-index:40; transition:opacity .4s, filter .4s}
 
-  /* Sol taraf: çok katmanlı İslami yıldız + geometrik desen — HOVER İLE PARLAMA */
+  /* ===== DEKORASYON ===== */
+  #dekor-sol,#dekor-sag{position:fixed; top:0; height:100vh; pointer-events:none; user-select:none; z-index:40; transition:opacity .4s, filter .4s}
   #dekor-sol{left:0; width:200px; overflow:hidden;
     background:
       repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 40deg, var(--gold) 40deg 41deg, transparent 41deg 80deg),
@@ -143,139 +352,698 @@
       radial-gradient(circle at 100% 100%, var(--gold) 1.5px, transparent 1.5px),
       radial-gradient(circle at 50% 50%, var(--gold) 1px, transparent 1px);
     background-size: 120px 120px, 120px 120px, 120px 120px, 120px 120px, 120px 120px, 120px 120px, 60px 60px;
-    opacity:.45;
-    mask-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+    opacity:.35;
+    mask-image: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, transparent 100%);
     animation: dekorSolHareket 60s linear infinite;
   }
-  #dekor-sol:hover{opacity:.7; filter:drop-shadow(0 0 15px color-mix(in srgb, var(--gold) 30%, transparent)); pointer-events:auto}
-  #dekor-sol:hover::before,#dekor-sol:hover::after{animation-duration:12s!important; opacity:.4}
-
-  /* Sol üst + alt köşe rozetleri — hover'da hızlanır */
+  #dekor-sol:hover{opacity:.6; filter:drop-shadow(0 0 15px var(--glow)); pointer-events:auto}
   #dekor-sol::before,#dekor-sol::after{
     content:''; position:absolute; left:10px; width:140px; height:140px;
-    border:1.5px solid var(--gold); opacity:.25;
-    background:radial-gradient(circle, var(--gold) 1px, transparent 1px);
-    background-size:12px 12px;
-    transition: opacity .4s, animation-duration .4s;
+    border:1.5px solid var(--gold); opacity:.2;
+    background:radial-gradient(circle, var(--gold) 1px, transparent 1px); background-size:12px 12px;
   }
   #dekor-sol::before{top:20px; border-radius:50%; transform:rotate(15deg); animation:dekorRozet 20s linear infinite}
   #dekor-sol::after{bottom:20px; border-radius:50%; transform:rotate(-15deg); animation:dekorRozet 25s linear infinite reverse}
   @keyframes dekorRozet{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  @keyframes dekorSolHareket{from{background-position:0 0}to{background-position:0 120px}}
 
-  /* Sağ taraf: hat sanatı + dekoratif çerçeve — hover'da parlar, tıklanabilir */
   #dekor-sag{right:0; width:220px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px;
     background:
-      radial-gradient(ellipse at center, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 65%),
-      linear-gradient(to left, color-mix(in srgb, var(--gold) 12%, transparent) 0%, transparent 3px);
+      radial-gradient(ellipse at center, rgba(212,168,83,0.06) 0%, transparent 65%),
+      linear-gradient(to left, rgba(212,168,83,0.08) 0%, transparent 3px);
     pointer-events:auto; cursor:default;
   }
-  #dekor-sag:hover{opacity:.85; filter:drop-shadow(0 0 20px color-mix(in srgb, var(--gold) 25%, transparent))}
+  #dekor-sag:hover{opacity:.85; filter:drop-shadow(0 0 20px var(--glow))}
   #dekor-sag span{font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
-    writing-mode:vertical-rl; direction:rtl; font-size:48px; color:var(--gold); opacity:.5;
+    writing-mode:vertical-rl; direction:rtl; font-size:48px; color:var(--gold); opacity:.4;
     letter-spacing:10px; line-height:1.5;
-    text-shadow:0 0 20px color-mix(in srgb, var(--gold) 25%, transparent), 0 0 40px color-mix(in srgb, var(--gold) 10%, transparent);
+    text-shadow:0 0 20px var(--glow), 0 0 40px rgba(212,168,83,0.08);
     animation: dekorSagNefes 8s ease-in-out infinite;
-    transition: opacity .4s, letter-spacing .4s;
   }
-  #dekor-sag:hover span{opacity:.7; letter-spacing:14px}
-  /* Sağ tarafta dönen ayet */
-  #dekor-ayet{font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
-    writing-mode:vertical-rl; direction:rtl; font-size:16px; color:var(--gold); opacity:.35;
+  @keyframes dekorSagNefes{0%,100%{opacity:.4}50%{opacity:.6}}
+
+  #dekor-ayet{
+    font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
+    writing-mode:vertical-rl; direction:rtl; font-size:16px; color:var(--gold); opacity:.3;
     letter-spacing:3px; line-height:1.8; max-height:40vh; overflow:hidden;
     animation: dekorAyetDonus 20s linear infinite;
-    transition: opacity .5s;
   }
-  #dekor-sag:hover #dekor-ayet{opacity:.55}
-  @keyframes dekorAyetDonus{0%{opacity:.35;transform:translateY(0)}50%{opacity:.5;transform:translateY(-5px)}100%{opacity:.35;transform:translateY(0)}}
+  @keyframes dekorAyetDonus{0%{opacity:.3;transform:translateY(0)}50%{opacity:.45;transform:translateY(-5px)}100%{opacity:.3;transform:translateY(0)}}
 
-  /* Sağ üst + alt dekoratif köşe */
   #dekor-sag::before,#dekor-sag::after{
     content:''; position:absolute; right:15px; width:100px; height:100px;
-    border:1px solid var(--gold); opacity:.18;
-    background:
-      conic-gradient(from 0deg, transparent 0deg 88deg, var(--gold) 88deg 92deg, transparent 92deg 178deg, var(--gold) 178deg 182deg, transparent 182deg 268deg, var(--gold) 268deg 272deg, transparent 272deg 360deg);
+    border:1px solid var(--gold); opacity:.15;
+    background:conic-gradient(from 0deg, transparent 0deg 88deg, var(--gold) 88deg 92deg, transparent 92deg 178deg, var(--gold) 178deg 182deg, transparent 182deg 268deg, var(--gold) 268deg 272deg, transparent 272deg 360deg);
   }
   #dekor-sag::before{top:30px; border-radius:50%; transform:rotate(22.5deg); animation:dekorRozet 30s linear infinite}
   #dekor-sag::after{bottom:30px; border-radius:50%; transform:rotate(-22.5deg); animation:dekorRozet 35s linear infinite reverse}
 
-  /* Ortak: ince yatay desen çizgileri */
-  #dekor-sol::before{background:radial-gradient(circle, var(--gold) 1px, transparent 1px); background-size:14px 14px}
-  #dekor-sag::before{background:conic-gradient(from 0deg, transparent 0deg 88deg, var(--gold) 88deg 92deg, transparent 92deg 178deg, var(--gold) 178deg 182deg, transparent 182deg 268deg, var(--gold) 268deg 272deg, transparent 272deg 360deg)}
-
-  /* Fare takipli parlama efekti */
   #dekor-glow{position:fixed; width:300px; height:300px; border-radius:50%; pointer-events:none; z-index:39;
-    background:radial-gradient(circle, color-mix(in srgb, var(--gold) 8%, transparent) 0%, transparent 70%);
+    background:radial-gradient(circle, rgba(212,168,83,0.06) 0%, transparent 70%);
     transform:translate(-50%,-50%); opacity:0; transition:opacity .6s;
   }
-  body:hover #dekor-glow{opacity:1}
-  /* Scroll paralaks */
-  @media(prefers-reduced-motion:no-preference){
-    #dekor-sol{will-change:transform}
-    #dekor-sag span{will-change:transform}
+
+  @media(max-width:1200px){#dekor-sol{width:120px;opacity:.25}#dekor-sag{width:140px}}
+  @media(max-width:900px){#dekor-sol,#dekor-sag{display:none}#dekor-glow{display:none}}
+
+  /* ===== İSLAMİ SÜSLEMELER — GÖRSEL DÖNÜŞÜM ===== */
+
+  /* Parçacık container'ı */
+  #particles{position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden}
+  .particle{
+    position:absolute; border-radius:50%;
+    background:radial-gradient(circle,var(--gold),transparent);
+    animation:particleFloat linear infinite;
+    opacity:0;
+  }
+  @keyframes particleFloat{
+    0%{transform:translateY(100vh) rotate(0deg); opacity:0}
+    10%{opacity:.6} 90%{opacity:.6}
+    100%{transform:translateY(-20px) rotate(360deg); opacity:0}
   }
 
-  /* Responsive: küçük ekranlarda gizle */
-  @media(max-width:1200px){#dekor-sol{width:120px;opacity:.3}#dekor-sag{width:140px}}
-  @media(max-width:900px){#dekor-sol,#dekor-sag{display:none}#dekor-glow{display:none}}
-  /* RTL + Dil seçici */
-  .dil-sec{display:flex;gap:2px;margin-left:6px}
-  .dil-sec button{background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:600;cursor:pointer}
-  .dil-sec button:hover{color:var(--txt);border-color:var(--green2)}
-  .dil-sec button.aktif{background:var(--green);color:var(--on-vurgu);border-color:var(--green)}
-  [dir="rtl"] body{text-align:right}
-  [dir="rtl"] nav{direction:rtl}
-  [dir="rtl"] .sec-head code{margin-left:0;margin-right:auto}
-  [dir="rtl"] .nav-sure{flex-direction:row-reverse}
-  [dir="rtl"] .verse{flex-direction:row-reverse}
+  /* Yıldız parçacıkları */
+  .star-particle{
+    position:absolute; width:8px; height:8px;
+    background:transparent;
+    animation:starTwinkle 3s ease-in-out infinite;
+  }
+  .star-particle::before,.star-particle::after{
+    content:''; position:absolute; background:var(--gold);
+  }
+  .star-particle::before{width:100%; height:2px; top:3px; border-radius:1px}
+  .star-particle::after{width:2px; height:100%; left:3px; border-radius:1px}
+  @keyframes starTwinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.8;transform:scale(1.2)}}
+
+  /* ===== HEADER KUBBE MOTİFİ ===== */
+  header::after{
+    content:''; position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
+    width:200px; height:40px;
+    background:
+      radial-gradient(ellipse at 50% 100%, transparent 68%, var(--bg) 70%),
+      radial-gradient(ellipse at 50% 0%, var(--gold) 0%, transparent 70%);
+    opacity:.08;
+    clip-path:polygon(50% 0%, 100% 100%, 0% 100%);
+  }
+
+  /* Gold glow header底线 */
+  header{
+    border-bottom:none !important;
+    box-shadow:0 1px 0 0 rgba(212,168,83,0.2), 0 4px 30px rgba(212,168,83,0.05);
+  }
+  header::before{
+    background:
+      repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg 44deg, rgba(212,168,83,0.04) 44deg 46deg, transparent 46deg 90deg),
+      radial-gradient(circle at 50% 100%, rgba(212,168,83,0.06) 0%, transparent 60%);
+    background-size:80px 80px, 100% 100%;
+    animation:headerPattern 120s linear infinite;
+  }
+
+  /* Bismillah dekoratif başlık */
+  .bismillah-decor{
+    font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
+    font-size:28px; color:var(--gold); text-align:center;
+    margin:8px 0 0; opacity:.7; direction:rtl;
+    text-shadow:0 0 20px rgba(212,168,83,0.2);
+    animation:bismillahGlow 4s ease-in-out infinite;
+  }
+  @keyframes bismillahGlow{0%,100%{opacity:.7;text-shadow:0 0 20px rgba(212,168,83,0.2)}50%{opacity:.9;text-shadow:0 0 30px rgba(212,168,83,0.35)}}
+
+  /* ===== SECTION İSLAMİ MİHRAB BAŞLIKLARI ===== */
+  section{
+    border:none !important;
+    position:relative;
+    overflow:visible !important;
+    margin-bottom:36px;
+    background:var(--panel) !important;
+    border-radius:var(--radius) !important;
+    box-shadow:0 2px 20px rgba(0,0,0,0.3), inset 0 1px 0 rgba(212,168,83,0.06);
+  }
+  section::before{
+    content:''; position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+    width:40px; height:10px; z-index:2;
+    border-left:20px solid transparent; border-right:20px solid transparent;
+    border-top:10px solid rgba(212,168,83,0.08);
+  }
+  section::after{
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent 10%, rgba(212,168,83,0.12) 30%, rgba(212,168,83,0.2) 50%, rgba(212,168,83,0.12) 70%, transparent 90%);
+    border-radius:var(--radius) var(--radius) 0 0;
+  }
+  section:hover{
+    box-shadow:0 4px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(212,168,83,0.1), 0 0 40px rgba(212,168,83,0.03);
+  }
+
+  /* Mihrab kemer başlık */
+  .sec-head{
+    background:linear-gradient(180deg, rgba(212,168,83,0.06) 0%, transparent 100%) !important;
+    border-bottom:1px solid rgba(212,168,83,0.1) !important;
+    padding:18px 24px 14px !important;
+    position:relative;
+  }
+  .sec-head::before{
+    content:''; position:absolute; bottom:0; left:15%; right:15%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(212,168,83,0.3), transparent) !important;
+    opacity:1 !important;
+  }
+  .sec-head::after{
+    content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
+    width:0; height:0;
+    border-left:18px solid transparent; border-right:18px solid transparent;
+    border-top:8px solid rgba(212,168,83,0.15);
+  }
+
+  /* Section icon rozeti */
+  .no{
+    background:rgba(212,168,83,0.12) !important;
+    color:var(--gold) !important;
+    width:36px !important; height:36px !important;
+    font-size:18px !important;
+    box-shadow:0 2px 12px rgba(212,168,83,0.15) !important;
+    border-radius:50% !important;
+    border:1px solid rgba(212,168,83,0.2) !important;
+    transition:all .3s !important;
+  }
+
+  /* ACCORDION — section tıklanınca açılır/kapanır */
+  .sec-head{cursor:pointer; user-select:none}
+  .sec-head::after{
+    content:'▾'; position:absolute; right:20px; top:50%; transform:translateY(-50%);
+    font-size:14px; color:var(--gold); opacity:.5;
+    transition:transform .3s;
+  }
+  section.acik .sec-head::after{transform:translateY(-50%) rotate(180deg)}
+  .sec-body{
+    max-height:0; overflow:hidden;
+    transition:max-height .4s cubic-bezier(.4,0,.2,1), padding .3s;
+    padding-top:0 !important; padding-bottom:0 !important;
+  }
+  section.acik .sec-body{
+    max-height:3000px;
+    padding-top:20px !important; padding-bottom:20px !important;
+  }
+
+  /* Section köşe süsleri */
+  .section-ornament{position:absolute; pointer-events:none; z-index:2; width:20px; height:20px; opacity:.3}
+  .section-ornament svg{width:100%; height:100%}
+  .corner-tl{top:8px; left:8px}
+  .corner-tr{top:8px; right:8px}
+  .corner-bl{bottom:8px; left:8px}
+  .corner-br{bottom:8px; right:8px}
+
+  /* ===== BÖLÜM AYRAÇLARI — İSLAMİ MOTİF ===== */
+  .section-divider{
+    display:flex; align-items:center; justify-content:center;
+    padding:8px 0; margin:4px 0 12px; position:relative;
+    opacity:.5;
+  }
+  .section-divider::before,.section-divider::after{
+    content:''; flex:1; height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .section-divider .motif{
+    width:24px; height:24px; margin:0 12px;
+    display:flex; align-items:center; justify-content:center;
+    animation:motifSpin 15s linear infinite;
+  }
+  @keyframes motifSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+  /* ===== NAV İYİLEŞTİRME ===== */
+  nav{
+    border-bottom:1px solid rgba(212,168,83,0.12) !important;
+    box-shadow:0 1px 20px rgba(0,0,0,0.2);
+  }
+  nav::after{
+    content:''; position:absolute; bottom:0; left:10%; right:10%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(212,168,83,0.2), transparent);
+  }
+  nav a{
+    transition:all .3s cubic-bezier(.4,0,.2,1) !important;
+    position:relative;
+  }
+  nav a:hover{
+    color:var(--gold) !important;
+    background:rgba(212,168,83,0.08) !important;
+    border-color:rgba(212,168,83,0.15) !important;
+    transform:translateY(-1px);
+    box-shadow:0 2px 8px rgba(212,168,83,0.1);
+  }
+
+  /* ===== STAT KARTLARI — ANİMALI ===== */
+  .stat{
+    position:relative; overflow:hidden;
+    animation:statFadeIn .6s ease-out both;
+  }
+  .stat:nth-child(1){animation-delay:.1s}
+  .stat:nth-child(2){animation-delay:.2s}
+  .stat:nth-child(3){animation-delay:.3s}
+  .stat:nth-child(4){animation-delay:.4s}
+  .stat:nth-child(5){animation-delay:.5s}
+  @keyframes statFadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .stat::before{
+    content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(212,168,83,0.05) 30deg, transparent 60deg);
+    animation:statShine 8s linear infinite;
+  }
+  @keyframes statShine{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  .stat b{position:relative; z-index:1}
+  .stat i{position:relative; z-index:1}
+
+  /* ===== STAT HOVER — ALTIN PARLAMA ===== */
+  .stat:hover{
+    border-color:rgba(212,168,83,0.35) !important;
+    box-shadow:0 4px 20px rgba(212,168,83,0.12), 0 0 40px rgba(212,168,83,0.05);
+    transform:translateY(-4px) !important;
+  }
+
+  /* ===== BUTON ANİMASYONLARI ===== */
+  button{
+    position:relative; overflow:hidden;
+    transition:all .3s cubic-bezier(.4,0,.2,1) !important;
+  }
+  button::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    transform:translateX(-100%);
+    transition:transform .5s;
+  }
+  button:hover::after{transform:translateX(100%)}
+  button:active{transform:scale(0.97) !important}
+
+  /* ===== KUR'AN SAYFASI ÇERÇEVESİ ===== */
+  .quran-frame{
+    border:2px solid rgba(212,168,83,0.18); border-radius:var(--radius-sm);
+    position:relative; padding:16px;
+    background:rgba(12,20,30,0.6);
+    box-shadow:inset 0 0 30px rgba(0,0,0,0.2), 0 2px 12px rgba(0,0,0,0.15);
+  }
+  .quran-frame::before{
+    content:''; position:absolute; inset:4px;
+    border:1px solid rgba(212,168,83,0.1); border-radius:8px; pointer-events:none;
+  }
+  .quran-frame::after{
+    content:'✦'; position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+    background:var(--panel); padding:0 8px; color:var(--gold); font-size:12px; opacity:.4;
+  }
+
+  /* ===== AYET GÖRÜNTÜLEYİCİ ===== */
+  .verse{
+    position:relative;
+    transition:all .3s;
+  }
+  .verse::before{
+    content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
+    background:linear-gradient(180deg, transparent, var(--gold), transparent);
+    opacity:0; transition:opacity .3s;
+  }
+  .verse:hover::before{opacity:.5}
+  .verse:hover{padding-left:20px !important}
+  .verse .vn{
+    background:linear-gradient(135deg,var(--gold),#c4943f) !important;
+    color:#1a1a2e !important;
+    width:28px !important; height:28px !important;
+    border-radius:50% !important;
+    display:flex !important; align-items:center; justify-content:center;
+    font-size:11px !important; font-weight:700 !important;
+    box-shadow:0 2px 8px rgba(212,168,83,0.3) !important;
+    flex-shrink:0;
+  }
+  .verse.arabic .vt{
+    font-family:'Amiri','Scheherazade New','Traditional Arabic','Noto Naskh Arabic',serif;
+    font-size:28px !important; line-height:2.2 !important;
+    text-align:right !important; direction:rtl !important;
+  }
+
+  /* ===== ÇİFT SÜSLÜ AYET ÇERÇEVESİ ===== */
+  .pair .col{
+    border:2px solid rgba(212,168,83,0.12) !important;
+    border-radius:var(--radius-sm) !important;
+    transition:border-color .3s;
+    position:relative;
+    box-shadow:inset 0 0 20px rgba(0,0,0,0.15);
+  }
+  .pair .col::before{
+    content:''; position:absolute; inset:3px;
+    border:1px solid rgba(212,168,83,0.06); border-radius:8px; pointer-events:none;
+  }
+  .pair .col:hover{border-color:rgba(212,168,83,0.25) !important}
+  .pair .col .col-head{
+    background:linear-gradient(135deg, rgba(212,168,83,0.06) 0%, transparent 100%) !important;
+    border-bottom:1px solid rgba(212,168,83,0.1) !important;
+    padding:12px 16px !important;
+  }
+
+  /* ===== ARAMA SONUÇ SÜSLEMESİ ===== */
+  .ara-satir{
+    border-left:2px solid transparent;
+    transition:all .3s !important;
+  }
+  .ara-satir:hover{
+    border-left-color:var(--gold) !important;
+    background:rgba(212,168,83,0.04) !important;
+    padding-left:16px !important;
+  }
+
+  /* ===== SCROLL ANİMASYONLARI ===== */
+  .scroll-reveal{opacity:1; transform:translateY(0); transition:all .6s cubic-bezier(.4,0,.2,1)}
+
+  /* ===== SÜZÜLEN ALTIN ÇİZGİ ===== */
+  .gold-line{
+    position:relative; height:1px; margin:16px 0;
+    background:linear-gradient(90deg, transparent, rgba(212,168,83,0.3), transparent);
+  }
+  .gold-line::before{
+    content:''; position:absolute; top:0; left:0; width:60px; height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+    animation:goldLineMove 4s ease-in-out infinite;
+  }
+  @keyframes goldLineMove{0%{left:0}50%{left:calc(100% - 60px)}100%{left:0}}
+
+  /* ===== CARD HOVER — KALDIRMA ===== */
+  .card{
+    transition:all .3s cubic-bezier(.4,0,.2,1) !important;
+    position:relative;
+  }
+  .card::after{
+    content:''; position:absolute; inset:0; border-radius:inherit;
+    box-shadow:0 8px 32px rgba(212,168,83,0.08);
+    opacity:0; transition:opacity .3s;
+  }
+  .card:hover::after{opacity:1}
+  .card:hover{transform:translateY(-3px) !important}
+
+  /* ===== TABLE ROW ANİMASYONU ===== */
+  tr{transition:all .2s !important}
+  tr:hover td{
+    background:rgba(212,168,83,0.05) !important;
+    box-shadow:inset 0 0 20px rgba(212,168,83,0.02);
+  }
+
+  /* ===== FOOTER SÜSLEMESİ ===== */
+  .footer{
+    position:relative;
+    padding-top:36px !important;
+  }
+  .footer::before{
+    content:'✦'; position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    color:var(--gold); font-size:16px; opacity:.3;
+    animation:footerStar 6s ease-in-out infinite;
+  }
+  @keyframes footerStar{0%,100%{opacity:.3;transform:translateX(-50%) rotate(0)}50%{opacity:.5;transform:translateX(-50%) rotate(180deg)}}
+
+  /* (pair styling yukarıda tanımlı) */
+
+  /* ===== ÖNEMLİ YAZI PARLAMA ===== */
+  .desc b{
+    position:relative;
+    text-shadow:0 0 20px rgba(212,168,83,0.1);
+  }
+
+  /* ===== SEÇİLEN CHİP SÜSLEMESİ ===== */
+  .chips button.aktif{
+    box-shadow:0 2px 12px rgba(212,168,83,0.2), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+    position:relative;
+  }
+  .chips button.aktif::before{
+    content:'✦'; position:absolute; left:6px; top:50%; transform:translateY(-50%);
+    font-size:8px; opacity:.6;
+  }
+
+  /* ===== LOADING SKELETON ===== */
+  @keyframes shimmer{
+    0%{background-position:-200% 0}
+    100%{background-position:200% 0}
+  }
+  .loading-shimmer{
+    background:linear-gradient(90deg, var(--panel) 25%, rgba(212,168,83,0.05) 50%, var(--panel) 75%);
+    background-size:200% 100%;
+    animation:shimmer 1.5s infinite;
+  }
+
+  /* ===== SCROLL BAR SÜSLEMESİ ===== */
+  ::-webkit-scrollbar{width:8px; height:8px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{
+    background:linear-gradient(180deg, rgba(212,168,83,0.3), rgba(212,168,83,0.15));
+    border-radius:4px; border:1px solid rgba(212,168,83,0.1);
+  }
+  ::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg, rgba(212,168,83,0.5), rgba(212,168,83,0.25))}
+
+  /* ===== SELECTION RENGİ ===== */
+  ::selection{background:rgba(212,168,83,0.25); color:var(--txt)}
 </style>
 </head>
 <body>
+
+<!-- Parçacık container'ı -->
+<div id="particles" aria-hidden="true"></div>
 
 <!-- DEKOR: Kur'an deseni (sol) + hat sanatı (sağ) -->
 <div id="dekor-sol" aria-hidden="true"></div>
 <div id="dekor-sag" aria-hidden="true"><span>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</span></div>
 
 <header>
-  <h1>📖 Kuran API <span data-t="subtitle">Ücretsiz & Limitsiz Kur'an Veri Merkezi</span></h1>
-  <p data-t="header_desc">fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
+  <h1>📖 Kuran API <span>Ücretsiz & Limitsiz Kur'an Veri Merkezi</span></h1>
+  <div class="bismillah-decor">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>
+  <p>fawazahmed0/quran-api · 98 dil · 486 çeviri · jsDelivr CDN üzerinden ücretsiz ve limitsiz</p>
   <div class="stats">
-    <div class="stat"><b id="s-editions">—</b><i data-t="stat_ed">Çeviri</i></div>
-    <div class="stat"><b>114</b><i data-t="stat_sur">Sure</i></div>
-    <div class="stat"><b>6236</b><i data-t="stat_ayet">Ayet</i></div>
-    <div class="stat"><b>30</b><i data-t="stat_cuz">Cüz</i></div>
-    <div class="stat"><b>604</b><i data-t="stat_sayfa">Sayfa</i></div>
+    <div class="stat"><b id="s-editions">—</b><i>Çeviri</i></div>
+    <div class="stat"><b>114</b><i>Sure</i></div>
+    <div class="stat"><b>6236</b><i>Ayet</i></div>
+    <div class="stat"><b>30</b><i>Cüz</i></div>
+    <div class="stat"><b>604</b><i>Sayfa</i></div>
   </div>
 </header>
 
 <nav>
-  <a href="#ses" data-t="nav_1">🎧 Sesli Okuma</a>
-  <a href="#ceviriler" data-t="nav_2">📚 Çeviriler</a>
-  <a href="#okuyucu" data-t="nav_3">📖 Okuyucu</a>
-  <a href="#ayet" data-t="nav_4">📝 Tek Ayet</a>
-  <a href="#bolumler" data-t="nav_5">🗂️ Bölümler</a>
-  <a href="#yanyana" data-t="nav_6">🌙 Arapça + Türkçe</a>
-  <a href="#arama" data-t="nav_7">🔍 Kur'an'da Ara</a>
-  <a href="#mesaj" data-t="nav_8">✉️ Yöneticiye Mesaj Gönder</a>
-  <a href="#ayarlar" data-t="nav_0">🎨 Tema & Görünüm</a>
+  <a href="#ses">🎧 Sesli Okuma</a>
+  <a href="#ceviriler">📖 Çeviriler</a>
+  <a href="#okuyucu">📝 Okuyucu</a>
+  <a href="#ayet">✨ Tek Ayet</a>
+  <a href="#bolumler">📑 Bölümler</a>
+  <a href="#yanyana">🌙 Arapça + Türkçe</a>
+  <a href="#arama">🔍 Kur'an'da Ara</a>
+  <a href="#mesaj">📩 Yöneticiye Mesaj Gönder</a>
+  <a href="#ayarlar">⚙️ Tema & Görünüm</a>
   <a href="javascript:void(0)" id="tema-hizli" onclick="temaUygula(document.documentElement.dataset.tema==='acik'?'koyu':'acik')" title="Açık / Koyu mod geçişi">☀️</a>
-  <div class="dil-sec" id="dil-sec">
-    <button data-dil="tr" onclick="dilUygula('tr')" class="aktif">TR</button>
-    <button data-dil="ar" onclick="dilUygula('ar')">عربي</button>
-    <button data-dil="en" onclick="dilUygula('en')">EN</button>
-  </div>
 </nav>
 
 <main>
 
+<!-- ============ BÖLÜM 1: SESLİ OKUMA / tilavet + TTS ============ -->
+<section id="ses">
+  <div class="sec-head"><span class="no">🎧</span><h2>Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code></div>
+  <div class="sec-body">
+    <p class="desc">1A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 1B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
+    <div class="grid2">
+      <div class="col">
+        <div class="col-head">🎧 Tilavet — Kur'an okunuşu (Arapça)</div>
+        <div style="padding:12px">
+          <div class="controls">
+            <div class="ctl"><label>Okuyucu</label><select id="tl-oku"></select></div>
+            <div class="ctl"><label>Sure</label><select id="tl-sure"></select></div>
+            <div class="ctl"><label>&nbsp;</label><button onclick="tilavetCal()">▶ Çal</button></div>
+            <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="tilavetDurdur()">⏹ Durdur</button></div>
+          </div>
+          <input type="range" id="tl-bar" min="0" max="1000" value="0" style="width:100%" oninput="tilBarAyarla(this.value)">
+          <div class="controls" style="margin-top:6px">
+            <div class="ctl" style="flex:1"><label>Ses seviyesi</label><input type="range" id="tl-vol" min="0" max="1" step="0.05" value="1" style="width:100%" oninput="tilSes(this.value)"></div>
+          </div>
+          <div class="status" id="tl-status"></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="col-head">🗣️ TTS — Metni sesli oku</div>
+        <div style="padding:12px">
+          <div class="controls">
+            <div class="ctl"><label>Dil</label><select id="tts-dil"></select></div>
+            <div class="ctl"><label>Hız</label><input type="range" id="tts-hiz" min="0.5" max="1.5" step="0.1" value="1" style="width:130px"></div>
+          </div>
+          <textarea id="tts-metin" rows="3" style="width:100%; resize:vertical" placeholder="Okunacak metni buraya yaz… (Bölüm 3'teki ayetlerin yanındaki 🔊 butonu da ayeti okur)"></textarea>
+          <div class="controls" style="margin-top:10px; margin-bottom:0">
+            <button onclick="ttsOkuMetin()">▶ Oku</button>
+            <button class="ghost" onclick="ttsDuraklat()">⏸ Duraklat / Devam</button>
+            <button class="ghost" onclick="ttsDurdur()">⏹ Durdur</button>
+          </div>
+          <div class="status" id="tts-status">Sesler yükleniyor…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
+<section id="ceviriler">
+  <div class="sec-head"><span class="no">📖</span><h2>Çeviriler</h2><code>/editions.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
+    <div class="controls">
+      <div class="ctl"><label>Dil</label><select id="f-dil" onchange="renderEditions()"></select></div>
+      <div class="ctl"><label>Ara (yazar / ad)</label><input type="text" id="f-ara" placeholder="Diyanet, Gölpınarlı…" oninput="renderEditions()"></div>
+      <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="resetFilter()">Sıfırla</button></div>
+    </div>
+    <div class="status" id="ed-status" role="status" aria-live="polite"></div>
+    <div class="table-wrap"><table><thead><tr><th>Çeviri</th><th>Yazar / Kaynak</th><th>Dil</th><th></th></tr></thead><tbody id="ed-body"></tbody></table></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
+<section id="okuyucu">
+  <div class="sec-head"><span class="no">📝</span><h2>Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
+    <div class="controls">
+      <div class="ctl"><label>Dil</label><select id="ok-dil" onchange="fillEditionSel()"></select></div>
+      <div class="ctl"><label>Çeviri</label><select id="ok-ed"></select></div>
+      <div class="ctl"><label>Latin (_la)</label><input type="checkbox" id="ok-la" style="width:20px; height:20px; margin-top:6px"></div>
+      <div class="ctl"><label>Sure</label><select id="ok-sure"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="loadSure()">Yükle</button></div>
+    </div>
+    <div class="status" id="ok-status" role="status" aria-live="polite"></div>
+    <div id="ok-list"></div>
+    <div class="nav-sure">
+      <button class="ghost small" onclick="sureAtla(-1)">← Önceki sure</button>
+      <button class="ghost small" onclick="sureAtla(1)">Sonraki sure →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
+<section id="ayet">
+  <div class="sec-head"><span class="no">✨</span><h2>Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
+    <div class="controls">
+      <div class="ctl"><label>Çeviri</label><select id="ay-ed"></select></div>
+      <div class="ctl"><label>Sure</label><select id="ay-sure"></select></div>
+      <div class="ctl"><label>Ayet</label><input type="number" id="ay-no" value="1" min="1" style="width:90px"></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="tekAyet()">Getir</button></div>
+    </div>
+    <div class="status" id="ay-status" role="status" aria-live="polite"></div>
+    <div id="ay-sonuc"></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
+<section id="bolumler">
+  <div class="sec-head"><span class="no">📑</span><h2>Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code></div>
+  <div class="sec-body">
+    <p class="desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
+    <div class="controls">
+      <div class="ctl"><label>Parça tipi</label><select id="bl-tip" onchange="blMax()">
+        <option value="juzs" data-max="30">Cüz (juzs)</option>
+        <option value="rukus" data-max="556">Rükû (rukus)</option>
+        <option value="pages" data-max="604">Sayfa (pages)</option>
+        <option value="manzils" data-max="7">Menzil (manzils)</option>
+        <option value="maqras" data-max="240">Maqra (maqras)</option>
+      </select></div>
+      <div class="ctl"><label>Numara</label><input type="number" id="bl-no" value="1" min="1" style="width:90px"></div>
+      <div class="ctl"><label>Çeviri</label><select id="bl-ed"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="bolumYukle()">Yükle</button></div>
+    </div>
+    <div class="status" id="bl-status" role="status" aria-live="polite"></div>
+    <div id="bl-list"></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
+<section id="yanyana">
+  <div class="sec-head"><span class="no">🌙</span><h2>Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code></div>
+  <div class="sec-body">
+    <p class="desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
+    <div class="controls">
+      <div class="ctl"><label>Sure</label><select id="ya-sure"></select></div>
+      <div class="ctl"><label>Arapça metin</label><select id="ya-ara"></select></div>
+      <div class="ctl"><label>Türkçe meal</label><select id="ya-tur"></select></div>
+      <div class="ctl"><label>&nbsp;</label><button onclick="yanyanaYukle()">Yükle</button></div>
+    </div>
+    <div class="status" id="ya-status" role="status" aria-live="polite"></div>
+    <div id="ya-sonuc"></div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 7: KUR'AN'DA ARA / tam metin arama ============ -->
+<section id="arama">
+  <div class="sec-head"><span class="no">🔍</span><h2>Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code></div>
+  <div class="sec-body">
+    <p class="desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
+    <div class="controls">
+      <div class="ctl"><label>Mod</label><select id="ara-mod" onchange="araModDegisti()">
+        <option value="kelime">Kelime</option>
+        <option value="cumle">Cümle</option>
+        <option value="konu">Konu</option>
+      </select></div>
+      <div class="ctl"><label>Dil</label><select id="ara-dil">
+        <option value="tur">Türkçe (Diyanet)</option>
+        <option value="ara">Arapça (asıl metin)</option>
+      </select></div>
+      <div class="ctl"><label>Aratılacak metin</label><input type="text" id="ara-kutu" placeholder="kelime veya cümle…" onkeydown="if(event.key==='Enter')araYap()"></div>
+      <div class="ctl"><label>&nbsp;</label><button id="ara-btn" onclick="araYap()">Ara</button></div>
+    </div>
+    <div id="ara-konular" style="display:none; margin-bottom:12px"></div>
+    <div class="status" id="ara-status" role="status" aria-live="polite"></div>
+    <div class="grid2">
+      <div>
+        <div class="col-head">Sonuçlar (<span id="ara-sayac">0</span>)</div>
+        <div class="table-wrap" id="ara-list"></div>
+      </div>
+      <div>
+        <div class="col-head" id="ara-panel-baslik">Seçili Ayet</div>
+        <div style="padding:12px" id="ara-panel"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BÖLÜM 8: YÖNETİCİYE MESAJ GÖNDER ============ -->
+<section id="mesaj">
+  <div class="sec-head"><span class="no">📩</span><h2>Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code></div>
+  <div class="sec-body">
+    <p class="desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
+    <div class="controls">
+      <div class="ctl"><label>Ad Soyad</label><input type="text" id="msj-ad" placeholder="Adınız ve soyadınız"></div>
+      <div class="ctl"><label>Mesajın Konusu</label><input type="text" id="msj-konu" placeholder="Mesajınızın konusu"></div>
+    </div>
+    <div class="ctl" style="margin-bottom:12px"><label>Mesajınız</label><textarea id="msj-metin" rows="6" style="width:100%; resize:vertical" placeholder="Mesajınızı buraya yazabilirsiniz…"></textarea></div>
+    <div class="controls">
+      <div class="ctl"><label>&nbsp;</label><button id="msj-gonder" onclick="msjGonder()">Mesajı Gönder</button></div>
+      <div class="ctl"><label>&nbsp;</label><button class="ghost" id="msj-temizle" onclick="msjFormuTemizle()">Formu Temizle</button></div>
+    </div>
+    <div class="status" id="msj-durum" role="status" aria-live="polite"></div>
+
+    <hr style="border:none; border-top:1px solid var(--border); margin:4px 0 16px">
+
+    <div class="col-head" style="margin-bottom:8px">Yönetici İşlemleri</div>
+    <button class="ghost" id="yon-giris-buton" onclick="yonGirisToggle()">🔒 Yönetici Girişi</button>
+    <div id="yon-giris-alan" style="display:none; margin-top:10px">
+      <div class="controls">
+        <div class="ctl"><label>Yönetici Şifresi</label><input type="password" id="yon-sifre" placeholder="Şifre" onkeydown="if(event.key==='Enter')yonGirisYap()"></div>
+        <div class="ctl"><label>&nbsp;</label><button id="yon-giris-btn" onclick="yonGirisYap()">Giriş Yap</button></div>
+      </div>
+      <div class="status" id="yon-hata" role="status" aria-live="polite"></div>
+    </div>
+    <div id="yon-panel" style="display:none; margin-top:14px">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px">
+        <div class="col-head" style="margin:0">Gelen Mesajlar (<span id="yon-sayac">0</span>)</div>
+        <div>
+          <button class="ghost small" id="yon-temizle" onclick="yonTemizle()">Tümünü Sil</button>
+          <button class="ghost small" onclick="yonCik()">Çıkış</button>
+        </div>
+      </div>
+      <div id="yon-liste"></div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ BÖLÜM 0: TEMA & GÖRÜNÜM ============ -->
 <section id="ayarlar">
-  <div class="sec-head"><span class="no">🎨</span><h2 data-t="s0_title">Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code><span class="chevron">▸</span></div>
+  <div class="sec-head"><span class="no">⚙️</span><h2>Tema & Görünüm</h2><code>localStorage: kuran_tema · kuran_renk</code></div>
   <div class="sec-body">
-    <p class="desc" data-t="s0_desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve her bölge için <b>bağımsız renk</b>. Seçimler tarayıcında saklanır. Sağ üstteki 🌙/☀️ ile hızlı geçiş yapabilirsin.</p>
+    <p class="desc">Sayfanın görünümünü özelleştir: <b>açık / koyu mod</b> ve her bölge için <b>bağımsız renk</b>. Seçimler tarayıcında saklanır. Sağ üstteki 🌙/☀️ ile hızlı geçiş yapabilirsin.</p>
     <div class="controls">
       <div class="ctl">
-        <label data-t="s0_gorunum">Görünüm</label>
+        <label>Görünüm</label>
         <div class="chips" id="tema-sec">
           <button id="tema-koyu" onclick="temaUygula('koyu')">🌙 Koyu</button>
           <button id="tema-acik" onclick="temaUygula('acik')">☀️ Açık</button>
@@ -284,28 +1052,28 @@
     </div>
     <div class="tema-bolgeler">
       <div class="tema-bolge" data-bolge="vurgu">
-        <label>🎨 Vurgu <span class="tema-bolge-info" data-t="s0_vurgu_info">Butonlar, linkler, aktif durumlar</span></label>
+        <label>🎨 Vurgu <span class="tema-bolge-info">Butonlar, linkler, aktif durumlar</span></label>
         <div class="renkler" id="renk-vurgu"></div>
         <input type="color" id="renk-vurgu-ozel" value="#c9a35c">
       </div>
       <div class="tema-bolge" data-bolge="bg">
-        <label>🖼️ Arka Plan <span class="tema-bolge-info" data-t="s0_bg_info">Sayfa ve nav arka planı</span></label>
+        <label>🖼️ Arka Plan <span class="tema-bolge-info">Sayfa ve nav arka planı</span></label>
         <div class="renkler" id="renk-bg"></div>
         <input type="color" id="renk-bg-ozel" value="#0b1210">
       </div>
       <div class="tema-bolge" data-bolge="panel">
-        <label>📋 Panel <span class="tema-bolge-info" data-t="s0_panel_info">Kart ve bölüm arka planları</span></label>
+        <label>📋 Panel <span class="tema-bolge-info">Kart ve bölüm arka planları</span></label>
         <div class="renkler" id="renk-panel"></div>
         <input type="color" id="renk-panel-ozel" value="#101a16">
       </div>
       <div class="tema-bolge" data-bolge="border">
-        <label>🔲 Kenarlık <span class="tema-bolge-info" data-t="s0_border_info">Çerçeve ve ayırıcı çizgiler</span></label>
+        <label>🔲 Kenarlık <span class="tema-bolge-info">Çerçeve ve ayırıcı çizgiler</span></label>
         <div class="renkler" id="renk-border"></div>
         <input type="color" id="renk-border-ozel" value="#1f352c">
       </div>
     </div>
     <div class="tema-kombinasyonlar">
-      <label data-t="s0_komb">Hazır Kombinasyonlar</label>
+      <label>Hazır Kombinasyonlar</label>
       <div class="chips" id="kombinasyon-sec">
         <button onclick="kombinasyonUygula('gece')">🌙 Gece</button>
         <button onclick="kombinasyonUygula('gunes')">☀️ Güneş</button>
@@ -320,333 +1088,17 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 1: SESLİ OKUMA / tilavet + TTS ============ -->
-<section id="ses">
-  <div class="sec-head"><span class="no">🎧</span><h2 data-t="s1_title">Sesli Okuma</h2><code>cdn.islamic.network · Web Speech API</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s1_desc">1A: <b>Kur'an tilaveti</b> — Arapça sure okunuşu, ücretsiz CDN. 1B: <b>TTS</b> — çeviri metinlerini her dilde sesli okuma (Chrome/Edge önerilir, Google sesleri otomatik gelir).</p>
-    <div class="grid2">
-      <div class="col">
-        <div class="col-head" data-t="s1_tilavet">🎧 Tilavet — Kur'an okunuşu (Arapça)</div>
-        <div style="padding:12px">
-          <div class="controls">
-            <div class="ctl"><label data-t="s1_okuyucu">Okuyucu</label><select id="tl-oku"></select></div>
-            <div class="ctl"><label data-t="s1_sure">Sure</label><select id="tl-sure"></select></div>
-            <div class="ctl"><label>&nbsp;</label><button onclick="tilavetCal()" data-t="s1_cal">▶ Çal</button></div>
-            <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="tilavetDurdur()" data-t="s1_durdur">⏹ Durdur</button></div>
-          </div>
-          <input type="range" id="tl-bar" min="0" max="1000" value="0" style="width:100%" oninput="tilBarAyarla(this.value)">
-          <div class="controls" style="margin-top:6px">
-            <div class="ctl" style="flex:1"><label data-t="s1_ses">Ses seviyesi</label><input type="range" id="tl-vol" min="0" max="1" step="0.05" value="1" style="width:100%" oninput="tilSes(this.value)"></div>
-          </div>
-          <div class="status" id="tl-status"></div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="col-head" data-t="s1_tts">🗣️ TTS — Metni sesli oku</div>
-        <div style="padding:12px">
-          <div class="controls">
-            <div class="ctl"><label data-t="s1_dil">Dil</label><select id="tts-dil"></select></div>
-            <div class="ctl"><label data-t="s1_hiz">Hız</label><input type="range" id="tts-hiz" min="0.5" max="1.5" step="0.1" value="1" style="width:130px"></div>
-          </div>
-          <textarea id="tts-metin" rows="3" style="width:100%; resize:vertical" placeholder="Okunacak metni buraya yaz… (Bölüm 3'teki ayetlerin yanındaki 🔊 butonu da ayeti okur)"></textarea>
-          <div class="controls" style="margin-top:10px; margin-bottom:0">
-            <button onclick="ttsOkuMetin()" data-t="s1_oku">▶ Oku</button>
-            <button class="ghost" onclick="ttsDuraklat()" data-t="s1_duraklat">⏸ Duraklat / Devam</button>
-            <button class="ghost" onclick="ttsDurdur()">⏹ Durdur</button>
-          </div>
-          <div class="status" id="tts-status">Sesler yükleniyor…</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 2: ÇEVİRİLER / editions.min.json ============ -->
-<section id="ceviriler">
-  <div class="sec-head"><span class="no">📚</span><h2 data-t="s2_title">Çeviriler</h2><code>/editions.min.json</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s2_desc">Tüm çeviriler (486). <b>Dil</b> filtresi + <b>arama</b> ile bul, <b>Oku</b> ile Bölüm 3'e aktar.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s2_dil">Dil</label><select id="f-dil" onchange="renderEditions()"></select></div>
-      <div class="ctl"><label data-t="s2_ara">Ara (yazar / ad)</label><input type="text" id="f-ara" placeholder="Diyanet, Gölpınarlı…" oninput="renderEditions()"></div>
-      <div class="ctl"><label>&nbsp;</label><button class="ghost" onclick="resetFilter()" data-t="s2_sifirla">Sıfırla</button></div>
-    </div>
-    <div class="status" id="ed-status" role="status" aria-live="polite"></div>
-    <div class="table-wrap"><table><thead><tr><th data-t="s2_th1">Çeviri</th><th data-t="s2_th2">Yazar / Kaynak</th><th data-t="s2_th3">Dil</th><th></th></tr></thead><tbody id="ed-body"></tbody></table></div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 3: ÇEVİRİ OKUYUCU / editions/{ad}/{sure}.min.json ============ -->
-<section id="okuyucu">
-  <div class="sec-head"><span class="no">📖</span><h2 data-t="s3_title">Çeviri Okuyucu</h2><code>/editions/{ad}/{sure}.min.json</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s3_desc">Seçili çeviride sure bazında okuma. <b>_la</b> = Latin harfli transkripsiyon.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s3_dil">Dil</label><select id="ok-dil" onchange="fillEditionSel()"></select></div>
-      <div class="ctl"><label data-t="s3_ceviri">Çeviri</label><select id="ok-ed"></select></div>
-      <div class="ctl"><label data-t="s3_latin">Latin (_la)</label><input type="checkbox" id="ok-la" style="width:20px; height:20px; margin-top:6px"></div>
-      <div class="ctl"><label data-t="s3_sure">Sure</label><select id="ok-sure"></select></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="loadSure()" data-t="s3_yukle">Yükle</button></div>
-    </div>
-    <div class="status" id="ok-status" role="status" aria-live="polite"></div>
-    <div id="ok-list"></div>
-    <div class="nav-sure">
-      <button class="ghost small" onclick="sureAtla(-1)" data-t="s3_onceki">← Önceki sure</button>
-      <button class="ghost small" onclick="sureAtla(1)" data-t="s3_sonraki">Sonraki sure →</button>
-    </div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 4: TEK AYET / editions/{ad}/{sure}/{ayet}.min.json ============ -->
-<section id="ayet">
-  <div class="sec-head"><span class="no">📝</span><h2 data-t="s4_title">Tek Ayet Sorgusu</h2><code>/editions/{ad}/{sure}/{ayet}.min.json</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s4_desc">Tek bir ayeti getir — görsel/afiş çalışmalarında <b>günün ayeti</b> kartı için ideal.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s4_ceviri">Çeviri</label><select id="ay-ed"></select></div>
-      <div class="ctl"><label data-t="s4_sure">Sure</label><select id="ay-sure"></select></div>
-      <div class="ctl"><label data-t="s4_ayet">Ayet</label><input type="number" id="ay-no" value="1" min="1" style="width:90px"></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="tekAyet()" data-t="s4_getir">Getir</button></div>
-    </div>
-    <div class="status" id="ay-status" role="status" aria-live="polite"></div>
-    <div id="ay-sonuc"></div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 5: BÖLÜM GEZGİNİ / juzs | rukus | pages | manzils | maqras ============ -->
-<section id="bolumler">
-  <div class="sec-head"><span class="no">🗂️</span><h2 data-t="s5_title">Bölüm Gezgini</h2><code>/editions/{ad}/{juzs|rukus|pages|manzils|maqras}/{no}.min.json</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s5_desc">Kur'an'ı parçalara ayırarak oku: <b>30 cüz</b> · <b>556 rükû</b> · <b>604 sayfa</b> · <b>7 menzil</b> · <b>240 maqra</b>.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s5_tip">Parça tipi</label><select id="bl-tip" onchange="blMax()">
-        <option value="juzs" data-max="30">Cüz (juzs)</option>
-        <option value="rukus" data-max="556">Rükû (rukus)</option>
-        <option value="pages" data-max="604">Sayfa (pages)</option>
-        <option value="manzils" data-max="7">Menzil (manzils)</option>
-        <option value="maqras" data-max="240">Maqra (maqras)</option>
-      </select></div>
-      <div class="ctl"><label data-t="s5_no">Numara</label><input type="number" id="bl-no" value="1" min="1" style="width:90px"></div>
-      <div class="ctl"><label data-t="s5_dil">Çeviri</label><select id="bl-ed"></select></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="bolumYukle()" data-t="s5_yukle">Yükle</button></div>
-    </div>
-    <div class="status" id="bl-status" role="status" aria-live="polite"></div>
-    <div id="bl-list"></div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 6: ARAPÇA + TÜRKÇE YAN YANA ============ -->
-<section id="yanyana">
-  <div class="sec-head"><span class="no">🌙</span><h2 data-t="s6_title">Arapça + Türkçe Yan Yana</h2><code>/editions/{ad}/{sure}.min.json · 2</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s6_desc">Arapça orijinal metin ve Türkçe meal <b>ayet ayet karşılaştırmalı</b> — tipografi ve içerik çalışmaları için.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s6_sure">Sure</label><select id="ya-sure"></select></div>
-      <div class="ctl"><label data-t="s6_arapca">Arapça metin</label><select id="ya-ara"></select></div>
-      <div class="ctl"><label data-t="s6_turkce">Türkçe meal</label><select id="ya-tur"></select></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="yanyanaYukle()" data-t="s6_yukle">Yükle</button></div>
-    </div>
-    <div class="status" id="ya-status" role="status" aria-live="polite"></div>
-    <div id="ya-sonuc"></div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 7: KUR'AN'DA ARA / tam metin arama ============ -->
-<section id="arama">
-  <div class="sec-head"><span class="no">🔍</span><h2 data-t="s7_title">Kur'an'da Ara</h2><code>ara-quransimple / tur-diyanetisleri</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s7_desc"><b>Tüm Kur'an'da arama</b> — kelime, cümle veya konu ile arayın; eşleşen <b>tüm ayetler</b> listelenir, ayete tıklayınca Arapçası ve Türkçe meali yan yana gösterilir. Arapça aramada hareke farkı gözetilmez.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s7_mod">Mod</label><select id="ara-mod" onchange="araModDegisti()">
-        <option value="kelime" data-t="s7_kelime">Kelime</option>
-        <option value="cumle" data-t="s7_cumle">Cümle</option>
-        <option value="konu" data-t="s7_konu">Konu</option>
-      </select></div>
-      <div class="ctl"><label data-t="s7_dil">Dil</label><select id="ara-dil">
-        <option value="tur" data-t="s7_turkce">Türkçe (Diyanet)</option>
-        <option value="ara" data-t="s7_arapca">Arapça (asıl metin)</option>
-      </select></div>
-      <div class="ctl"><label data-t="s7_ara_label">Aratılacak metin</label><input type="text" id="ara-kutu" placeholder="kelime veya cümle…" onkeydown="if(event.key==='Enter')araYap()"></div>
-      <div class="ctl"><label>&nbsp;</label><button id="ara-btn" onclick="araYap()" data-t="s7_ara">Ara</button></div>
-    </div>
-    <div id="ara-konular" style="display:none; margin-bottom:12px"></div>
-    <div class="status" id="ara-status" role="status" aria-live="polite"></div>
-    <div class="grid2">
-      <div>
-        <div class="col-head"><span data-t="s7_sonuclar">Sonuçlar</span> (<span id="ara-sayac">0</span>)</div>
-        <div class="table-wrap" id="ara-list"></div>
-      </div>
-      <div>
-        <div class="col-head" id="ara-panel-baslik"><span data-t="s7_secili">Seçili Ayet</span></div>
-        <div style="padding:12px" id="ara-panel"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ BÖLÜM 8: YÖNETİCİYE MESAJ GÖNDER ============ -->
-<section id="mesaj">
-  <div class="sec-head"><span class="no">✉️</span><h2 data-t="s8_title">Yöneticiye Mesaj Gönder</h2><code>Sayfa yöneticisine iletin</code><span class="chevron">▸</span></div>
-  <div class="sec-body">
-    <p class="desc" data-t="s8_desc">Bu alan üzerinden sayfa yöneticisine ulaşabilirsiniz. Sitenin geliştirilmesine yönelik <b>önerilerinizi</b>, karşılaştığınız sorunları ya da iletmek istediğiniz diğer konuları rahatlıkla paylaşabilirsiniz. Görüşleriniz, sayfamızı daha iyiye taşımak için bizim için büyük değer taşır.</p>
-    <div class="controls">
-      <div class="ctl"><label data-t="s8_ad">Ad Soyad</label><input type="text" id="msj-ad" placeholder="Adınız ve soyadınız"></div>
-      <div class="ctl"><label data-t="s8_konu">Mesajın Konusu</label><input type="text" id="msj-konu" placeholder="Mesajınızın konusu"></div>
-    </div>
-    <div class="ctl" style="margin-bottom:12px"><label data-t="s8_mesaj">Mesajınız</label><textarea id="msj-metin" rows="6" style="width:100%; resize:vertical" placeholder="Mesajınızı buraya yazabilirsiniz…"></textarea></div>
-    <div class="controls">
-      <div class="ctl"><label>&nbsp;</label><button id="msj-gonder" onclick="msjGonder()" data-t="s8_gonder">Mesajı Gönder</button></div>
-      <div class="ctl"><label>&nbsp;</label><button class="ghost" id="msj-temizle" onclick="msjFormuTemizle()" data-t="s8_temizle">Formu Temizle</button></div>
-    </div>
-    <div class="status" id="msj-durum" role="status" aria-live="polite"></div>
-
-    <hr style="border:none; border-top:1px solid var(--border); margin:4px 0 16px">
-
-    <div class="col-head" style="margin-bottom:8px" data-t="s8_yonetici">Yönetici İşlemleri</div>
-    <button class="ghost" id="yon-giris-buton" onclick="yonGirisToggle()" data-t="s8_girisi">🔒 Yönetici Girişi</button>
-    <div id="yon-giris-alan" style="display:none; margin-top:10px">
-      <div class="controls">
-        <div class="ctl"><label data-t="s8_sifre">Yönetici Şifresi</label><input type="password" id="yon-sifre" placeholder="Şifre" onkeydown="if(event.key==='Enter')yonGirisYap()"></div>
-        <div class="ctl"><label>&nbsp;</label><button id="yon-giris-btn" onclick="yonGirisYap()" data-t="s8_giris">Giriş Yap</button></div>
-      </div>
-      <div class="status" id="yon-hata" role="status" aria-live="polite"></div>
-    </div>
-    <div id="yon-panel" style="display:none; margin-top:14px">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px">
-        <div class="col-head" style="margin:0"><span data-t="s8_gelen">Gelen Mesajlar</span> (<span id="yon-sayac">0</span>)</div>
-        <div>
-          <button class="ghost small" id="yon-temizle" onclick="yonTemizle()" data-t="s8_sil">Tümünü Sil</button>
-          <button class="ghost small" onclick="yonCik()" data-t="s8_cikis">Çıkış</button>
-        </div>
-      </div>
-      <div id="yon-liste"></div>
-    </div>
-  </div>
-</section>
-
 </main>
 
 <div class="footer">
-  <span data-t="ft_kaynak">Kaynak:</span> <a href="https://github.com/fawazahmed0/quran-api" target="_blank">github.com/fawazahmed0/quran-api</a> ·
-  <span data-t="ft_veriler">Tüm veriler</span> <code style="font-size:11px">cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/</code> <span data-t="ft_uzerin">üzerinden canlı çekilir</span> ·
-  <span data-t="ft_lisans">Lisans:</span> Unlicense (kamu malı) · Bu sayfa: <b id="f-sure">—</b> ms
+  Kaynak: <a href="https://github.com/fawazahmed0/quran-api" target="_blank">github.com/fawazahmed0/quran-api</a> ·
+  Tüm veriler <code style="font-size:11px">cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/</code> üzerinden canlı çekilir ·
+  Lisans: Unlicense (kamu malı) · Bu sayfa: <b id="f-sure">—</b> ms
 </div>
 
 <script>
 "use strict";
 const BASE = 'https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1';
-
-// ===== DİL DESTEĞİ (TR / AR / EN) =====
-const LANG = {
-  tr: {},
-  ar: {
-    'subtitle':'مركز بيانات القرآن المجاني غير المحدود','header_desc':'فواز أحمد / القرآن API · 98 لغة · 486 ترجمة · مجاني عبر jsDelivr CDN',
-    'stat_ed':'ترجمات','stat_sur':'سور','stat_ayet':'آيات','stat_cuz':'أجزاء','stat_sayfa':'صفحات',
-    'nav_1':'🎧 القراءة بصوت عالٍ','nav_2':'📚 الترجمات','nav_3':'📖 القارئ','nav_4':'📝 آية واحدة',
-    'nav_5':'🗂️ الأقسام','nav_6':'🌙 العربية + التركية','nav_7':'🔍 البحث في القرآن',
-    'nav_8':'✉️ إرسال رسالة للمسؤول','nav_0':'🎨 المظهر والثيم',
-    's0_title':'المظهر والثيم','s0_desc':'خصص مظهر الصفحة: الوضع الفاتح/الداكن واللون المستقل لكل منطقة. يتم حفظ الاختيارات في المتصفح. استخدم ☀️/🌙 في الأعلى لتبديل سريع.',
-    's0_gorunum':'المظهر','s0_vurgu':'🎨 التمييز','s0_vurgu_info':'الأزرار والروابط والحالات النشطة',
-    's0_bg':'🖼️ الخلفية','s0_bg_info':'خلفية الصفحة والشريط',
-    's0_panel':'📋 اللوحة','s0_panel_info':'خلفية البطاقات والأقسام',
-    's0_border':'🔲 الحدود','s0_border_info':'الإطارات والخطوط الفاصلة',
-    's0_komb':'مجموعات جاهزة',
-    's1_title':'القراءة بصوت عالٍ','s1_desc':'1A: <b>تلاوة القرآن</b> — قراءة السور العربية، CDN مجاني. 1B: <b>TTS</b> — قراءة نصوص الترجمة بأي لغة.',
-    's1_tilavet':'🎧 التلاوة — قراءة القرآن (عربي)','s1_okuyucu':'القارئ','s1_sure':'السورة',
-    's1_cal':'▶ تشغيل','s1_durdur':'⏹ إيقاف','s1_ses':'مستوى الصوت',
-    's1_tts':'🗣️ TTS — قراءة النص بصوت عالٍ','s1_dil':'اللغة','s1_hiz':'السرعة',
-    's1_oku':'▶ اقرأ','s1_duraklat':'⏸ إيقاف مؤقت / استئناف',
-    's2_title':'الترجمات','s2_desc':'جميع الترجمات (486). استخدم فلتر <b>اللغة</b> + <b>البحث</b>، ثم <b>اقرأ</b> للانتقال إلى القسم 3.',
-    's2_dil':'اللغة','s2_ara':'بحث (مؤلف / اسم)','s2_sifirla':'إعادة ضبط',
-    's2_th1':'الترجمة','s2_th2':'المؤلف / المصدر','s2_th3':'اللغة',
-    's3_title':'قارئ الترجمات','s3_desc':'القراءة حسب السورة في الترجمة المحددة. <b>_la</b> = نسخ بالحروف اللاتينية.',
-    's3_dil':'اللغة','s3_ceviri':'الترجمة','s3_latin':'لاتيني (_la)','s3_sure':'السورة',
-    's3_yukle':'تحميل','s3_onceki':'← السورة السابقة','s3_sonraki':'السورة التالية →',
-    's4_title':'استعلام آية واحدة','s4_desc':'جلب آية واحدة — مثالي لبطاقة <b>آية اليوم</b>.',
-    's4_ceviri':'الترجمة','s4_sure':'السورة','s4_ayet':'الآية','s4_getir':'جلب',
-    's5_title':'مستكشف الأقسام','s5_desc':'اقرأ القرآن مقسّماً: <b>30 جزءاً</b> · <b>556 ركوعاً</b> · <b>604 صفحات</b> · <b>7 منازل</b> · <b>240 مقراً</b>.',
-    's5_tip':'نوع القسم','s5_no':'الرقم','s5_dil':'الترجمة','s5_yukle':'تحميل',
-    's5_cuz':'جزء (juzs)','s5_ruku':'ركوع (rukus)','s5_sayfa':'صفحة (pages)',
-    's5_menzil':'منزل (manzils)','s5_maqra':'مقرأة (maqras)',
-    's6_title':'العربية + التركية جنباً إلى جنب','s6_desc':'النص العربي الأصلي والترجمة التركية <b>آية بآية للمقارنة</b>.',
-    's6_sure':'السورة','s6_arapca':'النص العربي','s6_turkce':'الترجمة التركية','s6_yukle':'تحميل',
-    's7_title':'البحث في القرآن','s7_desc':'<b>بحث في جميع القرآن</b> — ابحث بكلمة أو جملة أو موضوع؛ يتم سرد جميع الآيات المتطابقة.',
-    's7_mod':'الوضع','s7_kelime':'كلمة','s7_cumle':'جملة','s7_konu':'موضوع',
-    's7_dil':'اللغة','s7_turkce':'التركية (ديوان)','s7_arapca':'العربية (النص الأصلي)',
-    's7_ara_label':'النص المطلوب البحث عنه','s7_ara':'بحث','s7_sonuclar':'النتائج','s7_secili':'الآية المحددة',
-    's8_title':'إرسال رسالة للمسؤول','s8_desc':'يمكنك التواصل مع مسؤول الصفحة. شارك <b>اقتراحاتك</b> أو المشاكل أو أي مواضيع أخرى.',
-    's8_ad':'الاسم الكامل','s8_konu':'موضوع الرسالة','s8_mesaj':'رسالتك',
-    's8_gonder':'إرسال الرسالة','s8_temizle':'مسح النموذج',
-    's8_yonetici':'إجراءات المسؤول','s8_girisi':'🔒 دخول المسؤول','s8_sifre':'كلمة مرور المسؤول',
-    's8_giris':'تسجيل الدخول','s8_gelen':'الرسائل الواردة','s8_sil':'حذف الكل','s8_cikis':'خروج',
-    'ft_kaynak':'المصدر:','ft_veriler':'جميع البيانات','ft_uzerin':'يتم جلبها مباشرة من','ft_lisans':'الرخصة:'
-  },
-  en: {
-    'subtitle':'Free & Unlimited Quran Data Center','header_desc':'fawazahmed0/quran-api · 98 languages · 486 translations · free via jsDelivr CDN',
-    'stat_ed':'Translations','stat_sur':'Sures','stat_ayet':'Verses','stat_cuz':'Juz','stat_sayfa':'Pages',
-    'nav_1':'🎧 Audio Reading','nav_2':'📚 Translations','nav_3':'📖 Reader','nav_4':'📝 Single Verse',
-    'nav_5':'🗂️ Sections','nav_6':'🌙 Arabic + Turkish','nav_7':'🔍 Search in Quran',
-    'nav_8':'✉️ Message to Admin','nav_0':'🎨 Theme & Appearance',
-    's0_title':'Theme & Appearance','s0_desc':'Customize page appearance: <b>light / dark mode</b> and <b>independent color</b> for each area. Choices are saved in your browser. Use ☀️/🌙 at top for quick switch.',
-    's0_gorunum':'Appearance','s0_vurgu':'🎨 Accent','s0_vurgu_info':'Buttons, links, active states',
-    's0_bg':'🖼️ Background','s0_bg_info':'Page and nav background',
-    's0_panel':'📋 Panel','s0_panel_info':'Card and section backgrounds',
-    's0_border':'🔲 Border','s0_border_info':'Frames and dividing lines',
-    's0_komb':'Preset Combinations',
-    's1_title':'Audio Reading','s1_desc':'1A: <b>Quran recitation</b> — Arabic surah recitation, free CDN. 1B: <b>TTS</b> — read translation texts in any language.',
-    's1_tilavet':'🎧 Tilavet — Quran recitation (Arabic)','s1_okuyucu':'Reciter','s1_sure':'Surah',
-    's1_cal':'▶ Play','s1_durdur':'⏹ Stop','s1_ses':'Volume',
-    's1_tts':'🗣️ TTS — Text to Speech','s1_dil':'Language','s1_hiz':'Speed',
-    's1_oku':'▶ Read','s1_duraklat':'⏸ Pause / Resume',
-    's2_title':'Translations','s2_desc':'All translations (486). Filter by <b>language</b> + <b>search</b>, then <b>Read</b> to go to Section 3.',
-    's2_dil':'Language','s2_ara':'Search (author / name)','s2_sifirla':'Reset',
-    's2_th1':'Translation','s2_th2':'Author / Source','s2_th3':'Language',
-    's3_title':'Translation Reader','s3_desc':'Read by surah in selected translation. <b>_la</b> = Latin transcription.',
-    's3_dil':'Language','s3_ceviri':'Translation','s3_latin':'Latin (_la)','s3_sure':'Surah',
-    's3_yukle':'Load','s3_onceki':'← Previous surah','s3_sonraki':'Next surah →',
-    's4_title':'Single Verse Query','s4_desc':'Fetch a single verse — ideal for <b>verse of the day</b> cards.',
-    's4_ceviri':'Translation','s4_sure':'Surah','s4_ayet':'Verse','s4_getir':'Fetch',
-    's5_title':'Section Explorer','s5_desc':'Read the Quran in sections: <b>30 juz</b> · <b>556 rukus</b> · <b>604 pages</b> · <b>7 manzils</b> · <b>240 maqras</b>.',
-    's5_tip':'Section type','s5_no':'Number','s5_dil':'Translation','s5_yukle':'Load',
-    's5_cuz':'Juz (juzs)','s5_ruku':'Ruku (rukus)','s5_sayfa':'Page (pages)',
-    's5_menzil':'Manzil (manzils)','s5_maqra':'Maqra (maqras)',
-    's6_title':'Arabic + Turkish Side by Side','s6_desc':'Original Arabic text and Turkish translation <b>verse by verse comparison</b>.',
-    's6_sure':'Surah','s6_arapca':'Arabic text','s6_turkce':'Turkish translation','s6_yukle':'Load',
-    's7_title':'Search in Quran','s7_desc':'<b>Search the entire Quran</b> — by word, sentence, or topic; all matching verses are listed.',
-    's7_mod':'Mode','s7_kelime':'Word','s7_cumle':'Sentence','s7_konu':'Topic',
-    's7_dil':'Language','s7_turkce':'Turkish (Diyanet)','s7_arapca':'Arabic (original text)',
-    's7_ara_label':'Search text','s7_ara':'Search','s7_sonuclar':'Results','s7_secili':'Selected Verse',
-    's8_title':'Message to Admin','s8_desc':'Contact the page administrator through this section. Share your <b>suggestions</b>, issues, or other topics.',
-    's8_ad':'Full Name','s8_konu':'Subject','s8_mesaj':'Your Message',
-    's8_gonder':'Send Message','s8_temizle':'Clear Form',
-    's8_yonetici':'Admin Operations','s8_girisi':'🔒 Admin Login','s8_sifre':'Admin Password',
-    's8_giris':'Log In','s8_gelen':'Inbox','s8_sil':'Delete All','s8_cikis':'Logout',
-    'ft_kaynak':'Source:','ft_veriler':'All data','ft_uzerin':'is fetched live from','ft_lisans':'License:'
-  }
-};
-let AKTIF_DIL = 'tr';
-const ORIG = {}; let origCached = false;
-function dilUygula(lang){
-  if(!origCached){
-    document.querySelectorAll('[data-t]').forEach(el => {
-      ORIG[el.getAttribute('data-t')] = el.innerHTML;
-    });
-    origCached = true;
-  }
-  AKTIF_DIL = lang;
-  try{ localStorage.setItem('kuran_dil', lang); }catch(e){}
-  const t = LANG[lang] || {};
-  document.documentElement.lang = lang==='ar'?'ar':(lang==='en'?'en':'tr');
-  document.documentElement.dir = lang==='ar'?'rtl':'ltr';
-  document.querySelectorAll('[data-t]').forEach(el => {
-    const k = el.getAttribute('data-t');
-    el.innerHTML = (lang === 'tr') ? (ORIG[k] || '') : (t[k] !== undefined ? t[k] : ORIG[k] || '');
-  });
-  document.querySelectorAll('#dil-sec button').forEach(b => b.classList.toggle('aktif', b.dataset.dil===lang));
-}
-// Dil yükleme (sayfa açılışında)
-try{ const l=localStorage.getItem('kuran_dil')||'tr'; if(l!=='tr') dilUygula(l); }catch(e){}
 
 // 114 sure: [Türkçe ad, ayet sayısı]
 const SURELER = [
@@ -1293,28 +1745,12 @@ function bolgeYaz(bolge,hex){
   try{localStorage.setItem(BOLGE_BASLIK[bolge],hex)}catch(e){}
 }
 
-const RENK_MOD_DEFAULTS={koyu:{bg:'#0b1210',panel:'#101a16',border:'#1f352c'},acik:{bg:'#f5f0e4',panel:'#faf6eb',border:'#d4c9a8'}};
 function temaUygula(t){
-  const onceki=document.documentElement.dataset.tema;
   document.documentElement.dataset.tema=t;
   try{localStorage.setItem('kuran_tema',t)}catch(e){}
   document.querySelectorAll('#tema-sec button').forEach(b=>b.classList.toggle('aktif',b.id==='tema-'+t));
   const h=$('tema-hizli');
   if(h)h.textContent=t==='acik'?'🌙':'☀️';
-  if(onceki && onceki!==t){
-    ['bg','panel','border'].forEach(bolge=>{
-      const simdi='renk_'+bolge,oncekiKey=simdi+'_'+onceki,yeniKey=simdi+'_'+t;
-      try{
-        const mevcut=localStorage.getItem(simdi);
-        if(mevcut) localStorage.setItem(oncekiKey,mevcut);
-        const yeni=localStorage.getItem(yeniKey)||RENK_MOD_DEFAULTS[t][bolge];
-        localStorage.setItem(simdi,yeni);
-      }catch(e){}
-    });
-    bolgePaletiKur('bg',BG_RENKLER);
-    bolgePaletiKur('panel',PANEL_RENKLER);
-    bolgePaletiKur('border',BORDER_RENKLER);
-  }
   temaHesapla();
 }
 
@@ -1487,18 +1923,85 @@ window.addEventListener('scroll', () => {
     el.style.transform = 'translateY(' + (y * 0.15) + 'px)';
   });
 });
-</script>
 
-<!-- Accordion: bağımsız script, ana script hatalarından etkilenmez -->
-<script>
+// ===== İSLAMİ SÜSLEMELER: Parçacık Sistemi =====
 (function(){
-  document.querySelectorAll('section').forEach(function(sec){
-    var head = sec.querySelector('.sec-head');
-    if(!head) return;
-    head.addEventListener('click', function(){ sec.classList.toggle('acik'); });
+  const container = document.getElementById('particles');
+  if(!container) return;
+
+  // Altın parçacık oluştur
+  function createParticle(){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 2 + Math.random() * 4;
+    p.style.width = size + 'px';
+    p.style.height = size + 'px';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = Math.random() * 10 + 's';
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 25000);
+  }
+
+  // Yıldız parçacık oluştur
+  function createStar(){
+    const s = document.createElement('div');
+    s.className = 'star-particle';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.animationDuration = (2 + Math.random() * 4) + 's';
+    s.style.animationDelay = Math.random() * 5 + 's';
+    container.appendChild(s);
+    setTimeout(() => s.remove(), 10000);
+  }
+
+  // Başlangıçta biraz parçacık
+  for(let i = 0; i < 8; i++) createParticle();
+  for(let i = 0; i < 12; i++) createStar();
+
+  // Periyodik olarak yenilerini ekle
+  setInterval(createParticle, 2000);
+  setInterval(createStar, 1500);
+
+  // Section köşe süsleri SVG'si
+  const starSVG = '<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 0L24 16L40 20L24 24L20 40L16 24L0 20L16 16Z" fill="currentColor" opacity="0.15"/><circle cx="20" cy="20" r="4" fill="currentColor" opacity="0.25"/></svg>';
+
+  // Section'lara köşe süsleri ekle
+  document.querySelectorAll('section').forEach(sec => {
+    ['corner-tl','corner-tr','corner-bl','corner-br'].forEach(cls => {
+      const div = document.createElement('div');
+      div.className = 'section-ornament ' + cls;
+      div.innerHTML = starSVG;
+      div.style.color = 'var(--gold)';
+      sec.appendChild(div);
+    });
   });
-  var ayarlar = document.querySelector('section#ayarlar');
-  if(ayarlar) ayarlar.classList.add('acik');
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, {threshold: 0.1});
+
+  document.querySelectorAll('section').forEach(sec => {
+    sec.classList.add('scroll-reveal');
+    observer.observe(sec);
+  });
+
+  // Section başlıklarına altın ayırıcı ekle
+  document.querySelectorAll('.sec-head').forEach(head => {
+    const goldLine = document.createElement('div');
+    goldLine.className = 'gold-line';
+    head.parentNode.insertBefore(goldLine, head.nextSibling);
+  });
+
+  document.querySelectorAll('section').forEach(sec => {
+    sec.querySelector('.sec-head').addEventListener('click', function(){
+      sec.classList.toggle('acik');
+    });
+  });
+  document.querySelector('#ses').classList.add('acik');
 })();
 </script>
 </body>
