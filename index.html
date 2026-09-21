@@ -1050,43 +1050,20 @@
 
 <!-- ============ BÖLÜM 9: KUR'AN TEFSİRİ OKUYUCU ============ -->
 <section id="tefsir-arama">
-  <div class="sec-head"><span class="no">📚</span><h2>Kur'an Tefsiri</h2><code>Diyanet Kur'an Yolu Tefsiri</code></div>
+  <div class="sec-head"><span class="no">📚</span><h2>Kur'an Tefsiri</h2><code>426 ders · 105 sure · Diyanet</code></div>
   <div class="sec-body">
-    <p class="desc"><b>Diyanet Kur'an Yolu Tefsiri</b> — 734 sayfalık tefsiri sayfa sayfa okuyun. İçindekilere tıklayarak veya sayfa numarası girerek gezinin.</p>
-    <details style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px">
-      <summary style="cursor:pointer;font-weight:600;color:var(--gold);font-size:15px">📑 İçindekiler</summary>
-      <div style="padding:8px 0;line-height:2;font-size:14px">
-        <div style="display:grid;grid-template-columns:60px 1fr;gap:2px 12px">
-          <a onclick="tefsirGit(1)" style="cursor:pointer;color:var(--gold);text-decoration:underline">1-39</a><span>GİRİŞ</span>
-          <a onclick="tefsirGit(41)" style="cursor:pointer;color:var(--gold);text-decoration:underline">41-52</a><span><b>1 / FÂTİHA SÛRESİ</b> (1-7)</span>
-          <a onclick="tefsirGit(54)" style="cursor:pointer;color:var(--gold);text-decoration:underline">54-443</a><span><b>2 / BAKARA SÛRESİ</b> (1-286)</span>
-          <a onclick="tefsirGit(445)" style="cursor:pointer;color:var(--gold);text-decoration:underline">445-734</a><span><b>3 / ÂL-İ İMRÂN SÛRESİ</b> (1-200)</span>
-        </div>
+    <p class="desc"><b>Diyanet Kur'an Yolu Tefsiri</b> — Sure seçin, dersleri inceleyin. 426 ders, 105 sure kapsamlı tefsir verisi.</p>
+    <div class="controls" style="flex-wrap:wrap;gap:8px;align-items:center">
+      <div class="ctl"><label>Sure Seçin</label>
+        <select id="tf-sure" onchange="tfSureSec()" style="min-width:220px">
+          <option value="">— Sure seçin —</option>
+        </select>
       </div>
-    </details>
-    <div class="controls" style="flex-wrap:wrap;gap:8px;align-items:center;justify-content:center">
-      <button onclick="tefsirGit(1)" title="İlk sayfa">⏮</button>
-      <button onclick="tefsirGit(tefsirSayfa-1)" title="Önceki sayfa">◀</button>
-      <div class="ctl" style="display:inline-flex;align-items:center;gap:6px;margin:0">
-        <label style="margin:0">Sayfa</label>
-        <input type="number" id="tefsir-no" min="1" max="734" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
-        <span style="color:var(--dim)">/ 734</span>
-      </div>
-      <button onclick="tefsirGit(tefsirSayfa+1)" title="Sonraki sayfa">▶</button>
-      <button onclick="tefsirGit(734)" title="Son sayfa">⏭</button>
+      <div id="tf-ders-sayisi" style="font-size:13px;color:var(--dim);margin-left:8px"></div>
     </div>
     <div class="status" id="tefsir-status" role="status" aria-live="polite" style="text-align:center;margin:8px 0"></div>
-    <div id="tefsir-sayfa" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px 28px;line-height:2;font-size:15px;white-space:pre-wrap;max-height:600px;overflow-y:auto;color:var(--txt)"></div>
-    <div class="controls" style="margin-top:12px;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center">
-      <button onclick="tefsirGit(1)">⏮</button>
-      <button onclick="tefsirGit(tefsirSayfa-1)">◀</button>
-      <div class="ctl" style="display:inline-flex;align-items:center;gap:6px;margin:0">
-        <input type="number" id="tefsir-no2" min="1" max="734" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
-        <span style="color:var(--dim)">/ 734</span>
-      </div>
-      <button onclick="tefsirGit(tefsirSayfa+1)">▶</button>
-      <button onclick="tefsirGit(734)">⏭</button>
-    </div>
+    <div id="tf-ders-listesi" style="margin-top:12px"></div>
+    <div id="tf-ders-icerik" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px 28px;line-height:2;font-size:15px;white-space:pre-wrap;max-height:600px;overflow-y:auto;color:var(--txt);margin-top:16px;display:none"></div>
   </div>
 </section>
 
@@ -1723,18 +1700,83 @@ async function araYap(){
   }
 }
 
-let tefsirSayfa=1;
-function tefsirGit(n){
-  if(!window.TEFSIR_DATA){document.getElementById('tefsir-status').innerHTML='<span class="err">Tefsir verisi yüklenemedi.</span>';return}
-  n=Math.max(1,Math.min(window.TEFSIR_DATA.sayfalar.length,Math.floor(n)));
-  tefsirSayfa=n;
-  const p=window.TEFSIR_DATA.sayfalar.find(s=>s.s===n);
-  if(!p){document.getElementById('tefsir-sayfa').textContent='Bu sayfa boş.';return}
-  document.getElementById('tefsir-sayfa').innerHTML='<div style="text-align:center;font-weight:600;color:var(--gold);margin-bottom:12px;font-size:16px">📄 Sayfa '+n+'</div>'+p.t.replace(/</g,'&lt;');
-  document.getElementById('tefsir-no').value=n;
-  document.getElementById('tefsir-no2').value=n;
-  document.getElementById('tefsir-status').innerHTML='<span class="ok">Sayfa '+n+' / 734</span>';
-  document.getElementById('tefsir-sayfa').scrollTop=0;
+// ---------- BÖLÜM 9: TEFSİR OKUYUCU (per-sure JSON) ----------
+const TF_SURELER = [
+  [1,"Fâtiha"],[2,"Bakara"],[3,"Âl-i İmrân"],[4,"Nisâ"],[5,"Mâide"],[6,"En'âm"],[7,"A'raf"],[8,"Enfâl"],[9,"Tevbe"],[10,"Yûnus"],
+  [11,"Hûd"],[12,"Yûsûf"],[13,"Ra'd"],[14,"İbrâhîm"],[15,"Hicr"],[16,"Nahl"],[17,"İsrâ"],[18,"Kehf"],[19,"Meryem"],[20,"Tâhâ"],
+  [21,"Enbiyâ"],[22,"Hac"],[23,"Mü'minûn"],[24,"Nûr"],[25,"Furkân"],[26,"Şuarâ"],[27,"Neml"],[28,"Kasas"],[29,"Ankebût"],[30,"Rûm"],
+  [31,"Lokmân"],[32,"Secde"],[33,"Ahzâb"],[34,"Sebe'"],[35,"Fâtır"],[36,"Yâsin"],[37,"Sâffât"],[38,"Sâd"],[39,"Zümer"],[40,"Gâfir"],
+  [41,"Fussılet"],[42,"Şûrâ"],[43,"Zuhruf"],[44,"Duhân"],[45,"Câsiye"],[46,"Ahkâf"],[47,"Muhammed"],[48,"Fetih"],[49,"Hucurât"],[50,"Kâf"],
+  [51,"Zâriyât"],[52,"Tûr"],[53,"Necm"],[54,"Kamer"],[55,"Rahmân"],[56,"Vâkıa"],[57,"Hadîd"],[58,"Mücâdele"],[59,"Haşr"],[60,"Mümtehine"],
+  [61,"Saf"],[62,"Cuma"],[63,"Münafikûn"],[64,"Teğâbün"],[65,"Talâk"],[66,"Tahrîm"],[67,"Mülk"],[68,"Kalem"],[69,"Hâkka"],[70,"Mearic"],
+  [71,"Nûh"],[72,"Cin"],[73,"Müzzemmil"],[74,"Müddessir"],[75,"Kıyâme"],[76,"İnsân"],[77,"Mürselât"],[78,"Nebe"],[79,"Nâzi'ât"],[80,"Abese"],
+  [81,"Tekvîr"],[82,"İnfitâr"],[83,"Mutaffifîn"],[84,"İnşikâk"],[85,"Bûrûc"],[86,"Târık"],[87,"A'lâ"],[88,"Ğâşiye"],[89,"Fecr"],[90,"Beled"],
+  [91,"Şems"],[92,"Leyl"],[93,"Duha"],[94,"İnşirâh"],[95,"Tîn"],[96,"Alak"],[97,"Kadr"],[98,"Beyyine"],[99,"Zilzâl"],[100,"Adiyât"],
+  [101,"Kâria"],[102,"Tekâsûr"],[103,"Asr"],[104,"Hümeze"],[105,"Fîl"],[106,"Kureyş"],[107,"Mâûn"],[108,"Kevser"],[109,"Kâfirûn"],[110,"Nasr"],
+  [111,"Tebbet"],[112,"İhlâs"],[113,"Felak"],[114,"Nâs"]
+];
+let TF_CACHE = {};
+let TF_SECILI_SURE = 0;
+
+(function(){
+  const sel = document.getElementById('tf-sure');
+  if(!sel) return;
+  TF_SURELER.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s[0];
+    o.textContent = s[0] + '. ' + s[1] + ' Sûresi';
+    sel.appendChild(o);
+  });
+})();
+
+async function tfSureSec(){
+  const s = +document.getElementById('tf-sure').value;
+  if(!s) return;
+  TF_SECILI_SURE = s;
+  const st = $('tefsir-status');
+  const dl = document.getElementById('tf-ders-listesi');
+  const ic = document.getElementById('tf-ders-icerik');
+  ic.style.display = 'none';
+  ic.innerHTML = '';
+  dl.innerHTML = '';
+  document.getElementById('tf-ders-sayisi').textContent = '';
+
+  if(!TF_CACHE[s]){
+    st.textContent = '⏳ ' + TF_SURELER.find(x=>x[0]===s)[1] + ' yükleniyor…';
+    try{
+      const r = await fetch('tefsir_data/sure_' + String(s).padStart(3,'0') + '.json');
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      TF_CACHE[s] = await r.json();
+    }catch(e){
+      st.innerHTML = '<span class="err">✘ Yüklenemedi: ' + esc(e.message) + '</span>';
+      return;
+    }
+  }
+  const data = TF_CACHE[s];
+  const dersler = data.lessons || [];
+  st.innerHTML = '<span class="ok">✔ ' + dersler.length + ' ders bulundu</span>';
+  document.getElementById('tf-ders-sayisi').textContent = dersler.length + ' ders';
+
+  dl.innerHTML = dersler.map((d,i) =>
+    '<div class="tf-ders-satir" onclick="tfDersGoster(' + s + ',' + i + ')" style="padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;font-size:14px">' +
+    '<span style="color:var(--gold);font-weight:600;margin-right:8px">' + esc(d.title) + '</span></div>'
+  ).join('');
+
+  dl.querySelectorAll('.tf-ders-satir').forEach(el => {
+    el.addEventListener('mouseenter', function(){ this.style.background = 'var(--hover-bg)'; });
+    el.addEventListener('mouseleave', function(){ this.style.background = ''; });
+  });
+}
+
+function tfDersGoster(sure, idx){
+  const data = TF_CACHE[sure];
+  if(!data || !data.lessons[idx]) return;
+  const d = data.lessons[idx];
+  const ic = document.getElementById('tf-ders-icerik');
+  ic.style.display = 'block';
+  ic.innerHTML = '<div style="text-align:center;font-weight:600;color:var(--gold);margin-bottom:16px;font-size:17px;padding-bottom:12px;border-bottom:1px solid var(--border)">' + esc(d.title) + '</div>' + esc(d.text).replace(/\n/g, '<br>');
+  ic.scrollTop = 0;
+  $('tefsir-status').innerHTML = '<span class="ok">✔ ' + esc(d.title) + '</span>';
 }
 
 // BÖLÜM 8: Yöneticiye mesaj gönder (Vercel proxy → GitHub depolama, sırlar sunucuda)
@@ -2147,9 +2189,13 @@ window.addEventListener('scroll', () => {
   document.querySelector('#ses').classList.add('acik');
 })();
 </script>
-<script src="tefsir_data.js"></script>
 <script>
-document.getElementById('tefsir-arama').addEventListener('click',function(){if(window.TEFSIR_DATA&&!document.getElementById('tefsir-sayfa').textContent.trim())tefsirGit(1)});
+document.getElementById('tefsir-arama').addEventListener('click',function(){
+  if(!document.getElementById('tf-sure').value && TF_SURELER.length){
+    document.getElementById('tf-sure').value = 1;
+    tfSureSec();
+  }
+});
 </script>
 </body>
 </html>
