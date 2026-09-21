@@ -1048,29 +1048,33 @@
   </div>
 </section>
 
-<!-- ============ BÖLÜM 9: KUR'AN TEFSİRİ VE TEFSİRDE ARAMA ============ -->
+<!-- ============ BÖLÜM 9: KUR'AN TEFSİRİ OKUYUCU ============ -->
 <section id="tefsir-arama">
-  <div class="sec-head"><span class="no">📚</span><h2>Kur'an Tefsiri ve Tefsirde Arama</h2><code>Diyanet Kur'an Yolu Tefsiri</code></div>
+  <div class="sec-head"><span class="no">📚</span><h2>Kur'an Tefsiri</h2><code>Diyanet Kur'an Yolu Tefsiri</code></div>
   <div class="sec-body">
-    <p class="desc"><b>Diyanet Kur'an Yolu Tefsiri</b> — 744 sayfalık Diyanet İşleri Başkanlığı tefsiri üzerinde <b>metin araması</b> yapın. Sure, ayet veya kelime ile arayın; sonuçlar sayfa numarasıyla birlikte listelenir.</p>
-    <div class="controls">
-      <div class="ctl"><label>Mod</label><select id="tefsir-mod">
-        <option value="metin">Metin Araması</option>
-        <option value="sayfa">Sayfa Numarası</option>
-      </select></div>
-      <div class="ctl"><label>Aratılacak metin</label><input type="text" id="tefsir-kutu" placeholder="Örn: Bakara, Rahman, sevap…" onkeydown="if(event.key==='Enter')tefsirAra()"></div>
-      <div class="ctl"><label>&nbsp;</label><button onclick="tefsirAra()">Ara</button></div>
+    <p class="desc"><b>Diyanet Kur'an Yolu Tefsiri</b> — 744 sayfalık tefsiri sayfa sayfa okuyun. Önceki/sonraki butonlarıyla veya sayfa numarası girerek gezinin.</p>
+    <div class="controls" style="flex-wrap:wrap;gap:8px;align-items:center;justify-content:center">
+      <button onclick="tefsirGit(1)" title="İlk sayfa">⏮</button>
+      <button onclick="tefsirGit(tefsirSayfa-1)" title="Önceki sayfa">◀</button>
+      <div class="ctl" style="display:inline-flex;align-items:center;gap:6px;margin:0">
+        <label style="margin:0">Sayfa</label>
+        <input type="number" id="tefsir-no" min="1" max="744" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
+        <span style="color:var(--dim)">/ 744</span>
+      </div>
+      <button onclick="tefsirGit(tefsirSayfa+1)" title="Sonraki sayfa">▶</button>
+      <button onclick="tefsirGit(744)" title="Son sayfa">⏭</button>
     </div>
-    <div class="status" id="tefsir-status" role="status" aria-live="polite"></div>
-    <div class="grid2">
-      <div>
-        <div class="col-head">Sonuçlar (<span id="tefsir-sayac">0</span>)</div>
-        <div class="table-wrap" id="tefsir-list" style="max-height:500px;overflow-y:auto"></div>
+    <div class="status" id="tefsir-status" role="status" aria-live="polite" style="text-align:center;margin:8px 0"></div>
+    <div id="tefsir-sayfa" style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px 28px;line-height:2;font-size:15px;white-space:pre-wrap;max-height:600px;overflow-y:auto;color:var(--txt)"></div>
+    <div class="controls" style="margin-top:12px;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center">
+      <button onclick="tefsirGit(1)">⏮</button>
+      <button onclick="tefsirGit(tefsirSayfa-1)">◀</button>
+      <div class="ctl" style="display:inline-flex;align-items:center;gap:6px;margin:0">
+        <input type="number" id="tefsir-no2" min="1" max="744" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
+        <span style="color:var(--dim)">/ 744</span>
       </div>
-      <div>
-        <div class="col-head" id="tefsir-panel-baslik">Seçili Sayfa</div>
-        <div id="tefsir-panel" style="padding:12px;max-height:500px;overflow-y:auto;line-height:1.8;font-size:14px"></div>
-      </div>
+      <button onclick="tefsirGit(tefsirSayfa+1)">▶</button>
+      <button onclick="tefsirGit(744)">⏭</button>
     </div>
   </div>
 </section>
@@ -1708,57 +1712,18 @@ async function araYap(){
   }
 }
 
-function tefsirAra(){
-  const mod=document.getElementById('tefsir-mod').value;
-  const q=document.getElementById('tefsir-kutu').value.trim();
-  const st=document.getElementById('tefsir-status');
-  const list=document.getElementById('tefsir-list');
-  const sayac=document.getElementById('tefsir-sayac');
-  if(!q){st.innerHTML='<span class="err">Lütfen arama terimi girin.</span>';return}
-  if(!window.TEFSIR_DATA){st.innerHTML='<span class="err">Tefsir verisi yüklenemedi.</span>';return}
-  st.innerHTML='Aranıyor…';
-  list.innerHTML='';
-  sayac.textContent='0';
-  const sayfalar=window.TEFSIR_DATA.sayfalar;
-  const bulunan=[];
-  if(mod==='sayfa'){
-    const num=parseInt(q);
-    if(isNaN(num)){st.innerHTML='<span class="err">Geçersiz sayfa numarası.</span>';return}
-    const p=sayfalar.find(s=>s.s===num);
-    if(p) bulunan.push(p);
-  } else {
-    const qLow=q.toLocaleLowerCase('tr');
-    for(let i=0;i<sayfalar.length;i++){
-      const p=sayfalar[i];
-      if(p.t.toLocaleLowerCase('tr').includes(qLow)) bulunan.push(p);
-    }
-  }
-  sayac.textContent=bulunan.length;
-  if(bulunan.length===0){st.innerHTML='<span class="err">Sonuç bulunamadı.</span>';return}
-  st.innerHTML='<span class="ok">✔ '+bulunan.length+' sayfa bulundu</span>';
-  bulunan.forEach(p=>{
-    const snippet=p.t.substring(0,200).replace(/</g,'&lt;');
-    const idx=p.t.toLocaleLowerCase('tr').indexOf(q.toLocaleLowerCase('tr'));
-    let highlighted=snippet;
-    if(idx>=0&&mod==='metin'){
-      const before=p.t.substring(Math.max(0,idx-40),idx).replace(/</g,'&lt;');
-      const match=p.t.substring(idx,idx+q.length);
-      const after=p.t.substring(idx+q.length,idx+q.length+80).replace(/</g,'&lt;');
-      highlighted='…'+before+'<b style="color:var(--gold)">'+match+'</b>'+after+'…';
-    }
-    const div=document.createElement('div');
-    div.className='card';
-    div.style.cssText='cursor:pointer;margin-bottom:6px;padding:10px;border-left:3px solid var(--gold);font-size:13px;line-height:1.6';
-    div.innerHTML='<div style="font-weight:600;color:var(--gold);margin-bottom:4px">📄 Sayfa '+p.s+'</div><div style="color:var(--dim)">'+highlighted+'</div>';
-    div.onclick=()=>tefsirGoster(p);
-    list.appendChild(div);
-  });
-}
-function tefsirGoster(p){
-  const panel=document.getElementById('tefsir-panel');
-  const baslik=document.getElementById('tefsir-panel-baslik');
-  baslik.textContent='📄 Sayfa '+p.s;
-  panel.innerHTML='<div style="white-space:pre-wrap;font-size:14px;line-height:1.9;color:var(--txt)">'+p.t.replace(/</g,'&lt;')+'</div>';
+let tefsirSayfa=1;
+function tefsirGit(n){
+  if(!window.TEFSIR_DATA){document.getElementById('tefsir-status').innerHTML='<span class="err">Tefsir verisi yüklenemedi.</span>';return}
+  n=Math.max(1,Math.min(744,Math.floor(n)));
+  tefsirSayfa=n;
+  const p=window.TEFSIR_DATA.sayfalar.find(s=>s.s===n);
+  if(!p){document.getElementById('tefsir-sayfa').textContent='Bu sayfa boş.';return}
+  document.getElementById('tefsir-sayfa').innerHTML='<div style="text-align:center;font-weight:600;color:var(--gold);margin-bottom:12px;font-size:16px">📄 Sayfa '+n+'</div>'+p.t.replace(/</g,'&lt;');
+  document.getElementById('tefsir-no').value=n;
+  document.getElementById('tefsir-no2').value=n;
+  document.getElementById('tefsir-status').innerHTML='<span class="ok">Sayfa '+n+' / 744</span>';
+  document.getElementById('tefsir-sayfa').scrollTop=0;
 }
 
 // BÖLÜM 8: Yöneticiye mesaj gönder (Vercel proxy → GitHub depolama, sırlar sunucuda)
@@ -2171,6 +2136,9 @@ window.addEventListener('scroll', () => {
   document.querySelector('#ses').classList.add('acik');
 })();
 </script>
-<script src="tefsir_data.js" defer></script>
+<script src="tefsir_data.js"></script>
+<script>
+document.getElementById('tefsir-arama').addEventListener('click',function(){if(window.TEFSIR_DATA&&!document.getElementById('tefsir-sayfa').textContent.trim())tefsirGit(1)});
+</script>
 </body>
 </html>
