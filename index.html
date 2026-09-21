@@ -1052,14 +1052,14 @@
 <section id="tefsir-arama">
   <div class="sec-head"><span class="no">📚</span><h2>Kur'an Tefsiri</h2><code>Diyanet Kur'an Yolu Tefsiri</code></div>
   <div class="sec-body">
-    <p class="desc"><b>Diyanet Kur'an Yolu Tefsiri</b> — 744 sayfalık tefsiri sayfa sayfa okuyun. Önceki/sonraki butonlarıyla veya sayfa numarası girerek gezinin.</p>
+    <p class="desc"><b>Diyanet Kur'an Yolu Tefsiri</b> — 732 sayfalık tefsiri sayfa sayfa okuyun. Önceki/sonraki butonlarıyla veya sayfa numarası girerek gezinin.</p>
     <div class="controls" style="flex-wrap:wrap;gap:8px;align-items:center;justify-content:center">
       <button onclick="tefsirGit(1)" title="İlk sayfa">⏮</button>
       <button onclick="tefsirGit(tefsirSayfa-1)" title="Önceki sayfa">◀</button>
       <div class="ctl" style="display:inline-flex;align-items:center;gap:6px;margin:0">
         <label style="margin:0">Sayfa</label>
-        <input type="number" id="tefsir-no" min="1" max="744" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
-        <span style="color:var(--dim)">/ 744</span>
+        <input type="number" id="tefsir-no" min="1" max="732" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
+        <span style="color:var(--dim)">/ 732</span>
       </div>
       <button onclick="tefsirGit(tefsirSayfa+1)" title="Sonraki sayfa">▶</button>
       <button onclick="tefsirGit(744)" title="Son sayfa">⏭</button>
@@ -1070,8 +1070,8 @@
       <button onclick="tefsirGit(1)">⏮</button>
       <button onclick="tefsirGit(tefsirSayfa-1)">◀</button>
       <div class="ctl" style="display:inline-flex;align-items:center;gap:6px;margin:0">
-        <input type="number" id="tefsir-no2" min="1" max="744" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
-        <span style="color:var(--dim)">/ 744</span>
+        <input type="number" id="tefsir-no2" min="1" max="732" value="1" style="width:60px;text-align:center" onkeydown="if(event.key==='Enter')tefsirGit(+this.value)">
+        <span style="color:var(--dim)">/ 732</span>
       </div>
       <button onclick="tefsirGit(tefsirSayfa+1)">▶</button>
       <button onclick="tefsirGit(744)">⏭</button>
@@ -1715,7 +1715,7 @@ async function araYap(){
 let tefsirSayfa=1;
 function tefsirGit(n){
   if(!window.TEFSIR_DATA){document.getElementById('tefsir-status').innerHTML='<span class="err">Tefsir verisi yüklenemedi.</span>';return}
-  n=Math.max(1,Math.min(744,Math.floor(n)));
+  n=Math.max(1,Math.min(window.TEFSIR_DATA.sayfalar.length,Math.floor(n)));
   tefsirSayfa=n;
   const p=window.TEFSIR_DATA.sayfalar.find(s=>s.s===n);
   if(!p){document.getElementById('tefsir-sayfa').textContent='Bu sayfa boş.';return}
