@@ -1,9 +1,8 @@
 <img width="500" height="250" alt="19" src="https://github.com/user-attachments/assets/3822effd-a312-418d-a788-10d9923a904a" />
 
- 
-# Rahman ve Rahim olan Allah'ın adıyla.
+Rahman ve Rahim olan Allah'ın adıyla.
 
-Ücretsiz & Limitsiz Kur'an-ı Kerim Veri Merkezi
+# Ücretsiz & Limitsiz Kur'an-ı Kerim Veri Merkezi
 
 Canlı demo: https://aydannadya31.github.io/quran-api-demo/
 
