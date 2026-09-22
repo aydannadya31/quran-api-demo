@@ -1,4 +1,4 @@
-<img width="1000" height="500" alt="19" src="https://github.com/user-attachments/assets/3822effd-a312-418d-a788-10d9923a904a" />
+<img width="500" height="250" alt="19" src="https://github.com/user-attachments/assets/3822effd-a312-418d-a788-10d9923a904a" />
 
  
 # Kuran API Deneme Sayfası
