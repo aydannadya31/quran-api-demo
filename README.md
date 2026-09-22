@@ -19,4 +19,4 @@ Sure bazlı tefsir de eklenmiştir.
 
 
 
-Bu sayfa babam Ferudun GÜBE adına geleceğe bir miras kalması için yapılmıştır
+Bu sayfa babam Ferudun GÜBE adına geleceğe bir miras kalması için oğlu Alper GÜBE tarafından yapılmıştır.
