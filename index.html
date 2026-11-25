@@ -431,17 +431,14 @@
     100%{transform:translateY(-20px) rotate(360deg); opacity:0}
   }
 
-  /* Yıldız parçacıkları */
+  /* Yıldız parçacıkları — '+' yerine 5-ucurlu yıldız */
   .star-particle{
-    position:absolute; width:8px; height:8px;
-    background:transparent;
+    position:absolute; width:10px; height:10px;
+    background:var(--gold);
+    clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
     animation:starTwinkle 3s ease-in-out infinite;
   }
-  .star-particle::before,.star-particle::after{
-    content:''; position:absolute; background:var(--gold);
-  }
-  .star-particle::before{width:100%; height:2px; top:3px; border-radius:1px}
-  .star-particle::after{width:2px; height:100%; left:3px; border-radius:1px}
+  .star-particle::before,.star-particle::after{content:none}
   @keyframes starTwinkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.8;transform:scale(1.2)}}
 
   /* ===== HEADER KUBBE MOTİFİ ===== */
